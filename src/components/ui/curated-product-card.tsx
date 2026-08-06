@@ -84,7 +84,7 @@ export function CuratedProductCard({
   return (
     <article
       ref={ref}
-      className={cn("group relative", className)}
+      className={cn("group relative h-full", className)}
       aria-expanded={showSheet}
       {...hoverBinders}
       onClick={(event) => {
@@ -95,8 +95,7 @@ export function CuratedProductCard({
     >
       <div
         className={cn(
-          "relative overflow-hidden bg-[#f5f0ee] shadow-saukhya-soft ring-1 ring-black/[0.04] transition-shadow duration-500 group-hover:shadow-saukhya-hover group-hover:ring-saukhya-gold/25",
-          showMetaBelow ? "rounded-[10px]" : "rounded-[10px]",
+          "relative flex h-full flex-col overflow-hidden rounded-[10px] bg-[#f5f0ee] shadow-saukhya-soft ring-1 ring-black/[0.04] transition-shadow duration-500 group-hover:shadow-saukhya-hover group-hover:ring-saukhya-gold/25",
         )}
       >
         <div className="relative overflow-hidden">
@@ -341,21 +340,21 @@ export function CuratedProductCard({
         </div>
 
         {showMetaBelow && (
-          <div className="space-y-1.5 bg-white px-3 py-3 md:px-3.5 md:py-3.5">
+          <div className="mt-auto flex min-h-[132px] flex-col gap-1.5 bg-white px-3 py-3 md:min-h-[140px] md:px-3.5 md:py-3.5">
             <div className="flex items-center gap-0.5 text-saukhya-gold">
               {Array.from({ length: 5 }).map((_, index) => (
                 <IconStar key={index} filled className="h-3 w-3" />
               ))}
             </div>
             <Link href={href} onClick={handleProductView} className="block">
-              <h3 className="line-clamp-2 text-sm font-medium leading-snug text-saukhya-text md:text-[15px]">
+              <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug text-saukhya-text md:min-h-[2.75rem] md:text-[15px]">
                 {product.productName}
               </h3>
             </Link>
-            {product.subCategoryName ? (
-              <p className="text-xs text-saukhya-muted">{product.subCategoryName}</p>
-            ) : null}
-            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 pt-0.5">
+            <p className="min-h-4 truncate text-xs text-saukhya-muted">
+              {product.subCategoryName ?? "\u00A0"}
+            </p>
+            <div className="mt-auto flex flex-wrap items-baseline gap-x-2 gap-y-0.5 pt-0.5">
               <span className="text-base font-semibold tabular-nums text-saukhya-text">
                 {formatPrice(product.finalAmount)}
               </span>

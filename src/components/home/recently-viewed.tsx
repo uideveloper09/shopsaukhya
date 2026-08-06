@@ -90,7 +90,7 @@ export function RecentlyViewed({ products = [] }: RecentlyViewedProps) {
           delay={0.05}
         >
           {displayProducts.map((product, index) => (
-            <RevealItem key={product.productCode} index={index}>
+            <RevealItem key={product.productCode} index={index} className="h-full">
               <CuratedProductCard
                 product={product}
                 priority={index < 2}
