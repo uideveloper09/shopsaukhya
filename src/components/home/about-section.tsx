@@ -119,7 +119,7 @@ export function AboutSection() {
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
-                href="/about-us"
+                href="/about"
                 className="inline-flex items-center justify-center rounded-sm bg-saukhya-maroon px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.22em] text-white shadow-[0_8px_24px_rgba(92,34,56,0.22)] transition-all duration-300 hover:bg-saukhya-maroon/90 hover:shadow-[0_12px_32px_rgba(92,34,56,0.28)]"
               >
                 Discover Our Story

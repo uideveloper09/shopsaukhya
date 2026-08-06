@@ -9,7 +9,7 @@ export const FOOTER_LINKS = {
     { label: "Co-ord sets", href: "/shop/co-ord-sets" },
   ],
   help: [
-    { label: "Contact us", href: "/contact-us" },
+    { label: "Contact us", href: "/contact" },
     { label: "Size guide", href: "/size-guide" },
   ],
   policies: [
