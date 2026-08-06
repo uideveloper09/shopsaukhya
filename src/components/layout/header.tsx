@@ -143,7 +143,7 @@ export function Header({ navigation, products = [] }: HeaderProps) {
                     onFocus={openMega}
                     onBlur={closeMega}
                     className={cn(
-                      "relative pb-1 text-sm font-medium transition-colors",
+                      "relative inline-flex h-9 items-center border-0 bg-transparent p-0 text-sm font-medium leading-none transition-colors",
                       megaOpen
                         ? "text-saukhya-pink"
                         : "text-saukhya-text hover:text-saukhya-pink",
@@ -153,7 +153,7 @@ export function Header({ navigation, products = [] }: HeaderProps) {
                     <span
                       aria-hidden
                       className={cn(
-                        "absolute left-1/2 top-full mt-0.5 -translate-x-1/2 border-x-[5px] border-t-[6px] border-x-transparent transition-opacity",
+                        "pointer-events-none absolute left-1/2 top-[calc(100%+2px)] -translate-x-1/2 border-x-[5px] border-t-[6px] border-x-transparent transition-opacity",
                         megaOpen
                           ? "border-t-saukhya-pink opacity-100"
                           : "border-t-transparent opacity-0",
@@ -165,7 +165,7 @@ export function Header({ navigation, products = [] }: HeaderProps) {
                     key={item.menuCode}
                     href={getMenuHref(item.menuUrl)}
                     onMouseEnter={closeMegaNow}
-                    className="text-sm font-medium text-saukhya-text transition-colors hover:text-saukhya-pink"
+                    className="inline-flex h-9 items-center text-sm font-medium leading-none text-saukhya-text transition-colors hover:text-saukhya-pink"
                   >
                     {item.menuName}
                   </Link>
