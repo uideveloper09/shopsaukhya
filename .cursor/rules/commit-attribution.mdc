@@ -1,0 +1,11 @@
+---
+description: Commit attribution must be Bitcraftly, never Cursor
+alwaysApply: true
+---
+
+Never add Cursor attribution to git commits, PRs, or code comments.
+
+When committing:
+- Do not include `Co-authored-by: Cursor` or `cursoragent@cursor.com`
+- Do not include `Made-with: Cursor` or `Made with Cursor`
+- If a co-author trailer is needed, use: `Co-authored-by: Bitcraftly <team@bitcraftly.com>`
