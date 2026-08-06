@@ -63,6 +63,36 @@ export function IconChevronRight({ className }: IconProps) {
   );
 }
 
+export function IconInstagram({ className }: IconProps) {
+  return (
+    <svg
+      className={cn("h-4 w-4", className)}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      aria-hidden
+    >
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+      <circle cx="12" cy="12" r="4.25" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function IconFacebook({ className }: IconProps) {
+  return (
+    <svg
+      className={cn("h-4 w-4", className)}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.6c0-.9.3-1.6 1.6-1.6h1.7V4.2c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.5v3.2h2.6V22h3.4Z" />
+    </svg>
+  );
+}
+
 export function IconPlay({ className }: IconProps) {
   return (
     <svg className={cn("h-8 w-8", className)} viewBox="0 0 24 24" fill="currentColor" aria-hidden>

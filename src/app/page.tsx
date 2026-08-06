@@ -36,6 +36,7 @@ export default async function HomePage() {
     home,
     navigation,
     products,
+    catalogProducts,
     filters,
     productSection,
     reviews,
@@ -45,7 +46,10 @@ export default async function HomePage() {
 
   return (
     <>
-      <Header navigation={navigation} />
+      <Header
+        navigation={navigation}
+        products={catalogProducts.length ? catalogProducts : products}
+      />
       <main className="w-full">
         <HeroBanner products={products} />
         <TrustStrip />

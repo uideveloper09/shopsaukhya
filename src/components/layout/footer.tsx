@@ -8,7 +8,7 @@ import { Logo } from "@/components/ui/logo";
 import { FashionPatternTexture } from "@/components/ui/fashion-pattern-texture";
 import { FOOTER_LINKS } from "@/constants/footer";
 import { cn, getMenuHref } from "@/lib/utils";
-import { TrustIcon } from "@/components/ui/icons";
+import { TrustIcon, IconInstagram, IconFacebook } from "@/components/ui/icons";
 
 interface FooterProps {
   navigation: NavigationData;
@@ -64,10 +64,14 @@ export function Footer({ navigation }: FooterProps) {
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-saukhya-border text-[11px] text-saukhya-muted transition-colors hover:border-saukhya-pink hover:text-saukhya-pink"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-saukhya-border text-saukhya-muted transition-colors hover:border-saukhya-pink hover:text-saukhya-pink"
                     aria-label={s.label}
                   >
-                    {s.icon === "instagram" ? "IG" : "FB"}
+                    {s.icon === "instagram" ? (
+                      <IconInstagram />
+                    ) : (
+                      <IconFacebook />
+                    )}
                   </a>
                 ))}
               </div>

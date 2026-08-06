@@ -24,6 +24,10 @@ export const metadata: Metadata = {
   description:
     "Shop SAUKHYA's curated collection of luxury Indian fashion — kurta sets, dresses, co-ord sets and more.",
   metadataBase: new URL("https://www.shopsaukhya.com"),
+  icons: {
+    icon: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

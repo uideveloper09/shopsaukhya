@@ -142,6 +142,7 @@ export type HomepageData = {
   categories: Category[];
   subcategories: SubCategory[];
   products: Product[];
+  catalogProducts: Product[];
   filters: ReturnType<typeof getHomeFilters>;
   productSection: ReturnType<typeof getPrimaryProductSection>;
   reviews: ProductReview[];
@@ -178,6 +179,7 @@ export const getHomepageData = cache(async (): Promise<HomepageData> => {
     categories,
     subcategories,
     products,
+    catalogProducts,
     filters,
     productSection,
     reviews,
