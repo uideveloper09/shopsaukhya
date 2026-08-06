@@ -52,20 +52,35 @@ export function ContactPageView() {
 
   return (
     <main className="w-full overflow-x-hidden bg-saukhya-warm">
-      {/* Compact premium hero */}
-      <section className="relative overflow-hidden border-b border-saukhya-border/50">
+      {/* Boutique masthead hero — compact, centered, readable */}
+      <section className="relative overflow-hidden border-b border-saukhya-border/40">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(201,169,110,0.12),transparent_45%),radial-gradient(ellipse_at_bottom_right,rgba(236,57,136,0.06),transparent_40%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,169,110,0.1),transparent_55%)]"
         />
 
-        <div className="container-saukhya relative grid items-center gap-8 py-10 md:gap-10 md:py-12 lg:grid-cols-12 lg:gap-12 lg:py-14">
+        <div className="container-saukhya relative py-9 md:py-11 lg:py-12">
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease }}
-            className="lg:col-span-6"
+            transition={{ duration: 0.65, ease }}
+            className="mx-auto flex max-w-2xl flex-col items-center text-center"
           >
+            <div className="relative mb-5 h-16 w-16 overflow-hidden md:mb-6 md:h-[4.5rem] md:w-[4.5rem]">
+              <Image
+                src={cdn(content.supportCard.image)}
+                alt=""
+                fill
+                priority
+                sizes="72px"
+                className="object-cover object-center"
+              />
+              <span
+                aria-hidden
+                className="absolute inset-0 ring-1 ring-inset ring-saukhya-gold/50"
+              />
+            </div>
+
             <div className="flex items-center gap-3">
               <span
                 aria-hidden
@@ -74,10 +89,14 @@ export function ContactPageView() {
               <p className="text-[11px] font-medium uppercase tracking-[0.34em] text-saukhya-gold">
                 {content.kicker}
               </p>
+              <span
+                aria-hidden
+                className="inline-block h-1.5 w-1.5 rotate-45 bg-saukhya-maroon"
+              />
             </div>
 
             <h1
-              className="mt-4 max-w-lg text-[1.85rem] font-medium leading-[1.18] tracking-tight text-saukhya-maroon md:text-[2.35rem] lg:text-[2.55rem]"
+              className="mt-4 text-[1.7rem] font-medium leading-[1.2] tracking-tight text-saukhya-maroon md:text-[2.15rem] lg:text-[2.35rem]"
               style={{ fontFamily: "var(--font-serif)" }}
             >
               {content.title}
@@ -85,64 +104,15 @@ export function ContactPageView() {
 
             <motion.div
               aria-hidden
-              className="mt-5 h-px w-20 origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/55 to-transparent"
-              initial={reduceMotion ? false : { scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.75, ease, delay: 0.25 }}
+              className="mx-auto mt-4 h-px w-14 origin-center bg-gradient-to-r from-transparent via-saukhya-gold to-transparent"
+              initial={reduceMotion ? false : { scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ duration: 0.7, ease, delay: 0.2 }}
             />
 
-            <p className="mt-5 max-w-md text-sm leading-[1.8] text-saukhya-muted md:text-[15px]">
+            <p className="mt-4 max-w-lg text-sm leading-[1.75] text-saukhya-muted md:text-[15px]">
               {content.intro}
             </p>
-
-            <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon/65">
-              <span>Business hours replies</span>
-              <span aria-hidden className="text-saukhya-border">
-                ·
-              </span>
-              <span>Order reference helps</span>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, x: 22 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.85, ease, delay: 0.1 }}
-            className="relative lg:col-span-6"
-          >
-            <div
-              aria-hidden
-              className="absolute -bottom-3 -right-3 hidden h-full w-full border border-saukhya-gold/35 md:block"
-            />
-            <div className="relative aspect-[16/10] overflow-hidden md:aspect-[5/3]">
-              <motion.div
-                className="absolute inset-0"
-                initial={reduceMotion ? false : { scale: 1.06 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 1.25, ease }}
-              >
-                <Image
-                  src={cdn(content.supportCard.image)}
-                  alt="Saukhya customer care"
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 48vw"
-                  className="object-cover object-[center_22%]"
-                />
-              </motion.div>
-              <div
-                aria-hidden
-                className="absolute inset-0 bg-gradient-to-t from-[#5c2238]/35 via-transparent to-transparent"
-              />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1f1a1c]/70 to-transparent px-5 pb-5 pt-12 md:px-6 md:pb-6">
-                <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-gold">
-                  {content.supportCard.title}
-                </p>
-                <p className="mt-1.5 max-w-sm text-sm leading-snug text-white/90">
-                  {content.supportCard.copy}
-                </p>
-              </div>
-            </div>
           </motion.div>
         </div>
       </section>
