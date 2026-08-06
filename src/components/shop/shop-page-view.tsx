@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
 import type { Category, Product, SubCategory } from "@/types/storefront";
 import {
   SHOP_PAGE,
@@ -19,7 +19,7 @@ import {
   getProductSizes,
   type ShopFiltersState,
 } from "@/lib/shop-filters";
-import { getProductCardImage } from "@/lib/utils";
+import { cn, getProductCardImage } from "@/lib/utils";
 import { CuratedProductCard } from "@/components/ui/curated-product-card";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
 
@@ -31,12 +31,21 @@ type ShopPageViewProps = {
   subcategories: SubCategory[];
 };
 
-function selectClassName(active?: boolean) {
-  return `w-full appearance-none border-b bg-transparent py-2.5 pr-8 text-sm outline-none transition ${
+function FilterLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="mb-3 block text-[10px] font-medium uppercase tracking-[0.24em] text-saukhya-gold">
+      {children}
+    </span>
+  );
+}
+
+function underlineSelect(active?: boolean) {
+  return cn(
+    "w-full appearance-none bg-transparent py-2.5 pr-7 text-sm outline-none transition border-b",
     active
-      ? "border-saukhya-pink text-saukhya-text"
-      : "border-saukhya-border/80 text-saukhya-text"
-  }`;
+      ? "border-saukhya-pink text-saukhya-maroon"
+      : "border-saukhya-border/70 text-saukhya-text focus:border-saukhya-pink/60",
+  );
 }
 
 export function ShopPageView({
@@ -78,12 +87,34 @@ export function ShopPageView({
     [products, filters],
   );
 
-  const mosaicImages = useMemo(() => {
+  const heroImage = useMemo(() => {
+    const preferred =
+      products.find((p) => (p.discountPercent ?? 0) > 0) ?? products[0];
+    return preferred ? getProductCardImage(preferred) : null;
+  }, [products]);
+
+  const sideImages = useMemo(() => {
     return products
-      .slice(0, 5)
+      .slice(0, 4)
       .map((p) => getProductCardImage(p))
       .filter(Boolean);
   }, [products]);
+
+  const uniqueStyles = useMemo(() => {
+    const map = new Map<number, string>();
+    for (const sub of subcategories) {
+      if (!map.has(sub.subCategoryCode)) {
+        map.set(sub.subCategoryCode, sub.subCategoryName);
+      }
+    }
+    // Prefer names from products if sub list incomplete
+    for (const product of products) {
+      if (product.subCategoryCode && product.subCategoryName) {
+        map.set(product.subCategoryCode, product.subCategoryName);
+      }
+    }
+    return Array.from(map.entries()).map(([code, name]) => ({ code, name }));
+  }, [subcategories, products]);
 
   const activeFilters = useMemo(() => {
     const chips: { key: keyof ShopFiltersState; label: string }[] = [];
@@ -92,10 +123,8 @@ export function ShopPageView({
       if (cat) chips.push({ key: "categoryCode", label: cat.categoryName });
     }
     if (filters.subcategoryCode) {
-      const sub = subcategories.find(
-        (s) => s.subCategoryCode === filters.subcategoryCode,
-      );
-      if (sub) chips.push({ key: "subcategoryCode", label: sub.subCategoryName });
+      const sub = uniqueStyles.find((s) => s.code === filters.subcategoryCode);
+      if (sub) chips.push({ key: "subcategoryCode", label: sub.name });
     }
     if (filters.size) chips.push({ key: "size", label: `Size ${filters.size}` });
     if (filters.material)
@@ -109,7 +138,7 @@ export function ShopPageView({
     if (filters.query.trim())
       chips.push({ key: "query", label: `“${filters.query.trim()}”` });
     return chips;
-  }, [filters, categories, subcategories]);
+  }, [filters, categories, uniqueStyles]);
 
   const syncUrl = (next: ShopFiltersState) => {
     const params = new URLSearchParams();
@@ -151,151 +180,301 @@ export function ShopPageView({
 
   return (
     <main className="w-full overflow-x-hidden bg-saukhya-warm">
-      {/* Hero edit band */}
-      <section className="relative overflow-hidden border-b border-saukhya-border/50">
+      {/* Cinematic hero */}
+      <section className="relative min-h-[72vh] overflow-hidden md:min-h-[82vh]">
+        {heroImage && (
+          <motion.div
+            className="absolute inset-0"
+            initial={reduceMotion ? false : { scale: 1.08 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.55, ease }}
+          >
+            <Image
+              src={heroImage}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-[center_18%]"
+            />
+          </motion.div>
+        )}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(236,57,136,0.08),transparent_50%),radial-gradient(ellipse_at_bottom_right,rgba(201,169,110,0.12),transparent_45%)]"
+          className="absolute inset-0 bg-gradient-to-r from-[#1f1a1c]/82 via-[#5c2238]/55 to-[#1f1a1c]/20"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-saukhya-warm via-transparent to-[#1f1a1c]/25"
         />
 
-        <div className="container-saukhya relative py-12 md:py-16 lg:py-20">
-          <div className="grid items-end gap-10 lg:grid-cols-12 lg:gap-12">
+        <div className="container-saukhya relative z-10 flex min-h-[72vh] flex-col justify-end pb-10 pt-28 md:min-h-[82vh] md:pb-14 md:pt-32">
+          <div className="grid items-end gap-10 lg:grid-cols-12">
             <motion.div
-              className="lg:col-span-6"
-              initial={reduceMotion ? false : { opacity: 0, y: 28 }}
+              className="lg:col-span-7"
+              initial={reduceMotion ? false : { opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease }}
+              transition={{ duration: 0.9, ease, delay: 0.1 }}
             >
               <p className="text-[11px] font-medium uppercase tracking-[0.36em] text-saukhya-gold">
                 {SHOP_PAGE.kicker}
               </p>
               <h1
-                className="mt-4 max-w-xl text-[2.2rem] font-medium leading-[1.15] tracking-tight text-saukhya-maroon md:text-5xl"
+                className="mt-4 max-w-2xl text-[2.35rem] font-medium leading-[1.12] tracking-tight text-white md:text-5xl lg:text-[3.25rem]"
                 style={{ fontFamily: "var(--font-serif)" }}
               >
                 {SHOP_PAGE.title}
               </h1>
               <motion.div
                 aria-hidden
-                className="mt-5 h-px origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/50 to-transparent"
+                className="mt-6 h-px origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/70 to-transparent"
                 initial={reduceMotion ? false : { scaleX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{ duration: 0.85, ease, delay: 0.25 }}
+                transition={{ duration: 0.9, ease, delay: 0.4 }}
               />
-              <p className="mt-5 max-w-lg text-base leading-[1.8] text-saukhya-muted md:text-[17px]">
+              <p className="mt-6 max-w-xl text-base leading-[1.85] text-white/85 md:text-[17px]">
                 {SHOP_PAGE.intro}
               </p>
 
               <div
-                className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-[11px] font-medium uppercase tracking-[0.18em] text-saukhya-maroon/80"
+                className="mt-9 flex flex-wrap gap-x-8 gap-y-3 text-[11px] font-medium uppercase tracking-[0.2em] text-white/75"
                 aria-label="Shop summary"
               >
-                <span>{products.length} styles</span>
-                <span className="text-saukhya-border">·</span>
-                <span>{styleEdits} style edits</span>
-                <span className="text-saukhya-border">·</span>
-                <span>{discountedCount} savings</span>
+                <span>
+                  <em className="not-italic text-saukhya-gold">{products.length}</em>{" "}
+                  styles
+                </span>
+                <span>
+                  <em className="not-italic text-saukhya-gold">{styleEdits}</em>{" "}
+                  edits
+                </span>
+                <span>
+                  <em className="not-italic text-saukhya-gold">{discountedCount}</em>{" "}
+                  savings
+                </span>
               </div>
             </motion.div>
 
             <motion.div
-              className="lg:col-span-6"
-              initial={reduceMotion ? false : { opacity: 0, x: 24 }}
+              className="hidden lg:col-span-5 lg:block"
+              initial={reduceMotion ? false : { opacity: 0, x: 28 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.9, ease, delay: 0.12 }}
+              transition={{ duration: 0.95, ease, delay: 0.2 }}
               aria-hidden
             >
-              <div className="grid grid-cols-5 gap-2 md:gap-3">
-                {Array.from({ length: 5 }).map((_, index) => {
-                  const src = mosaicImages[index];
-                  return (
-                    <motion.div
-                      key={src ?? `empty-${index}`}
-                      className={`relative overflow-hidden bg-[#f3ece9] ${
-                        index === 2 ? "aspect-[3/4]" : "aspect-[3/4] mt-4 odd:mt-0"
-                      } ${index % 2 === 1 ? "translate-y-4 md:translate-y-6" : ""}`}
-                      whileHover={
-                        reduceMotion || !src
-                          ? undefined
-                          : { y: -4, transition: { duration: 0.35 } }
-                      }
-                    >
-                      {src ? (
-                        <Image
-                          src={src}
-                          alt=""
-                          fill
-                          sizes="15vw"
-                          className="object-cover"
-                          priority={index < 3}
-                        />
-                      ) : null}
-                    </motion.div>
-                  );
-                })}
+              <div className="grid grid-cols-2 gap-3">
+                {sideImages.slice(0, 4).map((src, index) => (
+                  <motion.div
+                    key={src}
+                    className={cn(
+                      "relative overflow-hidden",
+                      index % 2 === 0 ? "aspect-[3/4]" : "aspect-[3/4] mt-8",
+                    )}
+                    whileHover={
+                      reduceMotion
+                        ? undefined
+                        : { y: -6, transition: { duration: 0.4, ease } }
+                    }
+                  >
+                    <Image
+                      src={src}
+                      alt=""
+                      fill
+                      sizes="20vw"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
+      {/* Style rail */}
+      <section className="border-b border-saukhya-border/60 bg-white/70">
+        <div className="container-saukhya py-5 md:py-6">
+          <LayoutGroup>
+            <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none md:flex-wrap md:justify-center md:gap-x-8 md:overflow-visible">
+              <button
+                type="button"
+                onClick={() => updateFilters({ subcategoryCode: 0 })}
+                className="relative shrink-0 px-3 py-2 text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-muted transition-colors hover:text-saukhya-maroon"
+              >
+                All styles
+                {!filters.subcategoryCode && (
+                  <motion.span
+                    layoutId="shop-style-underline"
+                    className="absolute inset-x-3 -bottom-0.5 h-px bg-saukhya-pink"
+                  />
+                )}
+              </button>
+              {uniqueStyles.map((style) => {
+                const active = filters.subcategoryCode === style.code;
+                return (
+                  <button
+                    key={style.code}
+                    type="button"
+                    onClick={() =>
+                      updateFilters({
+                        subcategoryCode: active ? 0 : style.code,
+                      })
+                    }
+                    className={cn(
+                      "relative shrink-0 px-3 py-2 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors",
+                      active
+                        ? "text-saukhya-maroon"
+                        : "text-saukhya-muted hover:text-saukhya-maroon",
+                    )}
+                  >
+                    {style.name}
+                    {active && (
+                      <motion.span
+                        layoutId="shop-style-underline"
+                        className="absolute inset-x-3 -bottom-0.5 h-px bg-saukhya-pink"
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </LayoutGroup>
+        </div>
+      </section>
+
       {/* Catalog */}
-      <section className="section-padding">
+      <section className="section-padding floral-decoration">
         <div className="container-saukhya">
-          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-saukhya-border/70 pb-6">
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-saukhya-gold">
+          <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
+            <Reveal from="left">
+              <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-saukhya-gold">
                 {SHOP_PAGE.catalogKicker}
               </p>
               <h2
-                className="mt-2 text-2xl font-medium text-saukhya-maroon md:text-3xl"
+                className="mt-3 text-3xl font-medium text-saukhya-maroon md:text-4xl"
                 style={{ fontFamily: "var(--font-serif)" }}
               >
                 {SHOP_PAGE.catalogTitle}
               </h2>
-              <p className="mt-2 text-sm text-saukhya-muted">
-                {filtered.length} of {products.length} styles showing
+              <p className="mt-3 text-sm text-saukhya-muted md:text-base">
+                <span className="font-medium text-saukhya-maroon">
+                  {filtered.length}
+                </span>{" "}
+                of {products.length} styles showing
               </p>
-            </div>
+            </Reveal>
 
-            <button
-              type="button"
-              onClick={() => setFiltersOpen((v) => !v)}
-              className="inline-flex items-center gap-2 border border-saukhya-maroon/20 px-4 py-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-saukhya-maroon transition-colors hover:border-saukhya-pink/40 hover:text-saukhya-pink md:hidden"
-              aria-expanded={filtersOpen}
-              aria-controls="shop-filter-panel"
-            >
-              {filtersOpen ? "Close" : "Filters"}
-            </button>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setFiltersOpen((v) => !v)}
+                className="inline-flex items-center gap-2 border border-saukhya-maroon/20 bg-white/80 px-4 py-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-saukhya-maroon transition-colors hover:border-saukhya-pink/40 hover:text-saukhya-pink lg:hidden"
+                aria-expanded={filtersOpen}
+                aria-controls="shop-filter-panel"
+              >
+                {filtersOpen ? "Close filters" : "Refine"}
+              </button>
+
+              <label className="flex items-center gap-3 border border-saukhya-border/70 bg-white/80 px-4 py-2">
+                <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-saukhya-muted">
+                  Sort
+                </span>
+                <select
+                  id="shop-sort"
+                  value={filters.sortMode}
+                  onChange={(e) =>
+                    updateFilters({
+                      sortMode: e.target.value as ShopSortMode,
+                    })
+                  }
+                  className="bg-transparent text-sm text-saukhya-text outline-none"
+                >
+                  {SHOP_SORT_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
           </div>
 
-          <div className="mt-8 grid gap-10 lg:grid-cols-12">
-            {/* Filters */}
+          <AnimatePresence initial={false}>
+            {activeFilters.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-8 overflow-hidden"
+              >
+                <div
+                  className="flex flex-wrap items-center gap-2"
+                  aria-label="Active filters"
+                >
+                  {activeFilters.map((chip) => (
+                    <button
+                      key={`${chip.key}-${chip.label}`}
+                      type="button"
+                      onClick={() => clearChip(chip.key)}
+                      className="inline-flex items-center gap-2 border border-saukhya-border/80 bg-white px-3 py-1.5 text-xs tracking-wide text-saukhya-text transition-colors hover:border-saukhya-pink/40 hover:text-saukhya-pink"
+                    >
+                      {chip.label}
+                      <span aria-hidden className="text-saukhya-muted">
+                        ×
+                      </span>
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="ml-1 text-[11px] font-medium uppercase tracking-[0.16em] text-saukhya-muted transition-colors hover:text-saukhya-pink"
+                  >
+                    Clear all
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
             <aside
               id="shop-filter-panel"
-              className={`lg:col-span-3 ${
-                filtersOpen ? "block" : "hidden lg:block"
-              }`}
+              className={cn(
+                "lg:col-span-3",
+                filtersOpen ? "block" : "hidden lg:block",
+              )}
             >
-              <Reveal from="left" className="space-y-7 lg:sticky lg:top-28">
+              <Reveal
+                from="left"
+                className="space-y-8 border border-saukhya-border/60 bg-white/85 p-5 shadow-saukhya-soft md:p-6 lg:sticky lg:top-28"
+              >
+                <div>
+                  <p
+                    className="text-lg font-medium text-saukhya-maroon"
+                    style={{ fontFamily: "var(--font-serif)" }}
+                  >
+                    Refine
+                  </p>
+                  <p className="mt-1 text-xs text-saukhya-muted">
+                    Soft filters for a calmer find
+                  </p>
+                </div>
+
                 <label className="block">
-                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-muted">
-                    Search
-                  </span>
+                  <FilterLabel>Search</FilterLabel>
                   <input
                     type="search"
                     value={filters.query}
                     onChange={(e) => updateFilters({ query: e.target.value })}
-                    placeholder="Search styles, fabric, code"
+                    placeholder="Style, fabric, code"
                     aria-label="Search styles"
-                    className="w-full border-b border-saukhya-border/80 bg-transparent py-2.5 text-sm outline-none transition placeholder:text-saukhya-muted/60 focus:border-saukhya-pink"
+                    className="w-full border-b border-saukhya-border/70 bg-transparent py-2.5 text-sm outline-none transition placeholder:text-saukhya-muted/55 focus:border-saukhya-pink"
                   />
                 </label>
 
                 <label className="block">
-                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-muted">
-                    Collection
-                  </span>
+                  <FilterLabel>Collection</FilterLabel>
                   <select
                     value={filters.categoryCode || ""}
                     onChange={(e) =>
@@ -304,7 +483,7 @@ export function ShopPageView({
                         subcategoryCode: 0,
                       })
                     }
-                    className={selectClassName(!!filters.categoryCode)}
+                    className={underlineSelect(!!filters.categoryCode)}
                   >
                     <option value="">All collections</option>
                     {categories.map((cat) => (
@@ -316,9 +495,7 @@ export function ShopPageView({
                 </label>
 
                 <label className="block">
-                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-muted">
-                    Style
-                  </span>
+                  <FilterLabel>Style</FilterLabel>
                   <select
                     value={filters.subcategoryCode || ""}
                     onChange={(e) =>
@@ -326,7 +503,7 @@ export function ShopPageView({
                         subcategoryCode: Number(e.target.value) || 0,
                       })
                     }
-                    className={selectClassName(!!filters.subcategoryCode)}
+                    className={underlineSelect(!!filters.subcategoryCode)}
                   >
                     <option value="">All styles</option>
                     {activeSubs.map((sub) => (
@@ -341,36 +518,42 @@ export function ShopPageView({
                 </label>
 
                 {sizes.length > 0 && (
-                  <label className="block">
-                    <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-muted">
-                      Size
-                    </span>
-                    <select
-                      value={filters.size}
-                      onChange={(e) => updateFilters({ size: e.target.value })}
-                      className={selectClassName(!!filters.size)}
-                    >
-                      <option value="">All sizes</option>
-                      {sizes.map((size) => (
-                        <option key={size} value={size}>
-                          {size}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <div>
+                    <FilterLabel>Size</FilterLabel>
+                    <div className="flex flex-wrap gap-2">
+                      {sizes.map((size) => {
+                        const active = filters.size === size;
+                        return (
+                          <button
+                            key={size}
+                            type="button"
+                            onClick={() =>
+                              updateFilters({ size: active ? "" : size })
+                            }
+                            className={cn(
+                              "min-w-10 border px-3 py-2 text-xs tracking-wide transition-colors",
+                              active
+                                ? "border-saukhya-maroon bg-saukhya-maroon text-white"
+                                : "border-saukhya-border/80 text-saukhya-text hover:border-saukhya-pink/40",
+                            )}
+                          >
+                            {size}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 )}
 
                 {materials.length > 0 && (
                   <label className="block">
-                    <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-muted">
-                      Material
-                    </span>
+                    <FilterLabel>Material</FilterLabel>
                     <select
                       value={filters.material}
                       onChange={(e) =>
                         updateFilters({ material: e.target.value })
                       }
-                      className={selectClassName(!!filters.material)}
+                      className={underlineSelect(!!filters.material)}
                     >
                       <option value="">All materials</option>
                       {materials.map((material) => (
@@ -382,102 +565,62 @@ export function ShopPageView({
                   </label>
                 )}
 
-                <label className="block">
-                  <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-muted">
-                    Price
-                  </span>
-                  <select
-                    value={filters.price}
-                    onChange={(e) => updateFilters({ price: e.target.value })}
-                    className={selectClassName(!!filters.price)}
-                  >
-                    {SHOP_PRICE_RANGES.map((range) => (
-                      <option key={range.key || "all"} value={range.key}>
-                        {range.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <div>
+                  <FilterLabel>Price</FilterLabel>
+                  <div className="space-y-2">
+                    {SHOP_PRICE_RANGES.map((range) => {
+                      const active = filters.price === range.key;
+                      return (
+                        <button
+                          key={range.key || "all"}
+                          type="button"
+                          onClick={() => updateFilters({ price: range.key })}
+                          className={cn(
+                            "flex w-full items-center justify-between border-b py-2.5 text-left text-sm transition-colors",
+                            active
+                              ? "border-saukhya-pink text-saukhya-maroon"
+                              : "border-saukhya-border/50 text-saukhya-muted hover:text-saukhya-text",
+                          )}
+                        >
+                          <span>{range.label}</span>
+                          {active && (
+                            <span className="h-1.5 w-1.5 rotate-45 bg-saukhya-pink" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
-                <label className="flex cursor-pointer items-center gap-3 pt-1">
-                  <input
-                    type="checkbox"
-                    checked={filters.discountOnly}
-                    onChange={(e) =>
-                      updateFilters({ discountOnly: e.target.checked })
-                    }
-                    className="h-4 w-4 accent-saukhya-pink"
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateFilters({ discountOnly: !filters.discountOnly })
+                  }
+                  className={cn(
+                    "flex w-full items-center justify-between border px-4 py-3 text-left transition-colors",
+                    filters.discountOnly
+                      ? "border-saukhya-pink/40 bg-saukhya-pink/[0.04] text-saukhya-maroon"
+                      : "border-saukhya-border/70 text-saukhya-text hover:border-saukhya-pink/30",
+                  )}
+                >
+                  <span className="text-sm">Early Bird Savings</span>
+                  <span
+                    className={cn(
+                      "h-4 w-4 border transition-colors",
+                      filters.discountOnly
+                        ? "border-saukhya-pink bg-saukhya-pink"
+                        : "border-saukhya-border",
+                    )}
                   />
-                  <span className="text-sm text-saukhya-text">
-                    Early Bird Savings
-                  </span>
-                </label>
-
-                {activeFilters.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={clearFilters}
-                    className="text-[11px] font-medium uppercase tracking-[0.18em] text-saukhya-muted transition-colors hover:text-saukhya-pink"
-                  >
-                    Clear filters
-                  </button>
-                )}
+                </button>
               </Reveal>
             </aside>
 
-            {/* Results */}
             <div className="lg:col-span-9">
-              <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-                <AnimatePresence initial={false}>
-                  {activeFilters.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="flex flex-wrap gap-2"
-                      aria-label="Active filters"
-                    >
-                      {activeFilters.map((chip) => (
-                        <button
-                          key={`${chip.key}-${chip.label}`}
-                          type="button"
-                          onClick={() => clearChip(chip.key)}
-                          className="inline-flex items-center gap-2 border border-saukhya-border bg-white px-3 py-1.5 text-xs text-saukhya-text transition-colors hover:border-saukhya-pink/40 hover:text-saukhya-pink"
-                        >
-                          {chip.label}
-                          <span aria-hidden>×</span>
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <label className="ml-auto flex items-center gap-3">
-                  <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-saukhya-muted">
-                    Sort
-                  </span>
-                  <select
-                    id="shop-sort"
-                    value={filters.sortMode}
-                    onChange={(e) =>
-                      updateFilters({
-                        sortMode: e.target.value as ShopSortMode,
-                      })
-                    }
-                    className="border-b border-saukhya-border/80 bg-transparent py-1.5 text-sm outline-none focus:border-saukhya-pink"
-                  >
-                    {SHOP_SORT_OPTIONS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
               {filtered.length > 0 ? (
                 <RevealStagger
-                  className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4"
+                  className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-5"
                   stagger={0.05}
                 >
                   {filtered.map((product, index) => (
@@ -488,21 +631,27 @@ export function ShopPageView({
                     >
                       <CuratedProductCard
                         product={product}
-                        priority={index < 4}
+                        priority={index < 6}
                         showMetaBelow
                       />
                     </RevealItem>
                   ))}
                 </RevealStagger>
               ) : (
-                <Reveal from="bottom" className="py-20 text-center">
+                <Reveal
+                  from="bottom"
+                  className="border border-dashed border-saukhya-border/80 bg-white/60 px-6 py-20 text-center"
+                >
+                  <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-saukhya-gold">
+                    Nothing here yet
+                  </p>
                   <h3
-                    className="text-2xl font-medium text-saukhya-maroon"
+                    className="mt-4 text-3xl font-medium text-saukhya-maroon"
                     style={{ fontFamily: "var(--font-serif)" }}
                   >
                     No styles found
                   </h3>
-                  <p className="mx-auto mt-3 max-w-md text-sm text-saukhya-muted">
+                  <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-saukhya-muted">
                     Try clearing filters or searching with a different fabric,
                     style, or price range.
                   </p>
