@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Product, RecentlyViewedProduct } from "@/types/storefront";
 import { CuratedProductCard } from "@/components/ui/curated-product-card";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { RevealStagger, RevealItem } from "@/components/motion/reveal";
 import {
   clearRecentlyViewed,
@@ -60,29 +59,60 @@ export function RecentlyViewed({ products = [] }: RecentlyViewedProps) {
       className="section-padding bg-saukhya-warm-alt/60 floral-decoration"
       aria-labelledby="recently-viewed-heading"
     >
-      <div className="container-saukhya relative">
-        {fromHistory && (
-          <button
-            type="button"
-            onClick={handleClear}
-            className="absolute right-0 top-1 z-10 text-[11px] font-medium uppercase tracking-[0.18em] text-saukhya-muted transition-colors hover:text-saukhya-pink"
-          >
-            Clear history
-          </button>
-        )}
+      <div className="container-saukhya">
+        <div className="mb-6 flex items-end justify-between gap-4 md:mb-8">
+          <div className="min-w-0 flex-1 text-left md:text-center md:mx-auto md:max-w-2xl">
+            <div className="flex items-center gap-3 md:justify-center">
+              <span
+                aria-hidden
+                className="inline-block h-[7px] w-[7px] shrink-0 rotate-45 bg-saukhya-maroon md:h-2 md:w-2"
+              />
+              <h2 id="recently-viewed-heading" className="section-title">
+                Recently Viewed Styles
+              </h2>
+              <span
+                aria-hidden
+                className="inline-block h-[7px] w-[7px] shrink-0 rotate-45 bg-saukhya-maroon md:h-2 md:w-2"
+              />
+            </div>
+            <p className="section-subtitle mx-0 mt-2 text-left md:mx-auto md:text-center">
+              {fromHistory
+                ? "Pick up where you left off"
+                : "Styles you may want to explore next"}
+            </p>
+          </div>
 
-        <SectionHeading
-          id="recently-viewed-heading"
-          title="Recently Viewed Styles"
-          subtitle={
-            fromHistory
-              ? "Pick up where you left off"
-              : "Styles you may want to explore next"
-          }
-        />
+          {fromHistory && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className="shrink-0 pb-1 text-[10px] font-medium uppercase tracking-[0.16em] text-saukhya-muted transition-colors hover:text-saukhya-pink md:absolute md:right-4 md:top-0 lg:right-8"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* Mobile: horizontal snap rail. Desktop: grid. */}
+        <div className="md:hidden">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
+            {displayProducts.map((product, index) => (
+              <div
+                key={product.productCode}
+                className="w-[68%] max-w-[260px] shrink-0 snap-start"
+              >
+                <CuratedProductCard
+                  product={product}
+                  priority={index < 2}
+                  showMetaBelow
+                />
+              </div>
+            ))}
+          </div>
+        </div>
 
         <RevealStagger
-          className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
+          className="hidden grid-cols-2 gap-3 md:grid md:grid-cols-3 md:gap-4 lg:grid-cols-4"
           stagger={0.06}
           delay={0.05}
         >
