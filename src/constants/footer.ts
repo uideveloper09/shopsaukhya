@@ -2,11 +2,11 @@ export const FOOTER_LINKS = {
   description:
     "Women's Indian wear crafted for comfort, soft festive dressing, and everyday celebrations.",
   shop: [
-    { label: "All styles", href: "/shop/all-styles" },
-    { label: "Kurta sets", href: "/shop/kurta-sets" },
-    { label: "Dresses", href: "/shop/dresses" },
-    { label: "Tops", href: "/shop/tops" },
-    { label: "Co-ord sets", href: "/shop/co-ord-sets" },
+    { label: "All styles", href: "/shop" },
+    { label: "Kurta sets", href: "/shop?subcategory=5" },
+    { label: "Dresses", href: "/shop?subcategory=3" },
+    { label: "Tops", href: "/shop?subcategory=2" },
+    { label: "Co-ord sets", href: "/shop?subcategory=4" },
   ],
   help: [
     { label: "Contact us", href: "/contact" },
