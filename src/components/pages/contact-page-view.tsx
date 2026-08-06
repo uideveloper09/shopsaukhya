@@ -64,117 +64,180 @@ export function ContactPageView({ collageImages = [] }: ContactPageViewProps) {
 
   return (
     <main className="w-full overflow-x-hidden bg-saukhya-warm">
-      {/* Fashion editorial hero — compact lookbook strip + readable copy */}
-      <section className="relative overflow-hidden border-b border-saukhya-border/40">
+      {/* Premium editorial contact hero */}
+      <section className="relative overflow-hidden border-b border-saukhya-border/30">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(236,57,136,0.06),transparent_45%),radial-gradient(ellipse_at_bottom_left,rgba(201,169,110,0.1),transparent_50%)]"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(165deg,#f7f0ec_0%,#f3e8e4_42%,#efe2dc_100%)]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-24 top-0 h-[70%] w-[55%] bg-[radial-gradient(ellipse_at_center,rgba(201,169,110,0.16),transparent_68%)]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 bottom-0 h-[65%] w-[50%] bg-[radial-gradient(ellipse_at_center,rgba(92,34,56,0.08),transparent_70%)]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-saukhya-gold/50 to-transparent"
         />
 
-        <div className="container-saukhya relative grid items-center gap-7 py-8 md:gap-8 md:py-10 lg:grid-cols-12 lg:gap-10 lg:py-11">
+        <div className="container-saukhya relative grid items-center gap-10 py-12 md:gap-12 md:py-16 lg:grid-cols-12 lg:gap-14 lg:py-20">
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, ease }}
+            transition={{ duration: 0.85, ease }}
             className="lg:col-span-5"
           >
-            <p className="text-[11px] font-medium uppercase tracking-[0.34em] text-saukhya-gold">
-              {content.kicker}
-            </p>
+            <div className="flex items-center gap-3">
+              <span className="h-px w-7 bg-saukhya-gold/70" />
+              <p className="text-[11px] font-medium uppercase tracking-[0.38em] text-saukhya-gold">
+                Saukhya · {content.kicker}
+              </p>
+            </div>
             <h1
-              className="mt-3 max-w-md text-[1.75rem] font-medium leading-[1.2] tracking-tight text-saukhya-maroon md:text-[2.2rem]"
+              className="mt-5 max-w-lg text-[2.05rem] font-medium leading-[1.14] tracking-tight text-saukhya-maroon md:text-[2.65rem] lg:text-[2.85rem]"
               style={{ fontFamily: "var(--font-serif)" }}
             >
               {content.title}
             </h1>
             <motion.div
               aria-hidden
-              className="mt-4 h-px w-16 origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/50 to-transparent"
+              className="mt-6 h-px w-20 origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/55 to-transparent"
               initial={reduceMotion ? false : { scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ duration: 0.7, ease, delay: 0.2 }}
+              transition={{ duration: 0.9, ease, delay: 0.25 }}
             />
-            <p className="mt-4 max-w-sm text-sm leading-[1.75] text-saukhya-muted md:text-[15px]">
+            <p className="mt-6 max-w-md text-[15px] leading-[1.85] text-saukhya-muted md:text-base">
               {content.intro}
             </p>
-            <div className="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-medium uppercase tracking-[0.18em] text-saukhya-maroon/60">
-              <span>Fit & fabric</span>
-              <span aria-hidden>·</span>
-              <span>Size guidance</span>
-              <span aria-hidden>·</span>
-              <span>Order care</span>
-            </div>
+            <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.28em] text-saukhya-maroon/45">
+              Fit · Fabric · Size · Order care
+            </p>
           </motion.div>
 
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.75, ease, delay: 0.08 }}
-            className="relative mx-auto w-full max-w-sm lg:col-span-7 lg:mx-0 lg:max-w-md lg:justify-self-end"
+            initial={reduceMotion ? false : { opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.95, ease, delay: 0.12 }}
+            className="relative mx-auto w-full max-w-md lg:col-span-7 lg:mx-0 lg:max-w-none lg:justify-self-end"
             aria-hidden
           >
-            {/* Compact collage */}
-            <div className="relative mx-auto h-[220px] w-full max-w-[320px] md:h-[250px] md:max-w-[360px]">
+            {/* Soft glow behind collage */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[78%] w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.75),transparent_70%)] blur-2xl"
+            />
+
+            <div className="relative mx-auto h-[280px] w-full max-w-[380px] md:h-[340px] md:max-w-[440px] lg:ml-auto lg:mr-2">
+              {/* Quiet gold frame */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-x-8 inset-y-3 z-0 border border-saukhya-gold/20"
+              />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-x-10 inset-y-5 z-0 border border-saukhya-gold/10"
+              />
+
               {/* Back left */}
               <motion.div
-                className="absolute left-0 top-6 z-[1] h-[68%] w-[42%] overflow-hidden bg-[#f3ece9] shadow-saukhya-soft ring-1 ring-black/[0.04]"
-                initial={reduceMotion ? false : { opacity: 0, x: -12, rotate: -4 }}
-                animate={{ opacity: 1, x: 0, rotate: -3 }}
-                transition={{ duration: 0.65, ease, delay: 0.15 }}
+                className="absolute left-0 top-8 z-[1] h-[72%] w-[40%]"
+                initial={reduceMotion ? false : { opacity: 0, x: -18, rotate: -5 }}
+                animate={{ opacity: 1, x: 0, rotate: -3.5 }}
+                transition={{ duration: 0.75, ease, delay: 0.2 }}
               >
-                <Image
-                  src={cdn(strip[1].src)}
-                  alt={strip[1].alt}
-                  fill
-                  sizes="140px"
-                  className="object-cover"
-                />
+                <motion.div
+                  className="h-full w-full overflow-hidden bg-[#f6f0ed] p-[3px] shadow-[0_18px_40px_rgba(92,34,56,0.1)]"
+                  animate={reduceMotion ? undefined : { y: [0, -4, 0] }}
+                  transition={{
+                    duration: 5.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.8,
+                  }}
+                >
+                  <div className="relative h-full w-full overflow-hidden">
+                    <Image
+                      src={cdn(strip[1].src)}
+                      alt={strip[1].alt}
+                      fill
+                      sizes="160px"
+                      className="object-cover"
+                    />
+                  </div>
+                </motion.div>
               </motion.div>
 
-              {/* Front center — main */}
+              {/* Front center — featured */}
               <motion.div
-                className="absolute left-1/2 top-0 z-[3] h-[88%] w-[48%] -translate-x-1/2 overflow-hidden bg-[#f3ece9] shadow-[0_16px_36px_rgba(92,34,56,0.16)] ring-1 ring-white/80"
-                initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+                className="absolute left-1/2 top-0 z-[3] h-[94%] w-[48%] -translate-x-1/2"
+                initial={reduceMotion ? false : { opacity: 0, y: 22 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease, delay: 0.22 }}
+                transition={{ duration: 0.85, ease, delay: 0.28 }}
               >
-                <Image
-                  src={cdn(strip[0].src)}
-                  alt={strip[0].alt}
-                  fill
-                  priority
-                  sizes="180px"
-                  className="object-cover object-[center_18%]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#5c2238]/25 to-transparent" />
+                <motion.div
+                  className="h-full w-full overflow-hidden bg-white p-[4px] shadow-[0_28px_60px_rgba(92,34,56,0.18)]"
+                  animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
+                  transition={{
+                    duration: 6.2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1,
+                  }}
+                >
+                  <div className="relative h-full w-full overflow-hidden">
+                    <Image
+                      src={cdn(strip[0].src)}
+                      alt={strip[0].alt}
+                      fill
+                      priority
+                      sizes="220px"
+                      className="object-cover object-[center_16%]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#5c2238]/30 via-transparent to-white/10" />
+                  </div>
+                </motion.div>
               </motion.div>
 
               {/* Back right */}
               <motion.div
-                className="absolute right-0 top-10 z-[2] h-[64%] w-[40%] overflow-hidden bg-[#f3ece9] shadow-saukhya-soft ring-1 ring-black/[0.04]"
-                initial={reduceMotion ? false : { opacity: 0, x: 12, rotate: 4 }}
-                animate={{ opacity: 1, x: 0, rotate: 2.5 }}
-                transition={{ duration: 0.65, ease, delay: 0.28 }}
+                className="absolute right-0 top-12 z-[2] h-[68%] w-[38%]"
+                initial={reduceMotion ? false : { opacity: 0, x: 18, rotate: 5 }}
+                animate={{ opacity: 1, x: 0, rotate: 2.8 }}
+                transition={{ duration: 0.75, ease, delay: 0.34 }}
               >
-                <Image
-                  src={cdn(strip[2].src)}
-                  alt={strip[2].alt}
-                  fill
-                  sizes="130px"
-                  className="object-cover"
-                />
+                <motion.div
+                  className="h-full w-full overflow-hidden bg-[#f6f0ed] p-[3px] shadow-[0_18px_40px_rgba(92,34,56,0.1)]"
+                  animate={reduceMotion ? undefined : { y: [0, -3, 0] }}
+                  transition={{
+                    duration: 5.8,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1.2,
+                  }}
+                >
+                  <div className="relative h-full w-full overflow-hidden">
+                    <Image
+                      src={cdn(strip[2].src)}
+                      alt={strip[2].alt}
+                      fill
+                      sizes="150px"
+                      className="object-cover"
+                    />
+                  </div>
+                </motion.div>
               </motion.div>
-
-              {/* Gold accent frame */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-x-6 bottom-1 top-4 z-0 border border-saukhya-gold/25"
-              />
             </div>
 
-            <p className="mt-2 text-center text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-gold lg:text-right">
-              Trending now
-            </p>
+            <div className="mt-5 flex items-center justify-center gap-3 lg:justify-end lg:pr-4">
+              <span className="h-px w-8 bg-saukhya-gold/40" />
+              <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-saukhya-gold">
+                Trending now
+              </p>
+              <span className="h-px w-8 bg-saukhya-gold/40" />
+            </div>
           </motion.div>
         </div>
       </section>
