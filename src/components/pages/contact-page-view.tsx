@@ -52,64 +52,88 @@ export function ContactPageView() {
 
   return (
     <main className="w-full overflow-x-hidden bg-saukhya-warm">
-      {/* Hero */}
-      <section className="relative min-h-[70vh] overflow-hidden md:min-h-[78vh]">
-        <motion.div
-          className="absolute inset-0"
-          initial={reduceMotion ? false : { scale: 1.06 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.5, ease }}
-        >
-          <Image
-            src={cdn(content.supportCard.image)}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        </motion.div>
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-b from-[#1f1a1c]/55 via-[#5c2238]/45 to-saukhya-warm"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-saukhya-warm to-transparent"
-        />
-
-        <div className="container-saukhya relative z-10 flex min-h-[70vh] flex-col justify-end pb-10 pt-28 md:min-h-[78vh] md:pb-14">
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, ease, delay: 0.12 }}
-            className="max-w-2xl"
-          >
-            <p className="text-[11px] font-medium uppercase tracking-[0.36em] text-saukhya-gold">
-              {content.kicker}
-            </p>
-            <h1
-              className="mt-5 text-[2.2rem] font-medium leading-[1.15] tracking-tight text-white md:text-5xl"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              {content.title}
-            </h1>
+      {/* Hero — readable solid copy panel + image plane */}
+      <section className="relative overflow-hidden">
+        <div className="grid min-h-[78vh] lg:grid-cols-12 lg:min-h-[86vh]">
+          <div className="relative z-10 flex flex-col justify-center bg-saukhya-warm px-4 py-14 sm:px-5 md:px-8 md:py-20 lg:col-span-5 lg:px-10 xl:px-14">
             <motion.div
-              aria-hidden
-              className="mt-6 h-px origin-left bg-gradient-to-r from-saukhya-gold via-white/50 to-transparent"
-              initial={reduceMotion ? false : { scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.85, ease, delay: 0.4 }}
+              initial={reduceMotion ? false : { opacity: 0, x: -28 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.85, ease, delay: 0.08 }}
+              className="mx-auto w-full max-w-xl lg:mx-0"
+            >
+              <p className="text-[11px] font-medium uppercase tracking-[0.36em] text-saukhya-gold">
+                {content.kicker}
+              </p>
+              <h1
+                className="mt-5 text-[2.15rem] font-medium leading-[1.15] tracking-tight text-saukhya-maroon md:text-4xl xl:text-[2.75rem]"
+                style={{ fontFamily: "var(--font-serif)" }}
+              >
+                {content.title}
+              </h1>
+              <motion.div
+                aria-hidden
+                className="mt-6 h-px origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/60 to-transparent"
+                initial={reduceMotion ? false : { scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.85, ease, delay: 0.35 }}
+              />
+              <p className="mt-6 max-w-md text-base leading-[1.85] text-saukhya-muted md:text-[17px]">
+                {content.intro}
+              </p>
+              <p className="mt-8 text-[11px] font-medium uppercase tracking-[0.28em] text-saukhya-maroon/70">
+                We usually reply during business hours
+              </p>
+            </motion.div>
+          </div>
+
+          <motion.div
+            className="relative min-h-[46vh] lg:col-span-7 lg:min-h-full"
+            initial={reduceMotion ? false : { opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, ease }}
+          >
+            <Image
+              src={cdn(content.supportCard.image)}
+              alt="Saukhya customer care"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 58vw"
+              className="object-cover object-[center_20%]"
             />
-            <p className="mt-6 max-w-xl text-base leading-[1.8] text-white/85 md:text-[17px]">
-              {content.intro}
-            </p>
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-r from-saukhya-warm via-transparent to-transparent lg:from-saukhya-warm/40"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-t from-[#5c2238]/25 via-transparent to-transparent"
+            />
+            <motion.div
+              initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease, delay: 0.45 }}
+              className="absolute bottom-5 left-4 right-4 bg-white/95 px-5 py-4 shadow-saukhya-soft backdrop-blur-sm md:bottom-8 md:left-8 md:right-auto md:max-w-sm md:px-6 md:py-5"
+            >
+              <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-saukhya-gold">
+                Order support tip
+              </p>
+              <p
+                className="mt-2 text-base font-medium text-saukhya-maroon"
+                style={{ fontFamily: "var(--font-serif)" }}
+              >
+                {content.supportCard.title}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-saukhya-muted">
+                {content.supportCard.copy}
+              </p>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
       {/* Channels */}
-      <section className="relative -mt-6 pb-6 md:-mt-10 md:pb-8">
+      <section className="relative pb-6 pt-2 md:pb-8 md:pt-4">
         <div className="container-saukhya">
           <RevealStagger
             className="grid gap-3 md:grid-cols-3 md:gap-4"
