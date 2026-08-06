@@ -34,6 +34,8 @@
   html {
     scroll-behavior: smooth;
     scrollbar-gutter: stable;
+    touch-action: pan-x pan-y;
+    -ms-touch-action: pan-x pan-y;
   }
 
   body {
@@ -41,6 +43,8 @@
     font-family: var(--font-outfit);
     font-size: 14px;
     line-height: 1.5;
+    touch-action: pan-x pan-y;
+    overscroll-behavior-x: none;
   }
 
   img {
