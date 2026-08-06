@@ -52,66 +52,84 @@ export function ContactPageView() {
 
   return (
     <main className="w-full overflow-x-hidden bg-saukhya-warm">
-      {/* Boutique masthead hero — compact, centered, readable */}
+      {/* Fashion editorial hero — compact lookbook strip + readable copy */}
       <section className="relative overflow-hidden border-b border-saukhya-border/40">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,169,110,0.1),transparent_55%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(236,57,136,0.06),transparent_45%),radial-gradient(ellipse_at_bottom_left,rgba(201,169,110,0.1),transparent_50%)]"
         />
 
-        <div className="container-saukhya relative py-9 md:py-11 lg:py-12">
+        <div className="container-saukhya relative grid items-center gap-7 py-8 md:gap-8 md:py-10 lg:grid-cols-12 lg:gap-10 lg:py-11">
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, ease }}
-            className="mx-auto flex max-w-2xl flex-col items-center text-center"
+            className="lg:col-span-5"
           >
-            <div className="relative mb-5 h-16 w-16 overflow-hidden md:mb-6 md:h-[4.5rem] md:w-[4.5rem]">
-              <Image
-                src={cdn(content.supportCard.image)}
-                alt=""
-                fill
-                priority
-                sizes="72px"
-                className="object-cover object-center"
-              />
-              <span
-                aria-hidden
-                className="absolute inset-0 ring-1 ring-inset ring-saukhya-gold/50"
-              />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span
-                aria-hidden
-                className="inline-block h-1.5 w-1.5 rotate-45 bg-saukhya-maroon"
-              />
-              <p className="text-[11px] font-medium uppercase tracking-[0.34em] text-saukhya-gold">
-                {content.kicker}
-              </p>
-              <span
-                aria-hidden
-                className="inline-block h-1.5 w-1.5 rotate-45 bg-saukhya-maroon"
-              />
-            </div>
-
+            <p className="text-[11px] font-medium uppercase tracking-[0.34em] text-saukhya-gold">
+              {content.kicker}
+            </p>
             <h1
-              className="mt-4 text-[1.7rem] font-medium leading-[1.2] tracking-tight text-saukhya-maroon md:text-[2.15rem] lg:text-[2.35rem]"
+              className="mt-3 max-w-md text-[1.75rem] font-medium leading-[1.2] tracking-tight text-saukhya-maroon md:text-[2.2rem]"
               style={{ fontFamily: "var(--font-serif)" }}
             >
               {content.title}
             </h1>
-
             <motion.div
               aria-hidden
-              className="mx-auto mt-4 h-px w-14 origin-center bg-gradient-to-r from-transparent via-saukhya-gold to-transparent"
-              initial={reduceMotion ? false : { scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: 1, opacity: 1 }}
+              className="mt-4 h-px w-16 origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/50 to-transparent"
+              initial={reduceMotion ? false : { scaleX: 0 }}
+              animate={{ scaleX: 1 }}
               transition={{ duration: 0.7, ease, delay: 0.2 }}
             />
-
-            <p className="mt-4 max-w-lg text-sm leading-[1.75] text-saukhya-muted md:text-[15px]">
+            <p className="mt-4 max-w-sm text-sm leading-[1.75] text-saukhya-muted md:text-[15px]">
               {content.intro}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-medium uppercase tracking-[0.18em] text-saukhya-maroon/60">
+              <span>Fit & fabric</span>
+              <span aria-hidden>·</span>
+              <span>Size guidance</span>
+              <span aria-hidden>·</span>
+              <span>Order care</span>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, x: 18 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease, delay: 0.08 }}
+            className="lg:col-span-7"
+            aria-hidden
+          >
+            <div className="grid grid-cols-3 gap-2 md:gap-3">
+              {content.fashionStrip.map((shot, index) => (
+                <motion.div
+                  key={shot.src}
+                  className={`relative overflow-hidden bg-[#f3ece9] ${
+                    index === 1
+                      ? "aspect-[3/4] -translate-y-2 md:-translate-y-3"
+                      : "aspect-[3/4] translate-y-2 md:translate-y-3"
+                  }`}
+                  whileHover={
+                    reduceMotion
+                      ? undefined
+                      : { y: index === 1 ? -10 : 0, transition: { duration: 0.35 } }
+                  }
+                >
+                  <Image
+                    src={cdn(shot.src)}
+                    alt={shot.alt}
+                    fill
+                    priority={index < 2}
+                    sizes="(max-width: 1024px) 30vw, 18vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#5c2238]/20 to-transparent" />
+                </motion.div>
+              ))}
+            </div>
+            <p className="mt-3 text-right text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-gold/90">
+              Current edit looks
             </p>
           </motion.div>
         </div>

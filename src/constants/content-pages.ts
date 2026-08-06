@@ -50,17 +50,30 @@ export const CONTACT_PAGE = {
   metaTitle: "Contact Us",
   metaDescription:
     "Contact Saukhya for customer support, product questions, collaborations, and order help.",
-  kicker: "Customer care",
-  title:
-    "Tell us what you need. We will help you choose, order, or resolve it calmly.",
+  kicker: "Styling desk",
+  title: "Fit, fabric, or festive plans — we’re here to guide you.",
   intro:
-    "For faster support, include your Saukhya order reference when the question is about payment, delivery, address, or exchange.",
+    "Ask about silhouettes, sizing, or an order. Include your Saukhya order reference for faster help with payment, delivery, or exchange.",
   supportCard: {
     title: "Need order support?",
     copy: "Keep your order reference ready so the team can find your details quickly.",
     image:
       "/ProductImg/14/optimized/85302e1f-cb14-4c09-b356-b3693c6cfac0_1-detail.jpg",
   },
+  fashionStrip: [
+    {
+      src: "/ProductImg/16/optimized/00642a29-d886-4cd7-8335-9415b3372a90_1-detail.jpg",
+      alt: "Saukhya floral kurta set",
+    },
+    {
+      src: "/Banner/bahaar-slider-desktop-2.png",
+      alt: "Bahaar collection look",
+    },
+    {
+      src: "/ProductImg/14/optimized/85302e1f-cb14-4c09-b356-b3693c6cfac0_1-detail.jpg",
+      alt: "Saukhya soft festive styling",
+    },
+  ],
   channels: [
     {
       title: "Order help",
