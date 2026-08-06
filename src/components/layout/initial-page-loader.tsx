@@ -7,12 +7,22 @@ import { PAGE_READY_EVENT } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
 const MIN_VISIBLE_MS = 650;
+const BOOT_KEY = "saukhya:booted";
 
 export function InitialPageLoader() {
   const [mounted, setMounted] = useState(true);
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
+    // Soft route changes keep the layout mounted; if we remount anyway,
+    // skip the branded loader so it never feels like a full page reload.
+    if (sessionStorage.getItem(BOOT_KEY) === "1") {
+      document.documentElement.classList.remove("saukhya-loading");
+      window.dispatchEvent(new Event(PAGE_READY_EVENT));
+      setMounted(false);
+      return;
+    }
+
     const started = performance.now();
     let startTimer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
@@ -26,6 +36,7 @@ export function InitialPageLoader() {
         requestAnimationFrame(() => {
           if (cancelled) return;
           setExiting(true);
+          sessionStorage.setItem(BOOT_KEY, "1");
           window.dispatchEvent(new Event(PAGE_READY_EVENT));
         });
       }, wait);

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -22,6 +23,18 @@ const sizes = {
   lg: "px-8 py-3.5 text-sm tracking-widest uppercase",
 };
 
+const linkBase =
+  "inline-flex items-center justify-center rounded-saukhya-md font-medium transition-all duration-250";
+
+function isExternalHref(href: string) {
+  return (
+    /^https?:\/\//i.test(href) ||
+    href.startsWith("mailto:") ||
+    href.startsWith("tel:") ||
+    href.startsWith("//")
+  );
+}
+
 export function Button({
   className,
   variant = "primary",
@@ -32,7 +45,8 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center rounded-saukhya-md font-medium transition-all duration-250 disabled:opacity-50",
+        linkBase,
+        "disabled:opacity-50",
         variants[variant],
         sizes[size],
         className,
@@ -50,24 +64,33 @@ export function ButtonLink({
   variant = "primary",
   size = "md",
   children,
+  prefetch,
 }: {
   href: string;
   className?: string;
   variant?: ButtonProps["variant"];
   size?: ButtonProps["size"];
   children: React.ReactNode;
+  prefetch?: boolean;
 }) {
+  const classes = cn(
+    linkBase,
+    variants[variant ?? "primary"],
+    sizes[size ?? "md"],
+    className,
+  );
+
+  if (isExternalHref(href)) {
+    return (
+      <a href={href} className={classes} rel="noopener noreferrer">
+        {children}
+      </a>
+    );
+  }
+
   return (
-    <a
-      href={href}
-      className={cn(
-        "inline-flex items-center justify-center rounded-saukhya-md font-medium transition-all duration-250",
-        variants[variant ?? "primary"],
-        sizes[size ?? "md"],
-        className,
-      )}
-    >
+    <Link href={href} className={classes} prefetch={prefetch}>
       {children}
-    </a>
+    </Link>
   );
 }

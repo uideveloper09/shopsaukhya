@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { Product, ProductSizes } from "@/types/storefront";
-import { SIZE_LABELS } from "@/constants/brand";
+import { SITE_URL, SIZE_LABELS } from "@/constants/brand";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -49,14 +49,55 @@ export function extractFabricFromProduct(product: Product): string {
 }
 
 export function getProductHref(product: Product): string {
-  return product.canonicalUrl || `/product/${product.seoSlug}`;
+  return toAppHref(product.canonicalUrl || `/product/${product.seoSlug}`);
+}
+
+/**
+ * Normalize storefront / hash / absolute same-origin URLs to App Router paths
+ * so Next.js <Link> can soft-navigate without a full page reload.
+ */
+export function toAppHref(href: string): string {
+  const value = href.trim();
+  if (!value) return "/";
+
+  if (
+    value.startsWith("mailto:") ||
+    value.startsWith("tel:") ||
+    value.startsWith("sms:")
+  ) {
+    return value;
+  }
+
+  // Legacy hash routes from shopsaukhya SPA: #/shop → /shop
+  if (value.startsWith("#")) {
+    const withoutHash = value.slice(1);
+    if (!withoutHash || withoutHash === "/") return "/";
+    return withoutHash.startsWith("/") ? withoutHash : `/${withoutHash}`;
+  }
+
+  try {
+    if (/^https?:\/\//i.test(value) || value.startsWith("//")) {
+      const url = new URL(value, SITE_URL);
+      const site = new URL(SITE_URL);
+      const sameHost =
+        url.hostname === site.hostname ||
+        url.hostname === "www.shopsaukhya.com" ||
+        url.hostname === "shopsaukhya.com" ||
+        url.hostname === "uat.bitcraftly.com" ||
+        url.hostname === "localhost";
+
+      if (!sameHost) return value;
+      return `${url.pathname}${url.search}${url.hash}` || "/";
+    }
+  } catch {
+    return value;
+  }
+
+  return value.startsWith("/") ? value : `/${value}`;
 }
 
 export function getMenuHref(menuUrl: string): string {
-  if (menuUrl.startsWith("#")) {
-    return menuUrl.replace("#", "") || "/";
-  }
-  return menuUrl;
+  return toAppHref(menuUrl);
 }
 
 export function slugify(text: string): string {
