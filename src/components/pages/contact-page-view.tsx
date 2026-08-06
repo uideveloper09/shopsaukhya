@@ -95,100 +95,74 @@ export function ContactPageView() {
           </motion.div>
 
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, x: 18 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease, delay: 0.08 }}
-            className="relative lg:col-span-7"
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.75, ease, delay: 0.08 }}
+            className="relative mx-auto w-full max-w-sm lg:col-span-7 lg:mx-0 lg:max-w-md lg:justify-self-end"
             aria-hidden
           >
-            <div className="grid grid-cols-12 gap-2.5 md:gap-3">
-              {/* Featured look */}
+            {/* Compact collage */}
+            <div className="relative mx-auto h-[220px] w-full max-w-[320px] md:h-[250px] md:max-w-[360px]">
+              {/* Back left */}
               <motion.div
-                className="relative col-span-7 aspect-[3/4] overflow-hidden bg-[#f3ece9] shadow-[0_18px_40px_rgba(92,34,56,0.12)]"
-                initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                className="absolute left-0 top-6 z-[1] h-[68%] w-[42%] overflow-hidden bg-[#f3ece9] shadow-saukhya-soft ring-1 ring-black/[0.04]"
+                initial={reduceMotion ? false : { opacity: 0, x: -12, rotate: -4 }}
+                animate={{ opacity: 1, x: 0, rotate: -3 }}
+                transition={{ duration: 0.65, ease, delay: 0.15 }}
+              >
+                <Image
+                  src={cdn(content.fashionStrip[1].src)}
+                  alt={content.fashionStrip[1].alt}
+                  fill
+                  sizes="140px"
+                  className="object-cover"
+                />
+              </motion.div>
+
+              {/* Front center — main */}
+              <motion.div
+                className="absolute left-1/2 top-0 z-[3] h-[88%] w-[48%] -translate-x-1/2 overflow-hidden bg-[#f3ece9] shadow-[0_16px_36px_rgba(92,34,56,0.16)] ring-1 ring-white/80"
+                initial={reduceMotion ? false : { opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.75, ease, delay: 0.12 }}
-                whileHover={
-                  reduceMotion
-                    ? undefined
-                    : { y: -4, transition: { duration: 0.35, ease } }
-                }
+                transition={{ duration: 0.7, ease, delay: 0.22 }}
               >
                 <Image
                   src={cdn(content.fashionStrip[0].src)}
                   alt={content.fashionStrip[0].alt}
                   fill
                   priority
-                  sizes="(max-width: 1024px) 55vw, 28vw"
-                  className="object-cover object-[center_15%]"
+                  sizes="180px"
+                  className="object-cover object-[center_18%]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1f1a1c]/45 via-transparent to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3 md:bottom-4 md:left-4">
-                  <p className="text-[9px] font-medium uppercase tracking-[0.22em] text-saukhya-gold">
-                    Look 01
-                  </p>
-                  <p className="mt-0.5 text-xs text-white/90 md:text-sm">
-                    Soft festive layering
-                  </p>
-                </div>
-                <span
-                  aria-hidden
-                  className="absolute left-3 top-3 h-6 w-6 border-l border-t border-white/55 md:left-4 md:top-4"
+                <div className="absolute inset-0 bg-gradient-to-t from-[#5c2238]/25 to-transparent" />
+              </motion.div>
+
+              {/* Back right */}
+              <motion.div
+                className="absolute right-0 top-10 z-[2] h-[64%] w-[40%] overflow-hidden bg-[#f3ece9] shadow-saukhya-soft ring-1 ring-black/[0.04]"
+                initial={reduceMotion ? false : { opacity: 0, x: 12, rotate: 4 }}
+                animate={{ opacity: 1, x: 0, rotate: 2.5 }}
+                transition={{ duration: 0.65, ease, delay: 0.28 }}
+              >
+                <Image
+                  src={cdn(content.fashionStrip[2].src)}
+                  alt={content.fashionStrip[2].alt}
+                  fill
+                  sizes="130px"
+                  className="object-cover"
                 />
               </motion.div>
 
-              {/* Stacked secondary looks */}
-              <div className="col-span-5 flex flex-col gap-2.5 md:gap-3">
-                {content.fashionStrip.slice(1).map((shot, index) => (
-                  <motion.div
-                    key={shot.src}
-                    className="relative flex-1 overflow-hidden bg-[#f3ece9] shadow-[0_12px_28px_rgba(92,34,56,0.1)]"
-                    style={{ minHeight: "46%" }}
-                    initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.7,
-                      ease,
-                      delay: 0.2 + index * 0.1,
-                    }}
-                    whileHover={
-                      reduceMotion
-                        ? undefined
-                        : { y: -3, transition: { duration: 0.3, ease } }
-                    }
-                  >
-                    <div className="relative aspect-[4/5] h-full min-h-[120px] md:min-h-0">
-                      <Image
-                        src={cdn(shot.src)}
-                        alt={shot.alt}
-                        fill
-                        priority={index === 0}
-                        sizes="(max-width: 1024px) 40vw, 18vw"
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#5c2238]/35 to-transparent" />
-                      <p className="absolute bottom-2.5 left-2.5 text-[9px] font-medium uppercase tracking-[0.2em] text-white/90 md:bottom-3 md:left-3">
-                        Look 0{index + 2}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+              {/* Gold accent frame */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-x-6 bottom-1 top-4 z-0 border border-saukhya-gold/25"
+              />
             </div>
 
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -bottom-2 -right-2 hidden h-[72%] w-[42%] border border-saukhya-gold/30 md:block"
-            />
-
-            <div className="mt-3 flex items-center justify-between gap-3">
-              <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-gold">
-                Current edit looks
-              </p>
-              <p className="text-[10px] uppercase tracking-[0.16em] text-saukhya-muted">
-                Bahaar · studio styles
-              </p>
-            </div>
+            <p className="mt-2 text-center text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-gold lg:text-right">
+              Current edit collage
+            </p>
           </motion.div>
         </div>
       </section>
