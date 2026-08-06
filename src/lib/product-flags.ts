@@ -5,6 +5,16 @@ export function isProductTrending(product: Product): boolean {
   return product.categoryCode === 1 || (product.position ?? 999) <= 7;
 }
 
+export function getTrendingProducts(
+  products: Product[],
+  limit = 3,
+): Product[] {
+  return products
+    .filter(isProductTrending)
+    .sort((a, b) => (a.position ?? 999) - (b.position ?? 999))
+    .slice(0, limit);
+}
+
 export function isProductOnOffer(product: Product): boolean {
   return (product.discountPercent ?? 0) > 0;
 }

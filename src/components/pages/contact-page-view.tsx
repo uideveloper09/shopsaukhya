@@ -19,11 +19,23 @@ function cdn(path: string) {
 const fieldClass =
   "w-full border-0 border-b border-saukhya-border/80 bg-transparent px-0 py-3 text-sm text-saukhya-text outline-none transition placeholder:text-saukhya-muted/60 focus:border-saukhya-pink";
 
-export function ContactPageView() {
+type CollageImage = { src: string; alt: string };
+
+interface ContactPageViewProps {
+  collageImages?: CollageImage[];
+}
+
+export function ContactPageView({ collageImages = [] }: ContactPageViewProps) {
   const content = CONTACT_PAGE;
   const reduceMotion = useReducedMotion();
   const [sent, setSent] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
+
+  const strip: CollageImage[] = [
+    collageImages[0] ?? content.fashionStrip[0],
+    collageImages[1] ?? content.fashionStrip[1],
+    collageImages[2] ?? content.fashionStrip[2],
+  ];
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -111,8 +123,8 @@ export function ContactPageView() {
                 transition={{ duration: 0.65, ease, delay: 0.15 }}
               >
                 <Image
-                  src={cdn(content.fashionStrip[1].src)}
-                  alt={content.fashionStrip[1].alt}
+                  src={cdn(strip[1].src)}
+                  alt={strip[1].alt}
                   fill
                   sizes="140px"
                   className="object-cover"
@@ -127,8 +139,8 @@ export function ContactPageView() {
                 transition={{ duration: 0.7, ease, delay: 0.22 }}
               >
                 <Image
-                  src={cdn(content.fashionStrip[0].src)}
-                  alt={content.fashionStrip[0].alt}
+                  src={cdn(strip[0].src)}
+                  alt={strip[0].alt}
                   fill
                   priority
                   sizes="180px"
@@ -145,8 +157,8 @@ export function ContactPageView() {
                 transition={{ duration: 0.65, ease, delay: 0.28 }}
               >
                 <Image
-                  src={cdn(content.fashionStrip[2].src)}
-                  alt={content.fashionStrip[2].alt}
+                  src={cdn(strip[2].src)}
+                  alt={strip[2].alt}
                   fill
                   sizes="130px"
                   className="object-cover"
@@ -161,7 +173,7 @@ export function ContactPageView() {
             </div>
 
             <p className="mt-2 text-center text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-gold lg:text-right">
-              Current edit collage
+              Trending now
             </p>
           </motion.div>
         </div>
