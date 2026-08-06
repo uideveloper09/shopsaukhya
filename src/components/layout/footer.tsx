@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import type { NavigationData } from "@/types/storefront";
 import { BRAND } from "@/constants/brand";
 import { Logo } from "@/components/ui/logo";
+import { AppLink } from "@/components/ui/app-link";
 import { FashionPatternTexture } from "@/components/ui/fashion-pattern-texture";
 import { FOOTER_LINKS } from "@/constants/footer";
 import { cn, getMenuHref } from "@/lib/utils";
@@ -359,12 +359,12 @@ function FooterColumn({
       <ul className={cn("space-y-2 md:block", !isOpen && "hidden md:block")}>
         {links.map((link) => (
           <li key={link.label}>
-            <Link
+            <AppLink
               href={link.href}
               className="text-sm text-saukhya-muted transition-colors hover:text-saukhya-pink"
             >
               {link.label}
-            </Link>
+            </AppLink>
           </li>
         ))}
       </ul>

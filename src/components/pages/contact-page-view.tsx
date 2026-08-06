@@ -2,11 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { CDN_BASE } from "@/constants/brand";
 import { CONTACT_PAGE } from "@/constants/content-pages";
 import { FOOTER_LINKS } from "@/constants/footer";
 import { Button } from "@/components/ui/button";
+import { AppLink } from "@/components/ui/app-link";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
 
 function cdn(path: string) {
@@ -258,18 +258,18 @@ export function ContactPageView() {
                 </ul>
 
                 <div className="mt-auto space-y-3 border-t border-saukhya-border/70 pt-6">
-                  <Link
+                  <AppLink
                     href={`tel:${FOOTER_LINKS.contact.phone.replace(/\s/g, "")}`}
                     className="block text-sm font-medium text-saukhya-maroon transition-colors hover:text-saukhya-pink"
                   >
                     Call {FOOTER_LINKS.contact.phone}
-                  </Link>
-                  <Link
+                  </AppLink>
+                  <AppLink
                     href={`mailto:${FOOTER_LINKS.contact.email}`}
                     className="block text-sm font-medium text-saukhya-maroon transition-colors hover:text-saukhya-pink"
                   >
                     {FOOTER_LINKS.contact.email}
-                  </Link>
+                  </AppLink>
                 </div>
               </aside>
             </Reveal>

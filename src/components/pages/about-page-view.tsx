@@ -1,8 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { CDN_BASE } from "@/constants/brand";
 import { ABOUT_PAGE } from "@/constants/content-pages";
 import { ButtonLink } from "@/components/ui/button";
+import { AppLink } from "@/components/ui/app-link";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
 
 function cdn(path: string) {
@@ -148,12 +148,12 @@ export function AboutPageView() {
             <ButtonLink href="/shop" size="lg">
               Shop The Collection
             </ButtonLink>
-            <Link
+            <AppLink
               href="/contact"
               className="text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
             >
               Contact Us →
-            </Link>
+            </AppLink>
           </div>
         </div>
       </section>

@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { CDN_BASE } from "@/constants/brand";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { AppLink } from "@/components/ui/app-link";
 import { Reveal, RevealStagger, RevealItem } from "@/components/motion/reveal";
 
 const PILLARS = [
@@ -118,13 +118,13 @@ export function AboutSection() {
             </RevealStagger>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Link
+              <AppLink
                 href="/about"
                 className="inline-flex items-center justify-center rounded-sm bg-saukhya-maroon px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.22em] text-white shadow-[0_8px_24px_rgba(92,34,56,0.22)] transition-all duration-300 hover:bg-saukhya-maroon/90 hover:shadow-[0_12px_32px_rgba(92,34,56,0.28)]"
               >
                 Discover Our Story
-              </Link>
-              <Link
+              </AppLink>
+              <AppLink
                 href="/shop"
                 className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
               >
@@ -135,7 +135,7 @@ export function AboutSection() {
                 >
                   →
                 </span>
-              </Link>
+              </AppLink>
             </div>
           </Reveal>
         </div>

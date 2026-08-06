@@ -9,23 +9,51 @@ import { cn } from "@/lib/utils";
 const MIN_VISIBLE_MS = 650;
 const BOOT_KEY = "saukhya:booted";
 
+/** Survives soft remounts within the same JS realm (client navigations). */
+let bootCompleted = false;
+
+function markBooted() {
+  bootCompleted = true;
+  try {
+    sessionStorage.setItem(BOOT_KEY, "1");
+  } catch {
+    /* private mode */
+  }
+  document.documentElement.classList.remove("saukhya-loading");
+  document.documentElement.dataset.saukhyaBooted = "1";
+  window.dispatchEvent(new Event(PAGE_READY_EVENT));
+}
+
+function alreadyBooted() {
+  if (bootCompleted) return true;
+  try {
+    if (sessionStorage.getItem(BOOT_KEY) === "1") return true;
+  } catch {
+    /* ignore */
+  }
+  return document.documentElement.dataset.saukhyaBooted === "1";
+}
+
+/**
+ * First hard load only. Soft App Router navigations must never show this again.
+ */
 export function InitialPageLoader() {
-  const [mounted, setMounted] = useState(true);
+  // Always false on first paint so remounts during client navigation never flash a full-screen loader.
+  const [show, setShow] = useState(false);
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
-    // Soft route changes keep the layout mounted; if we remount anyway,
-    // skip the branded loader so it never feels like a full page reload.
-    if (sessionStorage.getItem(BOOT_KEY) === "1") {
-      document.documentElement.classList.remove("saukhya-loading");
-      window.dispatchEvent(new Event(PAGE_READY_EVENT));
-      setMounted(false);
+    if (alreadyBooted()) {
+      markBooted();
       return;
     }
 
     const started = performance.now();
     let startTimer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
+
+    document.documentElement.classList.add("saukhya-loading");
+    setShow(true);
 
     const beginExit = () => {
       if (cancelled) return;
@@ -36,13 +64,10 @@ export function InitialPageLoader() {
         requestAnimationFrame(() => {
           if (cancelled) return;
           setExiting(true);
-          sessionStorage.setItem(BOOT_KEY, "1");
-          window.dispatchEvent(new Event(PAGE_READY_EVENT));
+          markBooted();
         });
       }, wait);
     };
-
-    document.documentElement.classList.add("saukhya-loading");
 
     if (document.readyState === "complete") {
       beginExit();
@@ -54,11 +79,10 @@ export function InitialPageLoader() {
       cancelled = true;
       clearTimeout(startTimer);
       window.removeEventListener("load", beginExit);
-      document.documentElement.classList.remove("saukhya-loading");
     };
   }, []);
 
-  if (!mounted) return null;
+  if (!show) return null;
 
   return (
     <div
@@ -73,16 +97,10 @@ export function InitialPageLoader() {
         if (event.target !== event.currentTarget) return;
         if (event.propertyName !== "opacity") return;
         if (!exiting) return;
-        document.documentElement.classList.remove("saukhya-loading");
-        setMounted(false);
+        setShow(false);
       }}
     >
-      <div
-        className={cn(
-          "saukhya-loader-logo px-6",
-          exiting && "is-frozen",
-        )}
-      >
+      <div className={cn("saukhya-loader-logo px-6", exiting && "is-frozen")}>
         <Image
           src={BRAND.logoUrl}
           alt={`${BRAND.name} — ${BRAND.tagline}`}

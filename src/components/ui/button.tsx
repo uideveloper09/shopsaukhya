@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn, toAppHref } from "@/lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "ghost";
@@ -64,7 +64,7 @@ export function ButtonLink({
   variant = "primary",
   size = "md",
   children,
-  prefetch,
+  prefetch = true,
 }: {
   href: string;
   className?: string;
@@ -79,17 +79,18 @@ export function ButtonLink({
     sizes[size ?? "md"],
     className,
   );
+  const normalized = toAppHref(href);
 
-  if (isExternalHref(href)) {
+  if (isExternalHref(normalized)) {
     return (
-      <a href={href} className={classes} rel="noopener noreferrer">
+      <a href={normalized} className={classes} rel="noopener noreferrer">
         {children}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={classes} prefetch={prefetch}>
+    <Link href={normalized} className={classes} prefetch={prefetch}>
       {children}
     </Link>
   );

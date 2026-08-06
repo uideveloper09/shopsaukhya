@@ -3,6 +3,7 @@ import { Outfit, Cormorant_Garamond } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { InitialPageLoader } from "@/components/layout/initial-page-loader";
+import { SoftNavigation } from "@/components/layout/soft-navigation";
 import { MobileViewportLock } from "@/components/layout/mobile-viewport-lock";
 import { Providers } from "./providers";
 import { storefrontApi } from "@/services/storefront-api";
@@ -45,6 +46,8 @@ export const viewport: Viewport = {
   interactiveWidget: "resizes-content",
 };
 
+const bootScript = `(function(){try{if(sessionStorage.getItem("saukhya:booted")==="1"){document.documentElement.dataset.saukhyaBooted="1";}else{document.documentElement.classList.add("saukhya-loading");}}catch(e){document.documentElement.classList.add("saukhya-loading");}})();`;
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -56,9 +59,13 @@ export default async function RootLayout({
   ]);
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
+      </head>
       <body className={`${outfit.variable} ${cormorant.variable} min-h-screen w-full overflow-x-hidden`}>
         <Providers>
+          <SoftNavigation />
           <MobileViewportLock />
           <InitialPageLoader />
           <Header navigation={navigation} products={catalogProducts} />

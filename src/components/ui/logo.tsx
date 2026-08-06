@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 import { BRAND } from "@/constants/brand";
+import { AppLink } from "@/components/ui/app-link";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
@@ -17,7 +17,7 @@ const sizeClasses = {
 
 export function Logo({ size = "md", className, priority = false }: LogoProps) {
   return (
-    <Link
+    <AppLink
       href="/"
       className={cn("inline-flex shrink-0", className)}
       aria-label={`${BRAND.name} — ${BRAND.tagline}`}
@@ -30,6 +30,6 @@ export function Logo({ size = "md", className, priority = false }: LogoProps) {
         priority={priority}
         className={cn("object-contain object-left", sizeClasses[size])}
       />
-    </Link>
+    </AppLink>
   );
 }

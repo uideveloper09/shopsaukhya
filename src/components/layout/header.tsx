@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import type { MenuItem, NavigationData, Product } from "@/types/storefront";
 import { ANNOUNCEMENT } from "@/constants/brand";
 import { Logo } from "@/components/ui/logo";
+import { AppLink } from "@/components/ui/app-link";
 import {
   cn,
   getMenuHref,
@@ -161,14 +161,14 @@ export function Header({ navigation, products = [] }: HeaderProps) {
                     />
                   </button>
                 ) : (
-                  <Link
+                  <AppLink
                     key={item.menuCode}
                     href={getMenuHref(item.menuUrl)}
                     onMouseEnter={closeMegaNow}
                     className="inline-flex h-9 items-center text-sm font-medium leading-none text-saukhya-text transition-colors hover:text-saukhya-pink"
                   >
                     {item.menuName}
-                  </Link>
+                  </AppLink>
                 ),
               )}
             </nav>
@@ -185,14 +185,14 @@ export function Header({ navigation, products = [] }: HeaderProps) {
               >
                 <IconSearch />
               </button>
-              <Link
+              <AppLink
                 href="/account"
                 className="hidden h-10 w-10 items-center justify-center rounded-full text-saukhya-pink transition-colors hover:bg-saukhya-pink/5 sm:flex"
                 aria-label="Account"
               >
                 <IconUser />
-              </Link>
-              <Link
+              </AppLink>
+              <AppLink
                 href="/wishlist"
                 className="relative flex h-10 w-10 items-center justify-center rounded-full text-saukhya-pink transition-colors hover:bg-saukhya-pink/5"
                 aria-label="Wishlist"
@@ -203,8 +203,8 @@ export function Header({ navigation, products = [] }: HeaderProps) {
                     {wishlistCount}
                   </span>
                 )}
-              </Link>
-              <Link
+              </AppLink>
+              <AppLink
                 href="/cart"
                 className="relative flex h-10 w-10 items-center justify-center rounded-full text-saukhya-pink transition-colors hover:bg-saukhya-pink/5"
                 aria-label="Cart"
@@ -215,7 +215,7 @@ export function Header({ navigation, products = [] }: HeaderProps) {
                     {cartCount}
                   </span>
                 )}
-              </Link>
+              </AppLink>
               <button
                 type="button"
                 className="relative z-[60] flex h-10 w-10 items-center justify-center md:hidden"
@@ -358,35 +358,35 @@ function MobileMenu({
                         {megaColumns.map(
                           ({ category, products: columnProducts }) => (
                             <div key={category.menuCode}>
-                              <Link
+                              <AppLink
                                 href={getMenuHref(category.menuUrl)}
                                 onClick={onClose}
                                 className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.16em] text-saukhya-pink"
                               >
                                 {category.menuName}
-                              </Link>
+                              </AppLink>
                               <ul className="space-y-2">
                                 {columnProducts.length > 0 ? (
                                   columnProducts.map((product) => (
                                     <li key={product.productCode}>
-                                      <Link
+                                      <AppLink
                                         href={getProductHref(product)}
                                         onClick={onClose}
                                         className="block text-sm font-medium text-saukhya-text transition-colors hover:text-saukhya-pink"
                                       >
                                         {getMegaProductLabel(product)}
-                                      </Link>
+                                      </AppLink>
                                     </li>
                                   ))
                                 ) : (
                                   <li>
-                                    <Link
+                                    <AppLink
                                       href={getMenuHref(category.menuUrl)}
                                       onClick={onClose}
                                       className="block text-sm text-saukhya-muted"
                                     >
                                       View all
-                                    </Link>
+                                    </AppLink>
                                   </li>
                                 )}
                               </ul>
@@ -402,14 +402,14 @@ function MobileMenu({
           }
 
           return (
-            <Link
+            <AppLink
               key={item.menuCode}
               href={getMenuHref(item.menuUrl)}
               onClick={onClose}
               className="flex items-center justify-between border-b border-saukhya-border px-4 py-3.5 text-[15px] font-medium text-saukhya-text last:border-b-0 sm:px-5"
             >
               {item.menuName}
-            </Link>
+            </AppLink>
           );
         })}
       </div>
@@ -458,7 +458,7 @@ function MegaMenu({
                 index > 0 && "border-l border-saukhya-gold/25",
               )}
             >
-              <Link
+              <AppLink
                 href={getMenuHref(category.menuUrl)}
                 onClick={onClose}
                 className="group mb-4 inline-flex flex-col"
@@ -467,13 +467,13 @@ function MegaMenu({
                   {category.menuName}
                 </span>
                 <span className="mt-1.5 h-px w-6 bg-saukhya-gold/70 transition-all duration-300 group-hover:w-10" />
-              </Link>
+              </AppLink>
 
               <ul className="space-y-2.5">
                 {columnProducts.length > 0 ? (
                   columnProducts.map((product) => (
                     <li key={product.productCode}>
-                      <Link
+                      <AppLink
                         href={getProductHref(product)}
                         onClick={onClose}
                         className="group flex items-center gap-2.5"
@@ -490,30 +490,30 @@ function MegaMenu({
                         <span className="text-[13px] font-semibold leading-snug text-saukhya-text transition-colors group-hover:text-saukhya-pink">
                           {getMegaProductLabel(product)}
                         </span>
-                      </Link>
+                      </AppLink>
                     </li>
                   ))
                 ) : (
                   <li>
-                    <Link
+                    <AppLink
                       href={getMenuHref(category.menuUrl)}
                       onClick={onClose}
                       className="text-[13px] font-medium text-saukhya-muted transition-colors hover:text-saukhya-pink"
                     >
                       Explore collection
-                    </Link>
+                    </AppLink>
                   </li>
                 )}
               </ul>
 
-              <Link
+              <AppLink
                 href={getMenuHref(category.menuUrl)}
                 onClick={onClose}
                 className="mt-auto inline-flex items-center gap-1 pt-4 text-[10px] font-medium uppercase tracking-[0.18em] text-saukhya-maroon/70 transition-colors hover:text-saukhya-pink"
               >
                 View all
                 <span aria-hidden>→</span>
-              </Link>
+              </AppLink>
             </motion.div>
           ))}
         </div>
