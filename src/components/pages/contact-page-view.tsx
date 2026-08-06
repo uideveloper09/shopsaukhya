@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CDN_BASE } from "@/constants/brand";
 import { CONTACT_PAGE } from "@/constants/content-pages";
 import { FOOTER_LINKS } from "@/constants/footer";
@@ -9,13 +10,20 @@ import { Button } from "@/components/ui/button";
 import { AppLink } from "@/components/ui/app-link";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 function cdn(path: string) {
   return path.startsWith("http") ? path : `${CDN_BASE}${path}`;
 }
 
+const fieldClass =
+  "w-full border-0 border-b border-saukhya-border/80 bg-transparent px-0 py-3 text-sm text-saukhya-text outline-none transition placeholder:text-saukhya-muted/60 focus:border-saukhya-pink";
+
 export function ContactPageView() {
   const content = CONTACT_PAGE;
+  const reduceMotion = useReducedMotion();
   const [sent, setSent] = useState(false);
+  const [focused, setFocused] = useState<string | null>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -43,68 +51,73 @@ export function ContactPageView() {
   };
 
   return (
-    <main className="w-full floral-decoration">
-      <section className="section-padding relative overflow-hidden">
+    <main className="w-full overflow-x-hidden bg-saukhya-warm">
+      {/* Hero */}
+      <section className="relative min-h-[70vh] overflow-hidden md:min-h-[78vh]">
+        <motion.div
+          className="absolute inset-0"
+          initial={reduceMotion ? false : { scale: 1.06 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5, ease }}
+        >
+          <Image
+            src={cdn(content.supportCard.image)}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        </motion.div>
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(236,57,136,0.07),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(201,169,110,0.1),transparent_45%)]"
+          className="absolute inset-0 bg-gradient-to-b from-[#1f1a1c]/55 via-[#5c2238]/45 to-saukhya-warm"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-saukhya-warm to-transparent"
         />
 
-        <div className="container-saukhya relative">
-          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
-            <Reveal from="left" className="lg:col-span-7">
-              <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-saukhya-gold">
-                {content.kicker}
-              </p>
-              <h1
-                className="mt-4 max-w-2xl text-[2rem] font-medium leading-[1.2] tracking-tight text-saukhya-maroon md:text-4xl lg:text-[2.65rem]"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
-                {content.title}
-              </h1>
-              <div className="mt-5 h-px w-16 bg-gradient-to-r from-saukhya-gold via-saukhya-pink/50 to-transparent" />
-              <p className="mt-6 max-w-xl text-base leading-[1.8] text-saukhya-muted md:text-[17px]">
-                {content.intro}
-              </p>
-            </Reveal>
-
-            <Reveal from="right" delay={0.08} className="lg:col-span-5">
-              <div className="overflow-hidden rounded-[1.25rem] bg-white shadow-saukhya-soft ring-1 ring-black/[0.04]">
-                <div className="relative aspect-[16/10]">
-                  <Image
-                    src={cdn(content.supportCard.image)}
-                    alt=""
-                    fill
-                    sizes="(max-width: 1024px) 90vw, 35vw"
-                    className="object-cover"
-                  />
-                </div>
-                <div className="px-5 py-5 md:px-6">
-                  <p
-                    className="text-lg font-medium text-saukhya-text"
-                    style={{ fontFamily: "var(--font-serif)" }}
-                  >
-                    {content.supportCard.title}
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-saukhya-muted">
-                    {content.supportCard.copy}
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-          </div>
+        <div className="container-saukhya relative z-10 flex min-h-[70vh] flex-col justify-end pb-10 pt-28 md:min-h-[78vh] md:pb-14">
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.85, ease, delay: 0.12 }}
+            className="max-w-2xl"
+          >
+            <p className="text-[11px] font-medium uppercase tracking-[0.36em] text-saukhya-gold">
+              {content.kicker}
+            </p>
+            <h1
+              className="mt-5 text-[2.2rem] font-medium leading-[1.15] tracking-tight text-white md:text-5xl"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              {content.title}
+            </h1>
+            <motion.div
+              aria-hidden
+              className="mt-6 h-px origin-left bg-gradient-to-r from-saukhya-gold via-white/50 to-transparent"
+              initial={reduceMotion ? false : { scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.85, ease, delay: 0.4 }}
+            />
+            <p className="mt-6 max-w-xl text-base leading-[1.8] text-white/85 md:text-[17px]">
+              {content.intro}
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      <section className="border-y border-saukhya-border/70 bg-white/70 py-10 md:py-14">
+      {/* Channels */}
+      <section className="relative -mt-6 pb-6 md:-mt-10 md:pb-8">
         <div className="container-saukhya">
           <RevealStagger
-            className="grid gap-6 md:grid-cols-3"
-            stagger={0.07}
+            className="grid gap-3 md:grid-cols-3 md:gap-4"
+            stagger={0.1}
           >
             {content.channels.map((channel, index) => (
               <RevealItem key={channel.title} index={index}>
-                <a
+                <motion.a
                   href={channel.href}
                   target={channel.href.startsWith("http") ? "_blank" : undefined}
                   rel={
@@ -112,93 +125,148 @@ export function ContactPageView() {
                       ? "noopener noreferrer"
                       : undefined
                   }
-                  className="block h-full border border-saukhya-border/80 bg-saukhya-warm/40 px-5 py-6 transition-colors hover:border-saukhya-pink/30 hover:bg-white"
+                  whileHover={
+                    reduceMotion
+                      ? undefined
+                      : { y: -4, transition: { duration: 0.35, ease } }
+                  }
+                  className="group block bg-white px-5 py-6 shadow-saukhya-soft ring-1 ring-black/[0.04] transition-shadow hover:shadow-saukhya-hover md:px-6 md:py-7"
                 >
-                  <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-gold">
-                    {channel.title}
-                  </p>
-                  <p className="mt-3 text-base font-medium text-saukhya-text md:text-lg">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-saukhya-gold">
+                      {channel.title}
+                    </p>
+                    <span
+                      aria-hidden
+                      className="text-saukhya-pink/70 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-saukhya-pink"
+                    >
+                      →
+                    </span>
+                  </div>
+                  <p
+                    className="mt-4 text-lg font-medium text-saukhya-text md:text-xl"
+                    style={{ fontFamily: "var(--font-serif)" }}
+                  >
                     {channel.value}
                   </p>
                   <p className="mt-2 text-sm leading-relaxed text-saukhya-muted">
                     {channel.copy}
                   </p>
-                </a>
+                </motion.a>
               </RevealItem>
             ))}
           </RevealStagger>
         </div>
       </section>
 
-      <section className="section-padding">
+      {/* Form + help */}
+      <section className="section-padding floral-decoration">
         <div className="container-saukhya">
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+          <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
             <Reveal from="left" className="lg:col-span-7">
               <form
                 onSubmit={handleSubmit}
-                className="border border-saukhya-border/80 bg-white/90 p-5 shadow-saukhya-soft md:p-8"
+                className="relative overflow-hidden bg-white px-5 py-8 shadow-saukhya-soft ring-1 ring-black/[0.03] md:px-10 md:py-12"
               >
-                <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-saukhya-pink">
+                <motion.div
+                  aria-hidden
+                  className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-saukhya-pink/[0.06]"
+                  animate={
+                    reduceMotion
+                      ? undefined
+                      : { scale: [1, 1.15, 1], opacity: [0.5, 0.85, 0.5] }
+                  }
+                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                />
+
+                <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-saukhya-pink">
                   {content.form.kicker}
                 </p>
                 <h2
-                  className="mt-3 text-2xl font-medium text-saukhya-maroon md:text-3xl"
+                  className="mt-3 text-3xl font-medium text-saukhya-maroon md:text-4xl"
                   style={{ fontFamily: "var(--font-serif)" }}
                 >
                   {content.form.title}
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-saukhya-muted md:text-base">
+                <p className="mt-3 max-w-md text-sm leading-relaxed text-saukhya-muted md:text-base">
                   {content.form.copy}
                 </p>
 
-                <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                  <label className="block sm:col-span-2">
-                    <span className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.16em] text-saukhya-muted">
-                      Full name
-                    </span>
-                    <input
-                      name="name"
-                      required
-                      placeholder="Your name"
-                      className="w-full rounded-saukhya-sm border border-saukhya-border bg-saukhya-warm/50 px-4 py-3 text-sm text-saukhya-text outline-none transition focus:border-saukhya-pink/40 focus:bg-white"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.16em] text-saukhya-muted">
-                      Email address
-                    </span>
-                    <input
-                      name="email"
-                      type="email"
-                      required
-                      placeholder="you@example.com"
-                      className="w-full rounded-saukhya-sm border border-saukhya-border bg-saukhya-warm/50 px-4 py-3 text-sm text-saukhya-text outline-none transition focus:border-saukhya-pink/40 focus:bg-white"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.16em] text-saukhya-muted">
-                      Phone number
-                    </span>
-                    <input
-                      name="phone"
-                      type="tel"
-                      placeholder="10 digit mobile number"
-                      className="w-full rounded-saukhya-sm border border-saukhya-border bg-saukhya-warm/50 px-4 py-3 text-sm text-saukhya-text outline-none transition focus:border-saukhya-pink/40 focus:bg-white"
-                    />
-                  </label>
-                  <label className="block sm:col-span-2">
-                    <span className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.16em] text-saukhya-muted">
-                      Subject
-                    </span>
-                    <input
-                      name="subject"
-                      required
-                      placeholder="Order help, product question, collaboration..."
-                      className="w-full rounded-saukhya-sm border border-saukhya-border bg-saukhya-warm/50 px-4 py-3 text-sm text-saukhya-text outline-none transition focus:border-saukhya-pink/40 focus:bg-white"
-                    />
-                  </label>
-                  <label className="block sm:col-span-2">
-                    <span className="mb-1.5 block text-[11px] font-medium uppercase tracking-[0.16em] text-saukhya-muted">
+                <div className="relative mt-10 grid gap-7 sm:grid-cols-2">
+                  {(
+                    [
+                      {
+                        name: "name",
+                        label: "Full name",
+                        placeholder: "Your name",
+                        full: true,
+                        required: true,
+                      },
+                      {
+                        name: "email",
+                        label: "Email address",
+                        placeholder: "you@example.com",
+                        type: "email",
+                        required: true,
+                      },
+                      {
+                        name: "phone",
+                        label: "Phone number",
+                        placeholder: "10 digit mobile number",
+                        type: "tel",
+                      },
+                      {
+                        name: "subject",
+                        label: "Subject",
+                        placeholder:
+                          "Order help, product question, collaboration...",
+                        full: true,
+                        required: true,
+                      },
+                    ] as const
+                  ).map((field) => (
+                    <label
+                      key={field.name}
+                      className={`relative block ${"full" in field && field.full ? "sm:col-span-2" : ""}`}
+                    >
+                      <span
+                        className={`mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${
+                          focused === field.name
+                            ? "text-saukhya-pink"
+                            : "text-saukhya-muted"
+                        }`}
+                      >
+                        {field.label}
+                      </span>
+                      <input
+                        name={field.name}
+                        type={"type" in field ? field.type : "text"}
+                        required={"required" in field ? field.required : false}
+                        placeholder={field.placeholder}
+                        className={fieldClass}
+                        onFocus={() => setFocused(field.name)}
+                        onBlur={() => setFocused(null)}
+                      />
+                      <motion.span
+                        aria-hidden
+                        className="pointer-events-none absolute bottom-0 left-0 h-px bg-saukhya-pink"
+                        animate={{
+                          scaleX: focused === field.name ? 1 : 0,
+                        }}
+                        style={{ originX: 0, width: "100%" }}
+                        transition={{ duration: 0.35, ease }}
+                      />
+                    </label>
+                  ))}
+
+                  <label className="relative block sm:col-span-2">
+                    <span
+                      className={`mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${
+                        focused === "message"
+                          ? "text-saukhya-pink"
+                          : "text-saukhya-muted"
+                      }`}
+                    >
                       Message
                     </span>
                     <textarea
@@ -206,67 +274,95 @@ export function ContactPageView() {
                       required
                       rows={5}
                       placeholder="Tell us how we can help"
-                      className="w-full resize-y rounded-saukhya-sm border border-saukhya-border bg-saukhya-warm/50 px-4 py-3 text-sm text-saukhya-text outline-none transition focus:border-saukhya-pink/40 focus:bg-white"
+                      className={`${fieldClass} resize-y`}
+                      onFocus={() => setFocused("message")}
+                      onBlur={() => setFocused(null)}
+                    />
+                    <motion.span
+                      aria-hidden
+                      className="pointer-events-none absolute bottom-0 left-0 h-px bg-saukhya-pink"
+                      animate={{ scaleX: focused === "message" ? 1 : 0 }}
+                      style={{ originX: 0, width: "100%" }}
+                      transition={{ duration: 0.35, ease }}
                     />
                   </label>
                 </div>
 
-                <div className="mt-6 flex flex-wrap items-center gap-4">
+                <div className="mt-10 flex flex-wrap items-center gap-5">
                   <Button type="submit" size="lg">
                     Send Message
                   </Button>
-                  {sent && (
-                    <p className="text-sm text-saukhya-muted">
-                      Opening your email app…
-                    </p>
-                  )}
+                  <AnimatePresence>
+                    {sent && (
+                      <motion.p
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="text-sm text-saukhya-muted"
+                      >
+                        Opening your email app…
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
               </form>
             </Reveal>
 
-            <Reveal from="right" delay={0.08} className="lg:col-span-5">
-              <aside
-                className="flex h-full flex-col gap-6 border border-saukhya-border/80 bg-saukhya-warm-alt/80 p-5 md:p-7"
-                aria-label="How Saukhya can help"
-              >
-                <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-saukhya-gold">
-                    How we help
-                  </p>
-                  <h2
-                    className="mt-3 text-xl font-medium text-saukhya-text md:text-2xl"
-                    style={{ fontFamily: "var(--font-serif)" }}
-                  >
-                    Support that stays calm and clear
-                  </h2>
-                </div>
+            <Reveal from="right" delay={0.1} className="lg:col-span-5">
+              <aside className="lg:sticky lg:top-28" aria-label="How Saukhya can help">
+                <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-saukhya-gold">
+                  How we help
+                </p>
+                <h2
+                  className="mt-4 text-2xl font-medium text-saukhya-maroon md:text-3xl"
+                  style={{ fontFamily: "var(--font-serif)" }}
+                >
+                  Support that stays calm and clear
+                </h2>
+                <p className="mt-4 text-sm leading-relaxed text-saukhya-muted">
+                  {content.supportCard.copy}
+                </p>
 
-                <ul className="space-y-5">
-                  {content.help.map((item) => (
-                    <li
+                <ul className="mt-10 space-y-0">
+                  {content.help.map((item, index) => (
+                    <motion.li
                       key={item.title}
-                      className="border-t border-saukhya-border/70 pt-5 first:border-t-0 first:pt-0"
+                      initial={reduceMotion ? false : { opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, margin: "-40px" }}
+                      transition={{
+                        duration: 0.55,
+                        ease,
+                        delay: 0.08 * index,
+                      }}
+                      className="border-t border-saukhya-border/70 py-5"
                     >
-                      <p className="text-sm font-medium text-saukhya-text">
+                      <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-pink">
+                        0{index + 1}
+                      </p>
+                      <p
+                        className="mt-2 text-lg font-medium text-saukhya-text"
+                        style={{ fontFamily: "var(--font-serif)" }}
+                      >
                         {item.title}
                       </p>
-                      <p className="mt-1.5 text-sm leading-relaxed text-saukhya-muted">
+                      <p className="mt-2 text-sm leading-relaxed text-saukhya-muted">
                         {item.copy}
                       </p>
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
 
-                <div className="mt-auto space-y-3 border-t border-saukhya-border/70 pt-6">
+                <div className="mt-8 space-y-3 border-t border-saukhya-border/70 pt-8">
                   <AppLink
                     href={`tel:${FOOTER_LINKS.contact.phone.replace(/\s/g, "")}`}
-                    className="block text-sm font-medium text-saukhya-maroon transition-colors hover:text-saukhya-pink"
+                    className="block text-sm font-medium tracking-wide text-saukhya-maroon transition-colors hover:text-saukhya-pink"
                   >
                     Call {FOOTER_LINKS.contact.phone}
                   </AppLink>
                   <AppLink
                     href={`mailto:${FOOTER_LINKS.contact.email}`}
-                    className="block text-sm font-medium text-saukhya-maroon transition-colors hover:text-saukhya-pink"
+                    className="block text-sm font-medium tracking-wide text-saukhya-maroon transition-colors hover:text-saukhya-pink"
                   >
                     {FOOTER_LINKS.contact.email}
                   </AppLink>
@@ -274,15 +370,23 @@ export function ContactPageView() {
               </aside>
             </Reveal>
           </div>
+        </div>
+      </section>
 
-          <Reveal from="bottom" delay={0.1} className="mt-12 md:mt-16">
-            <div className="overflow-hidden border border-saukhya-border/80 bg-white">
-              <div className="flex flex-wrap items-end justify-between gap-3 border-b border-saukhya-border/70 px-5 py-4 md:px-6">
+      {/* Map */}
+      <section className="pb-16 md:pb-24">
+        <div className="container-saukhya">
+          <Reveal from="bottom">
+            <div className="overflow-hidden bg-white shadow-saukhya-soft ring-1 ring-black/[0.04]">
+              <div className="flex flex-wrap items-end justify-between gap-4 px-5 py-5 md:px-8 md:py-6">
                 <div>
-                  <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-gold">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-saukhya-gold">
                     Studio base
                   </p>
-                  <p className="mt-1 text-sm text-saukhya-text md:text-base">
+                  <p
+                    className="mt-2 text-xl font-medium text-saukhya-maroon md:text-2xl"
+                    style={{ fontFamily: "var(--font-serif)" }}
+                  >
                     {FOOTER_LINKS.contact.address}
                   </p>
                 </div>
@@ -290,18 +394,20 @@ export function ContactPageView() {
                   href={FOOTER_LINKS.contact.directionsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[11px] font-medium uppercase tracking-[0.18em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
+                  className="text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
                 >
                   Open in Maps →
                 </a>
               </div>
-              <iframe
-                title={`${FOOTER_LINKS.contact.mapQuery} map`}
-                src={FOOTER_LINKS.contact.mapEmbedUrl}
-                className="h-64 w-full border-0 md:h-80"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+              <div className="relative h-64 md:h-[22rem]">
+                <iframe
+                  title={`${FOOTER_LINKS.contact.mapQuery} map`}
+                  src={FOOTER_LINKS.contact.mapEmbedUrl}
+                  className="absolute inset-0 h-full w-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
             </div>
           </Reveal>
         </div>
