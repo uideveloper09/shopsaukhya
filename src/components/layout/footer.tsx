@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import type { NavigationData } from "@/types/storefront";
 import { BRAND } from "@/constants/brand";
 import { Logo } from "@/components/ui/logo";
@@ -16,6 +17,9 @@ interface FooterProps {
 }
 
 export function Footer({ navigation }: FooterProps) {
+  const pathname = usePathname();
+  const hideContactSection =
+    pathname === "/contact" || pathname.startsWith("/contact/");
   const [openSection, setOpenSection] = useState<string | null>(null);
 
   const shopLinks =
@@ -52,12 +56,19 @@ export function Footer({ navigation }: FooterProps) {
         </div>
 
         <div className="container-saukhya py-8">
-          <FooterContactSection
-            isOpen={openSection === "contact"}
-            onToggle={() => toggle("contact")}
-          />
+          {!hideContactSection && (
+            <FooterContactSection
+              isOpen={openSection === "contact"}
+              onToggle={() => toggle("contact")}
+            />
+          )}
 
-          <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div
+            className={cn(
+              "grid gap-6 md:grid-cols-2 lg:grid-cols-4",
+              !hideContactSection && "mt-6",
+            )}
+          >
             <div className="lg:col-span-1">
               <Logo size="md" />
               <p className="mt-3 max-w-xs text-xs leading-relaxed text-saukhya-muted md:text-sm">
