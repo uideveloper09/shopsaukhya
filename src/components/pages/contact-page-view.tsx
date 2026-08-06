@@ -52,88 +52,103 @@ export function ContactPageView() {
 
   return (
     <main className="w-full overflow-x-hidden bg-saukhya-warm">
-      {/* Hero — readable solid copy panel + image plane */}
-      <section className="relative overflow-hidden">
-        <div className="grid min-h-[78vh] lg:grid-cols-12 lg:min-h-[86vh]">
-          <div className="relative z-10 flex flex-col justify-center bg-saukhya-warm px-4 py-14 sm:px-5 md:px-8 md:py-20 lg:col-span-5 lg:px-10 xl:px-14">
-            <motion.div
-              initial={reduceMotion ? false : { opacity: 0, x: -28 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.85, ease, delay: 0.08 }}
-              className="mx-auto w-full max-w-xl lg:mx-0"
-            >
-              <p className="text-[11px] font-medium uppercase tracking-[0.36em] text-saukhya-gold">
+      {/* Compact premium hero */}
+      <section className="relative overflow-hidden border-b border-saukhya-border/50">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(201,169,110,0.12),transparent_45%),radial-gradient(ellipse_at_bottom_right,rgba(236,57,136,0.06),transparent_40%)]"
+        />
+
+        <div className="container-saukhya relative grid items-center gap-8 py-10 md:gap-10 md:py-12 lg:grid-cols-12 lg:gap-12 lg:py-14">
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease }}
+            className="lg:col-span-6"
+          >
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden
+                className="inline-block h-1.5 w-1.5 rotate-45 bg-saukhya-maroon"
+              />
+              <p className="text-[11px] font-medium uppercase tracking-[0.34em] text-saukhya-gold">
                 {content.kicker}
               </p>
-              <h1
-                className="mt-5 text-[2.15rem] font-medium leading-[1.15] tracking-tight text-saukhya-maroon md:text-4xl xl:text-[2.75rem]"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
-                {content.title}
-              </h1>
-              <motion.div
-                aria-hidden
-                className="mt-6 h-px origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/60 to-transparent"
-                initial={reduceMotion ? false : { scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.85, ease, delay: 0.35 }}
-              />
-              <p className="mt-6 max-w-md text-base leading-[1.85] text-saukhya-muted md:text-[17px]">
-                {content.intro}
-              </p>
-              <p className="mt-8 text-[11px] font-medium uppercase tracking-[0.28em] text-saukhya-maroon/70">
-                We usually reply during business hours
-              </p>
-            </motion.div>
-          </div>
+            </div>
+
+            <h1
+              className="mt-4 max-w-lg text-[1.85rem] font-medium leading-[1.18] tracking-tight text-saukhya-maroon md:text-[2.35rem] lg:text-[2.55rem]"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              {content.title}
+            </h1>
+
+            <motion.div
+              aria-hidden
+              className="mt-5 h-px w-20 origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/55 to-transparent"
+              initial={reduceMotion ? false : { scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.75, ease, delay: 0.25 }}
+            />
+
+            <p className="mt-5 max-w-md text-sm leading-[1.8] text-saukhya-muted md:text-[15px]">
+              {content.intro}
+            </p>
+
+            <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon/65">
+              <span>Business hours replies</span>
+              <span aria-hidden className="text-saukhya-border">
+                ·
+              </span>
+              <span>Order reference helps</span>
+            </div>
+          </motion.div>
 
           <motion.div
-            className="relative min-h-[46vh] lg:col-span-7 lg:min-h-full"
-            initial={reduceMotion ? false : { opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, ease }}
+            initial={reduceMotion ? false : { opacity: 0, x: 22 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.85, ease, delay: 0.1 }}
+            className="relative lg:col-span-6"
           >
-            <Image
-              src={cdn(content.supportCard.image)}
-              alt="Saukhya customer care"
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 58vw"
-              className="object-cover object-[center_20%]"
-            />
             <div
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-r from-saukhya-warm via-transparent to-transparent lg:from-saukhya-warm/40"
+              className="absolute -bottom-3 -right-3 hidden h-full w-full border border-saukhya-gold/35 md:block"
             />
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-t from-[#5c2238]/25 via-transparent to-transparent"
-            />
-            <motion.div
-              initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease, delay: 0.45 }}
-              className="absolute bottom-5 left-4 right-4 bg-white/95 px-5 py-4 shadow-saukhya-soft backdrop-blur-sm md:bottom-8 md:left-8 md:right-auto md:max-w-sm md:px-6 md:py-5"
-            >
-              <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-saukhya-gold">
-                Order support tip
-              </p>
-              <p
-                className="mt-2 text-base font-medium text-saukhya-maroon"
-                style={{ fontFamily: "var(--font-serif)" }}
+            <div className="relative aspect-[16/10] overflow-hidden md:aspect-[5/3]">
+              <motion.div
+                className="absolute inset-0"
+                initial={reduceMotion ? false : { scale: 1.06 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 1.25, ease }}
               >
-                {content.supportCard.title}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-saukhya-muted">
-                {content.supportCard.copy}
-              </p>
-            </motion.div>
+                <Image
+                  src={cdn(content.supportCard.image)}
+                  alt="Saukhya customer care"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 48vw"
+                  className="object-cover object-[center_22%]"
+                />
+              </motion.div>
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-[#5c2238]/35 via-transparent to-transparent"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1f1a1c]/70 to-transparent px-5 pb-5 pt-12 md:px-6 md:pb-6">
+                <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-gold">
+                  {content.supportCard.title}
+                </p>
+                <p className="mt-1.5 max-w-sm text-sm leading-snug text-white/90">
+                  {content.supportCard.copy}
+                </p>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Channels */}
-      <section className="relative pb-6 pt-2 md:pb-8 md:pt-4">
+      <section className="relative pb-6 pt-8 md:pb-8 md:pt-10">
         <div className="container-saukhya">
           <RevealStagger
             className="grid gap-3 md:grid-cols-3 md:gap-4"
