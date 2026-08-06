@@ -192,17 +192,30 @@ function FooterMap({ visible }: { visible: boolean }) {
   }, [visible]);
 
   return (
-    <div className="relative h-[220px] w-full shrink-0 bg-[#ece7e4] lg:h-full lg:min-h-[220px]">
+    <div className="relative h-[220px] w-full shrink-0 overflow-hidden bg-[#ece7e4] touch-manipulation lg:h-full lg:min-h-[220px]">
       {canMount ? (
-        <iframe
-          key={visible ? "map-open" : "map-desktop"}
-          title={`${FOOTER_LINKS.contact.mapQuery} map`}
-          src={FOOTER_LINKS.contact.mapEmbedUrl}
-          className="absolute inset-0 h-full w-full border-0"
-          loading="eager"
-          referrerPolicy="no-referrer-when-downgrade"
-          allowFullScreen
-        />
+        <>
+          <iframe
+            key={visible ? "map-open" : "map-desktop"}
+            title={`${FOOTER_LINKS.contact.mapQuery} map`}
+            src={FOOTER_LINKS.contact.mapEmbedUrl}
+            className="pointer-events-none absolute inset-0 h-full w-full border-0"
+            loading="eager"
+            referrerPolicy="no-referrer-when-downgrade"
+            tabIndex={-1}
+          />
+          <a
+            href={FOOTER_LINKS.contact.directionsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute inset-0 z-10 flex items-end justify-center bg-transparent pb-3 md:hidden"
+            aria-label="Open location in Google Maps"
+          >
+            <span className="rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-saukhya-pink shadow-saukhya-soft">
+              Open in Maps
+            </span>
+          </a>
+        </>
       ) : (
         <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-[11px] text-saukhya-muted">
           Open Contact to view map

@@ -63,6 +63,26 @@
     text-size-adjust: 100%;
   }
 
+  /* Prevent zoom gestures on media / embeds inside sections */
+  img,
+  video,
+  canvas,
+  svg,
+  iframe {
+    touch-action: manipulation;
+    -webkit-user-drag: none;
+  }
+
+  /* iOS zooms focused inputs under 16px — keep readable without zoom */
+  @media (max-width: 1023px) {
+    input,
+    textarea,
+    select,
+    button {
+      font-size: 16px;
+    }
+  }
+
   img {
     max-width: 100%;
     height: auto;
