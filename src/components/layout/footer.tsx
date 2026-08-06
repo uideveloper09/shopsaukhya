@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { NavigationData } from "@/types/storefront";
 import { BRAND } from "@/constants/brand";
@@ -9,7 +9,7 @@ import { FashionPatternTexture } from "@/components/ui/fashion-pattern-texture";
 import { FOOTER_LINKS } from "@/constants/footer";
 import { cn, getMenuHref } from "@/lib/utils";
 import { TrustIcon, IconInstagram, IconFacebook } from "@/components/ui/icons";
-import { Reveal, RevealStagger, RevealItem } from "@/components/motion/reveal";
+import { RevealStagger, RevealItem } from "@/components/motion/reveal";
 
 interface FooterProps {
   navigation: NavigationData;
@@ -29,7 +29,7 @@ export function Footer({ navigation }: FooterProps) {
     setOpenSection(openSection === section ? null : section);
 
   return (
-    <footer className="relative w-full overflow-hidden bg-[#faf7f5]">
+    <footer className="relative w-full bg-[#faf7f5]">
       <FashionPatternTexture variant="card" />
 
       <div className="relative z-10">
@@ -51,7 +51,7 @@ export function Footer({ navigation }: FooterProps) {
           </RevealStagger>
         </div>
 
-        <Reveal from="bottom" distance={36} className="container-saukhya py-8">
+        <div className="container-saukhya py-8">
           <FooterContactSection
             isOpen={openSection === "contact"}
             onToggle={() => toggle("contact")}
@@ -102,7 +102,7 @@ export function Footer({ navigation }: FooterProps) {
               onToggle={() => toggle("policies")}
             />
           </div>
-        </Reveal>
+        </div>
 
         <div className="border-t border-saukhya-border">
           <div className="container-saukhya flex flex-col items-center justify-between gap-4 py-6 lg:flex-row">
@@ -177,6 +177,38 @@ function ContactIcon({ type }: { type: "phone" | "email" | "location" }) {
         {paths[type]}
       </svg>
     </span>
+  );
+}
+
+function FooterMap({ visible }: { visible: boolean }) {
+  const [canMount, setCanMount] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    const sync = () => setCanMount(media.matches || visible);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, [visible]);
+
+  return (
+    <div className="relative h-[220px] w-full shrink-0 bg-[#ece7e4] lg:h-full lg:min-h-[220px]">
+      {canMount ? (
+        <iframe
+          key={visible ? "map-open" : "map-desktop"}
+          title={`${FOOTER_LINKS.contact.mapQuery} map`}
+          src={FOOTER_LINKS.contact.mapEmbedUrl}
+          className="absolute inset-0 h-full w-full border-0"
+          loading="eager"
+          referrerPolicy="no-referrer-when-downgrade"
+          allowFullScreen
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-[11px] text-saukhya-muted">
+          Open Contact to view map
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -262,23 +294,14 @@ function FooterContactSection({
           </a>
         </div>
 
-        <div className="flex h-full flex-col overflow-hidden rounded-[10px] shadow-saukhya-soft ring-1 ring-black/[0.04] lg:max-h-none">
+        <div className="flex h-full flex-col overflow-hidden rounded-[10px] shadow-saukhya-soft ring-1 ring-black/[0.04]">
           <div className="shrink-0 border-b border-saukhya-border/70 bg-white/80 px-3 py-2">
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-saukhya-maroon">
               Find us on map
             </p>
             <p className="mt-0.5 text-[11px] text-saukhya-muted">{contact.mapQuery}</p>
           </div>
-          <div className="relative h-40 flex-1 bg-[#ece7e4] lg:min-h-0">
-            <iframe
-              title={`${contact.mapQuery} map`}
-              src={contact.mapEmbedUrl}
-              className="absolute inset-0 h-full w-full border-0"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              allowFullScreen
-            />
-          </div>
+          <FooterMap visible={isOpen} />
         </div>
       </div>
     </div>

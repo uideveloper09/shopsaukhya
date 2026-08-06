@@ -24,7 +24,7 @@ export const FOOTER_LINKS = {
     address: "Gurugram, Haryana, India",
     mapQuery: "Gurugram, Haryana, India",
     mapEmbedUrl:
-      "https://maps.google.com/maps?q=Gurugram,Haryana,India&hl=en&z=11&output=embed",
+      "https://www.google.com/maps?q=Gurugram%2C+Haryana%2C+India&hl=en&z=13&output=embed",
     directionsUrl:
       "https://www.google.com/maps/search/?api=1&query=Gurugram,Haryana,India",
   },
