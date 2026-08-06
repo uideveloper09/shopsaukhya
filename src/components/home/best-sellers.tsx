@@ -3,6 +3,7 @@
 import type { Product } from "@/types/storefront";
 import { CuratedProductCard } from "@/components/ui/curated-product-card";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { RevealStagger, RevealItem } from "@/components/motion/reveal";
 
 interface BestSellersProps {
   products: Product[];
@@ -27,15 +28,17 @@ export function BestSellers({
       <div className="container-saukhya">
         <SectionHeading id="bestsellers-heading" title={title} subtitle={subtitle} />
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+        <RevealStagger
+          className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
+          stagger={0.06}
+          delay={0.05}
+        >
           {displayProducts.map((product, index) => (
-            <CuratedProductCard
-              key={product.productCode}
-              product={product}
-              priority={index < 4}
-            />
+            <RevealItem key={product.productCode} index={index}>
+              <CuratedProductCard product={product} priority={index < 4} />
+            </RevealItem>
           ))}
-        </div>
+        </RevealStagger>
       </div>
     </section>
   );

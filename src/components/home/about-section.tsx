@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { CDN_BASE } from "@/constants/brand";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { Reveal, RevealStagger, RevealItem } from "@/components/motion/reveal";
 
 const PILLARS = [
   {
@@ -21,8 +21,6 @@ const PILLARS = [
   },
 ] as const;
 
-const ease = [0.22, 1, 0.36, 1] as const;
-
 export function AboutSection() {
   return (
     <section
@@ -37,14 +35,7 @@ export function AboutSection() {
         />
 
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16 xl:gap-20">
-          {/* Image — asymmetrical premium frame */}
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.65, ease }}
-            className="relative lg:col-span-5"
-          >
+          <Reveal from="left" distance={44} className="relative lg:col-span-5">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               <div
                 aria-hidden
@@ -60,11 +51,10 @@ export function AboutSection() {
                 />
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.25, ease }}
+              <Reveal
+                from="bottom"
+                distance={20}
+                delay={0.2}
                 className="absolute -bottom-4 right-4 z-10 bg-white/95 px-4 py-3 shadow-[0_8px_32px_rgba(31,26,28,0.08)] backdrop-blur-sm md:right-6 md:px-5"
               >
                 <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-saukhya-gold">
@@ -76,18 +66,11 @@ export function AboutSection() {
                 >
                   Embrace Tranquility
                 </p>
-              </motion.div>
+              </Reveal>
             </div>
-          </motion.div>
+          </Reveal>
 
-          {/* Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.65, delay: 0.1, ease }}
-            className="lg:col-span-7"
-          >
+          <Reveal from="right" distance={44} delay={0.08} className="lg:col-span-7">
             <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-saukhya-pink">
               Our Story
             </p>
@@ -114,15 +97,13 @@ export function AboutSection() {
               grace.
             </p>
 
-            <div className="mt-10 grid gap-6 border-y border-saukhya-border/80 py-8 sm:grid-cols-3">
+            <RevealStagger
+              className="mt-10 grid gap-6 border-y border-saukhya-border/80 py-8 sm:grid-cols-3"
+              delay={0.1}
+              stagger={0.08}
+            >
               {PILLARS.map((pillar, index) => (
-                <motion.div
-                  key={pillar.title}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.45, delay: 0.15 + index * 0.08, ease }}
-                >
+                <RevealItem key={pillar.title} index={index} distance={24}>
                   <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-gold">
                     0{index + 1}
                   </p>
@@ -132,9 +113,9 @@ export function AboutSection() {
                   <p className="mt-1 text-xs leading-relaxed text-saukhya-muted md:text-sm">
                     {pillar.description}
                   </p>
-                </motion.div>
+                </RevealItem>
               ))}
-            </div>
+            </RevealStagger>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
@@ -148,12 +129,15 @@ export function AboutSection() {
                 className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
               >
                 Shop The Collection
-                <span aria-hidden className="transition-transform duration-300 hover:translate-x-0.5">
+                <span
+                  aria-hidden
+                  className="transition-transform duration-300 hover:translate-x-0.5"
+                >
                   →
                 </span>
               </Link>
             </div>
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>

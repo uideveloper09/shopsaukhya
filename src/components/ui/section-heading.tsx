@@ -1,4 +1,7 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { Reveal } from "@/components/motion/reveal";
 
 function SectionDiamond({ className }: { className?: string }) {
   return (
@@ -32,7 +35,10 @@ export function SectionHeading({
   const isCenter = align === "center";
 
   return (
-    <div
+    <Reveal
+      from="top"
+      distance={32}
+      duration={0.55}
       className={cn(
         "mb-8 md:mb-10",
         isCenter ? "text-center" : "text-left",
@@ -59,6 +65,6 @@ export function SectionHeading({
           {subtitle}
         </p>
       )}
-    </div>
+    </Reveal>
   );
 }

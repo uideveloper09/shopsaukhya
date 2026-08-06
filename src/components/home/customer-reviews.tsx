@@ -9,6 +9,7 @@ import { resolveCustomerReviews } from "@/lib/customer-reviews";
 import { CustomerReviewCard } from "@/components/ui/customer-review-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { IconChevronLeft, IconChevronRight } from "@/components/ui/icons";
+import { Reveal } from "@/components/motion/reveal";
 import "swiper/css";
 
 interface CustomerReviewsProps {
@@ -38,7 +39,7 @@ export function CustomerReviews({ reviews = [], products = [] }: CustomerReviews
           subtitle="Real photos and videos from women who love Saukhya"
         />
 
-        <div className="relative">
+        <Reveal from="bottom" distance={40} delay={0.05} className="relative">
           <Swiper
             modules={[Navigation]}
             spaceBetween={16}
@@ -80,7 +81,7 @@ export function CustomerReviews({ reviews = [], products = [] }: CustomerReviews
               </button>
             </>
           )}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

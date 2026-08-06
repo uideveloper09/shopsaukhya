@@ -9,6 +9,7 @@ import { FashionPatternTexture } from "@/components/ui/fashion-pattern-texture";
 import { FOOTER_LINKS } from "@/constants/footer";
 import { cn, getMenuHref } from "@/lib/utils";
 import { TrustIcon, IconInstagram, IconFacebook } from "@/components/ui/icons";
+import { Reveal, RevealStagger, RevealItem } from "@/components/motion/reveal";
 
 interface FooterProps {
   navigation: NavigationData;
@@ -33,19 +34,24 @@ export function Footer({ navigation }: FooterProps) {
 
       <div className="relative z-10">
         <div className="border-b border-saukhya-border">
-          <div className="container-saukhya grid grid-cols-2 gap-3 py-4 sm:grid-cols-3 md:py-5 lg:grid-cols-5">
-            {FOOTER_LINKS.promises.map((item) => (
-              <div key={item.label} className="flex items-center gap-2.5">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-saukhya-pink/5 text-saukhya-pink">
-                  <TrustIcon name={item.icon} className="h-4 w-4" />
-                </span>
-                <span className="text-[11px] font-medium leading-tight">{item.label}</span>
-              </div>
+          <RevealStagger
+            className="container-saukhya grid grid-cols-2 gap-3 py-4 sm:grid-cols-3 md:py-5 lg:grid-cols-5"
+            stagger={0.05}
+          >
+            {FOOTER_LINKS.promises.map((item, index) => (
+              <RevealItem key={item.label} index={index} distance={24}>
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-saukhya-pink/5 text-saukhya-pink">
+                    <TrustIcon name={item.icon} className="h-4 w-4" />
+                  </span>
+                  <span className="text-[11px] font-medium leading-tight">{item.label}</span>
+                </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealStagger>
         </div>
 
-        <div className="container-saukhya py-8">
+        <Reveal from="bottom" distance={36} className="container-saukhya py-8">
           <FooterContactSection
             isOpen={openSection === "contact"}
             onToggle={() => toggle("contact")}
@@ -96,7 +102,7 @@ export function Footer({ navigation }: FooterProps) {
               onToggle={() => toggle("policies")}
             />
           </div>
-        </div>
+        </Reveal>
 
         <div className="border-t border-saukhya-border">
           <div className="container-saukhya flex flex-col items-center justify-between gap-4 py-6 lg:flex-row">

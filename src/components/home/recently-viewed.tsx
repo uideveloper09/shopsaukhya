@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Product, RecentlyViewedProduct } from "@/types/storefront";
 import { CuratedProductCard } from "@/components/ui/curated-product-card";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { RevealStagger, RevealItem } from "@/components/motion/reveal";
 import {
   clearRecentlyViewed,
   getRecentlyViewedDisplayProducts,
@@ -80,16 +81,21 @@ export function RecentlyViewed({ products = [] }: RecentlyViewedProps) {
           }
         />
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+        <RevealStagger
+          className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
+          stagger={0.06}
+          delay={0.05}
+        >
           {displayProducts.map((product, index) => (
-            <CuratedProductCard
-              key={product.productCode}
-              product={product}
-              priority={index < 2}
-              showMetaBelow
-            />
+            <RevealItem key={product.productCode} index={index}>
+              <CuratedProductCard
+                product={product}
+                priority={index < 2}
+                showMetaBelow
+              />
+            </RevealItem>
           ))}
-        </div>
+        </RevealStagger>
       </div>
     </section>
   );

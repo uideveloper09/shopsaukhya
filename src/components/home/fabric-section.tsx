@@ -8,6 +8,7 @@ import { FABRIC_CARDS, FABRIC_SECTION } from "@/constants/fabric";
 import { FabricCard } from "@/components/ui/fabric-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { IconChevronLeft, IconChevronRight } from "@/components/ui/icons";
+import { Reveal } from "@/components/motion/reveal";
 import "swiper/css";
 
 export function FabricSection() {
@@ -23,7 +24,7 @@ export function FabricSection() {
         />
       </div>
 
-      <div className="relative mt-8 w-full md:mt-10">
+      <Reveal from="right" distance={40} delay={0.05} className="relative mt-8 w-full md:mt-10">
         <Swiper
           modules={[Autoplay, Navigation]}
           autoplay={{
@@ -75,7 +76,7 @@ export function FabricSection() {
             </button>
           </>
         )}
-      </div>
+      </Reveal>
     </section>
   );
 }

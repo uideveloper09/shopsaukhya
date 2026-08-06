@@ -10,6 +10,7 @@ import { getCategoryMaxOfferPercent } from "@/lib/category-offers";
 import { CategoryCarouselCard } from "@/components/ui/category-carousel-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { IconChevronLeft, IconChevronRight } from "@/components/ui/icons";
+import { Reveal } from "@/components/motion/reveal";
 import "swiper/css";
 
 interface CategorySectionProps {
@@ -48,7 +49,7 @@ export function CategorySection({ filters, products = [] }: CategorySectionProps
           subtitle="Explore our curated styles — from kurta sets to co-ord sets"
         />
 
-        <div className="relative">
+        <Reveal from="bottom" distance={40} delay={0.05} className="relative">
           <Swiper
             modules={[Navigation]}
             spaceBetween={16}
@@ -94,7 +95,7 @@ export function CategorySection({ filters, products = [] }: CategorySectionProps
               </button>
             </>
           )}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

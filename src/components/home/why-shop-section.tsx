@@ -3,16 +3,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { CDN_BASE } from "@/constants/brand";
 import { HOME_FAQ_ITEMS } from "@/constants/faq";
 import { IconHeart } from "@/components/ui/icons";
 import { FashionPatternTexture } from "@/components/ui/fashion-pattern-texture";
+import { Reveal } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
 const WHY_SHOP_IMAGE = `${CDN_BASE}/ProductImg/16/optimized/8df4f032-471c-476d-842b-98a70ada71cf_2-detail.jpg`;
-
-const ease = [0.22, 1, 0.36, 1] as const;
 
 function FaqPlusIcon({ open }: { open: boolean }) {
   return (
@@ -81,11 +79,10 @@ function NewsletterPanel() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.55, delay: 0.12, ease }}
+    <Reveal
+      from="right"
+      distance={36}
+      delay={0.12}
       className="relative flex h-full flex-col justify-center overflow-hidden rounded-[1.25rem] bg-[#fff0f3] px-6 py-10 sm:px-7 sm:py-11 lg:px-8 lg:py-12"
       aria-labelledby="newsletter-heading"
     >
@@ -149,7 +146,7 @@ function NewsletterPanel() {
           View Wishlist
         </Link>
       </div>
-    </motion.div>
+    </Reveal>
   );
 }
 
@@ -164,11 +161,9 @@ export function WhyShopSection() {
       <div className="container-saukhya">
         <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)_minmax(0,0.88fr)] lg:gap-5">
           {/* Left — text + image in one cream block */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.55, ease }}
+          <Reveal
+            from="left"
+            distance={40}
             className="overflow-hidden rounded-2xl bg-[#faf7f5] shadow-[0_4px_24px_rgba(31,26,28,0.05)]"
           >
             <div className="grid min-h-[380px] grid-cols-1 sm:grid-cols-[1.08fr_0.92fr]">
@@ -202,14 +197,12 @@ export function WhyShopSection() {
                 />
               </div>
             </div>
-          </motion.div>
+          </Reveal>
 
-          {/* FAQ panel */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.55, delay: 0.08, ease }}
+          <Reveal
+            from="bottom"
+            distance={36}
+            delay={0.08}
             className="relative flex flex-col justify-center overflow-hidden rounded-[1.25rem] border border-[#e6e0dc] bg-[#faf7f5] px-6 py-8 shadow-[0_8px_32px_rgba(31,26,28,0.04)] sm:px-7 sm:py-9 lg:px-8 lg:py-10"
           >
             <FashionPatternTexture variant="card" />
@@ -256,7 +249,7 @@ export function WhyShopSection() {
                 );
               })}
             </div>
-          </motion.div>
+          </Reveal>
 
           {/* Far right — newsletter */}
           <NewsletterPanel />

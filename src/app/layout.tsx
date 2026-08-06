@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Outfit, Cormorant_Garamond } from "next/font/google";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { InitialPageLoader } from "@/components/layout/initial-page-loader";
 import { Providers } from "./providers";
+import { storefrontApi } from "@/services/storefront-api";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -30,15 +34,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [navigation, catalogProducts] = await Promise.all([
+    storefrontApi.navigation(),
+    storefrontApi.products(),
+  ]);
+
   return (
     <html lang="en">
       <body className={`${outfit.variable} ${cormorant.variable} min-h-screen w-full overflow-x-hidden`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <InitialPageLoader />
+          <Header navigation={navigation} products={catalogProducts} />
+          {children}
+          <Footer navigation={navigation} />
+        </Providers>
       </body>
     </html>
   );

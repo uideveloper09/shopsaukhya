@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import type { Product } from "@/types/storefront";
 import { CDN_BASE } from "@/constants/brand";
 import { formatPrice, getProductCardImage, getProductHref } from "@/lib/utils";
 import { ButtonLink } from "@/components/ui/button";
 import { FashionPatternTexture } from "@/components/ui/fashion-pattern-texture";
 import { IconPlay } from "@/components/ui/icons";
+import { Reveal } from "@/components/motion/reveal";
 
 interface WatchAndBuyProps {
   featuredProduct?: Product;
@@ -26,12 +26,7 @@ export function WatchAndBuy({ featuredProduct }: WatchAndBuyProps) {
     <section className="section-padding bg-saukhya-warm-alt" aria-labelledby="watch-buy-heading">
       <div className="container-saukhya">
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="relative"
-          >
+          <Reveal from="left" distance={40} className="relative">
             <div className="relative aspect-video overflow-hidden rounded-saukhya-lg shadow-saukhya-soft">
               {playing ? (
                 <iframe
@@ -63,13 +58,9 @@ export function WatchAndBuy({ featuredProduct }: WatchAndBuyProps) {
                 </>
               )}
             </div>
-          </motion.div>
+          </Reveal>
 
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
+          <Reveal from="right" distance={40} delay={0.08}>
             <p className="text-xs font-medium uppercase tracking-[0.3em] text-saukhya-pink">
               Shop The Look
             </p>
@@ -117,7 +108,7 @@ export function WatchAndBuy({ featuredProduct }: WatchAndBuyProps) {
                 </ButtonLink>
               )}
             </div>
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>
