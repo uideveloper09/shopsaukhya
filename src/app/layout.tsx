@@ -3,6 +3,7 @@ import { Outfit, Cormorant_Garamond } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { InitialPageLoader } from "@/components/layout/initial-page-loader";
+import { MobileViewportLock } from "@/components/layout/mobile-viewport-lock";
 import { Providers } from "./providers";
 import { storefrontApi } from "@/services/storefront-api";
 import "./globals.css";
@@ -37,6 +38,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  minimumScale: 1,
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
@@ -56,6 +58,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${outfit.variable} ${cormorant.variable} min-h-screen w-full overflow-x-hidden`}>
         <Providers>
+          <MobileViewportLock />
           <InitialPageLoader />
           <Header navigation={navigation} products={catalogProducts} />
           {children}
