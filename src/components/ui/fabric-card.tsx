@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import type { FabricCard as FabricCardType } from "@/types/storefront";
 import { cn } from "@/lib/utils";
-import { usePrefersHover } from "@/hooks/use-prefers-hover";
+import { useCardReveal } from "@/hooks/use-card-reveal";
 import { ButtonLink } from "@/components/ui/button";
 
 interface FabricCardProps {
@@ -35,21 +34,17 @@ const reveal = {
 };
 
 export function FabricCard({ fabric, variant = "default", className }: FabricCardProps) {
-  const prefersHover = usePrefersHover();
-  const [hovered, setHovered] = useState(false);
+  const { ref, showSheet, hoverBinders, handleTapAction } =
+    useCardReveal<HTMLElement>();
   const isCarousel = variant === "carousel";
-  const showSheet = prefersHover && hovered;
   const href = `/shop?fabric=${fabric.slug}`;
-
-  const setActive = (active: boolean) => {
-    if (prefersHover) setHovered(active);
-  };
 
   return (
     <article
+      ref={ref}
       className={cn("group relative w-full", className)}
-      onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => setActive(false)}
+      aria-expanded={showSheet}
+      {...hoverBinders}
     >
       <div
         className={cn(
@@ -59,7 +54,11 @@ export function FabricCard({ fabric, variant = "default", className }: FabricCar
             : "rounded-[10px] shadow-saukhya-soft ring-1 ring-black/[0.04]",
         )}
       >
-        <Link href={href} className="block">
+        <Link
+          href={href}
+          className="block"
+          onClick={(event) => handleTapAction(event)}
+        >
           <div className="relative aspect-[3/4] overflow-hidden">
             <motion.div
               className="absolute inset-0"

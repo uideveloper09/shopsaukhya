@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Product } from "@/types/storefront";
-import { usePrefersHover } from "@/hooks/use-prefers-hover";
+import { useCardReveal } from "@/hooks/use-card-reveal";
 import {
   isProductOnOffer,
   isProductTrending,
@@ -48,9 +47,8 @@ export function OfferProductCarouselCard({
   variant = "hero",
   priority = false,
 }: OfferProductCarouselCardProps) {
-  const prefersHover = usePrefersHover();
-  const [hovered, setHovered] = useState(false);
-  const showSheet = prefersHover && hovered;
+  const { ref, showSheet, hoverBinders, handleTapAction } =
+    useCardReveal<HTMLAnchorElement>();
 
   const isHero = variant === "hero";
   const imageUrl = getProductCardImage(product);
@@ -59,20 +57,17 @@ export function OfferProductCarouselCard({
   const onOffer = isProductOnOffer(product);
   const discountPercent = Math.round(product.discountPercent ?? 0);
 
-  const setActive = (active: boolean) => {
-    if (prefersHover) setHovered(active);
-  };
-
   return (
     <Link
+      ref={ref}
       href={href}
       aria-label={`${product.productName}, ${formatPrice(product.finalAmount)}`}
+      aria-expanded={showSheet}
       className="group block h-full w-full min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saukhya-pink/40 focus-visible:ring-offset-2"
-      onClick={() => trackRecentlyViewed(product)}
-      onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => setActive(false)}
-      onFocus={() => setActive(true)}
-      onBlur={() => setActive(false)}
+      onClick={(event) =>
+        handleTapAction(event, () => trackRecentlyViewed(product))
+      }
+      {...hoverBinders}
     >
       <div
         className={cn(
@@ -102,7 +97,6 @@ export function OfferProductCarouselCard({
           />
         </motion.div>
 
-        {/* Cinematic overlay on hover */}
         <motion.div
           initial={false}
           animate={{ opacity: showSheet ? 1 : 0 }}
@@ -156,7 +150,6 @@ export function OfferProductCarouselCard({
           </div>
         </motion.div>
 
-        {/* Premium hover panel */}
         <AnimatePresence>
           {showSheet && (
             <motion.div
@@ -167,7 +160,6 @@ export function OfferProductCarouselCard({
               transition={luxurySpring}
               className="absolute inset-x-0 bottom-0 z-20 overflow-hidden"
             >
-              {/* Gold accent line — expands on enter */}
               <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
@@ -177,7 +169,6 @@ export function OfferProductCarouselCard({
               />
 
               <div className="relative border-t border-white/60 bg-gradient-to-b from-white/97 via-saukhya-warm/98 to-saukhya-warm shadow-[0_-20px_60px_rgba(31,26,28,0.14)] backdrop-blur-2xl">
-                {/* Soft pink glow */}
                 <div className="pointer-events-none absolute -top-8 left-1/2 h-16 w-[70%] -translate-x-1/2 rounded-full bg-saukhya-pink/10 blur-2xl" />
 
                 <div className="relative px-5 py-5 md:px-6 md:py-6">
@@ -256,11 +247,23 @@ export function OfferProductCarouselCard({
                     animate="visible"
                     className="mt-5 flex items-center gap-3"
                   >
-                    <span className="rounded-full bg-saukhya-text px-5 py-2.5 text-[11px] font-medium uppercase tracking-[0.22em] text-white transition-colors duration-500 group-hover:bg-saukhya-pink">
+                    <span
+                      className={cn(
+                        "rounded-full px-5 py-2.5 text-[11px] font-medium uppercase tracking-[0.22em] text-white transition-colors duration-500",
+                        showSheet ? "bg-saukhya-pink" : "bg-saukhya-text",
+                      )}
+                    >
                       Discover
                     </span>
 
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-saukhya-gold/40 bg-white/80 text-saukhya-text shadow-sm transition-all duration-300 group-hover:translate-x-0.5 group-hover:border-saukhya-pink/40 group-hover:text-saukhya-pink">
+                    <span
+                      className={cn(
+                        "flex h-10 w-10 items-center justify-center rounded-full border bg-white/80 shadow-sm transition-all duration-300",
+                        showSheet
+                          ? "translate-x-0.5 border-saukhya-pink/40 text-saukhya-pink"
+                          : "border-saukhya-gold/40 text-saukhya-text",
+                      )}
+                    >
                       <motion.span
                         animate={{ x: showSheet ? [0, 3, 0] : 0 }}
                         transition={{

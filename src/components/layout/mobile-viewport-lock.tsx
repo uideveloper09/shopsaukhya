@@ -43,14 +43,6 @@ export function MobileViewportLock() {
     };
     document.addEventListener("touchmove", onTouchMove, { passive: false });
 
-    let lastTouchEnd = 0;
-    const onTouchEnd = (event: TouchEvent) => {
-      const now = Date.now();
-      if (now - lastTouchEnd <= 320) event.preventDefault();
-      lastTouchEnd = now;
-    };
-    document.addEventListener("touchend", onTouchEnd, { passive: false });
-
     const visualViewport = window.visualViewport;
     const onViewportChange = () => {
       if (!visualViewport) return;
@@ -72,7 +64,6 @@ export function MobileViewportLock() {
       document.removeEventListener("gesturechange", preventGesture);
       document.removeEventListener("gestureend", preventGesture);
       document.removeEventListener("touchmove", onTouchMove);
-      document.removeEventListener("touchend", onTouchEnd);
       visualViewport?.removeEventListener("resize", onViewportChange);
       visualViewport?.removeEventListener("scroll", onViewportChange);
       window.removeEventListener("orientationchange", lockViewport);

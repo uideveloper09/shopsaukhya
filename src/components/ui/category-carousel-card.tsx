@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import type { SectionFilter } from "@/types/storefront";
-import { usePrefersHover } from "@/hooks/use-prefers-hover";
+import { useCardReveal } from "@/hooks/use-card-reveal";
 import { cn } from "@/lib/utils";
 import { ButtonLink } from "@/components/ui/button";
 
@@ -41,25 +40,25 @@ export function CategoryCarouselCard({
   maxOfferPercent = 0,
   className,
 }: CategoryCarouselCardProps) {
-  const prefersHover = usePrefersHover();
-  const [hovered, setHovered] = useState(false);
+  const { ref, showSheet, hoverBinders, handleTapAction } =
+    useCardReveal<HTMLElement>();
 
-  const showSheet = prefersHover && hovered;
   const hasOffer = maxOfferPercent > 0;
   const href = `/shop/${category.slug}`;
 
-  const setActive = (active: boolean) => {
-    if (prefersHover) setHovered(active);
-  };
-
   return (
     <article
+      ref={ref}
       className={cn("group relative", className)}
-      onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => setActive(false)}
+      aria-expanded={showSheet}
+      {...hoverBinders}
     >
       <div className="relative overflow-hidden rounded-[10px] bg-[#f5f0ee] shadow-saukhya-soft ring-1 ring-black/[0.04] transition-shadow duration-500 group-hover:shadow-saukhya-hover group-hover:ring-saukhya-gold/25">
-        <Link href={href} className="block">
+        <Link
+          href={href}
+          className="block"
+          onClick={(event) => handleTapAction(event)}
+        >
           <div className="relative aspect-[3/4] overflow-hidden">
             <motion.div
               className="absolute inset-0"

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Product } from "@/types/storefront";
-import { usePrefersHover } from "@/hooks/use-prefers-hover";
+import { useCardReveal } from "@/hooks/use-card-reveal";
 import { isProductOnOffer, isProductTrending } from "@/lib/product-flags";
 import {
   cn,
@@ -53,13 +53,12 @@ export function CuratedProductCard({
   priority = false,
   showMetaBelow = false,
 }: CuratedProductCardProps) {
-  const prefersHover = usePrefersHover();
-  const [hovered, setHovered] = useState(false);
+  const { ref, showSheet, hoverBinders, handleTapAction } =
+    useCardReveal<HTMLElement>();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const { toggle, has } = useWishlistStore();
   const addItem = useCartStore((s) => s.addItem);
 
-  const showSheet = prefersHover && hovered;
   const isWishlisted = has(product.productCode);
   const sizes = getAvailableSizes(product.objSizes);
   const fabric = extractFabricFromProduct(product);
@@ -68,11 +67,6 @@ export function CuratedProductCard({
   const trending = isProductTrending(product);
   const onOffer = isProductOnOffer(product);
   const discountPercent = Math.round(product.discountPercent ?? 0);
-
-  const setActive = (active: boolean) => {
-    if (prefersHover) setHovered(active);
-    if (!active) setSelectedSize(null);
-  };
 
   const handleProductView = () => {
     trackRecentlyViewed(product);
@@ -83,14 +77,29 @@ export function CuratedProductCard({
     if (size) addItem(product.productCode, size);
   };
 
+  useEffect(() => {
+    if (!showSheet) setSelectedSize(null);
+  }, [showSheet]);
+
   return (
     <article
+      ref={ref}
       className={cn("group relative", className)}
-      onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => setActive(false)}
+      aria-expanded={showSheet}
+      {...hoverBinders}
+      onClick={(event) => {
+        // Open sheet on first touch tap when clicking non-interactive card chrome
+        const target = event.target as HTMLElement;
+        if (target.closest("a,button")) return;
+        handleTapAction(event);
+      }}
     >
       <div className="relative overflow-hidden rounded-[10px] bg-[#f5f0ee] shadow-saukhya-soft ring-1 ring-black/[0.04] transition-shadow duration-500 group-hover:shadow-saukhya-hover group-hover:ring-saukhya-gold/25">
-        <Link href={href} className="block" onClick={handleProductView}>
+        <Link
+          href={href}
+          className="block"
+          onClick={(event) => handleTapAction(event, handleProductView)}
+        >
           <div className="relative aspect-[3/4] overflow-hidden">
             <motion.div
               className="absolute inset-0"
