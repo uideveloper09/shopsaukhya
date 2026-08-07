@@ -35,7 +35,11 @@ export function BestSellers({
         >
           {displayProducts.map((product, index) => (
             <RevealItem key={product.productCode} index={index}>
-              <CuratedProductCard product={product} priority={index < 4} />
+              <CuratedProductCard
+                product={product}
+                priority={index < 4}
+                showMetaBelow
+              />
             </RevealItem>
           ))}
         </RevealStagger>

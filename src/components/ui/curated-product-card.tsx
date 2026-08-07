@@ -45,6 +45,8 @@ interface CuratedProductCardProps {
   className?: string;
   priority?: boolean;
   showMetaBelow?: boolean;
+  /** Reserve equal meta height (Recently Viewed grids). */
+  equalMetaHeight?: boolean;
 }
 
 export function CuratedProductCard({
@@ -52,6 +54,7 @@ export function CuratedProductCard({
   className,
   priority = false,
   showMetaBelow = false,
+  equalMetaHeight = false,
 }: CuratedProductCardProps) {
   const { ref, showSheet, hoverBinders, handleTapAction } =
     useCardReveal<HTMLElement>();
@@ -342,22 +345,42 @@ export function CuratedProductCard({
         </div>
 
         {showMetaBelow && (
-          <div className="mt-auto flex min-h-[132px] flex-col gap-1.5 bg-white px-3 py-3 md:min-h-[140px] md:px-3.5 md:py-3.5">
+          <div
+            className={cn(
+              "mt-auto flex flex-col bg-white px-3.5 pb-3.5 pt-3 md:px-4 md:pb-4 md:pt-3.5",
+              equalMetaHeight && "min-h-[132px] md:min-h-[140px]",
+            )}
+          >
             <div className="flex items-center gap-0.5 text-saukhya-gold">
               {Array.from({ length: 5 }).map((_, index) => (
                 <IconStar key={index} filled className="h-3 w-3" />
               ))}
             </div>
-            <Link href={href} onClick={handleProductView} className="block">
-              <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug text-saukhya-text md:min-h-[2.75rem] md:text-[15px]">
+            <Link href={href} onClick={handleProductView} className="mt-2 block">
+              <h3
+                className={cn(
+                  "line-clamp-2 text-[13px] font-semibold leading-snug text-saukhya-text md:text-sm",
+                  equalMetaHeight && "min-h-[2.5rem] md:min-h-[2.75rem]",
+                )}
+              >
                 {product.productName}
               </h3>
             </Link>
-            <p className="min-h-4 truncate text-xs text-saukhya-muted">
-              {product.subCategoryName ?? "\u00A0"}
+            <p
+              className={cn(
+                "mt-1 truncate text-xs text-saukhya-muted",
+                equalMetaHeight && "min-h-4",
+              )}
+            >
+              {product.subCategoryName || (equalMetaHeight ? "\u00A0" : "Saukhya")}
             </p>
-            <div className="mt-auto flex flex-wrap items-baseline gap-x-2 gap-y-0.5 pt-0.5">
-              <span className="text-base font-semibold tabular-nums text-saukhya-text">
+            <div
+              className={cn(
+                "mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5",
+                equalMetaHeight && "mt-auto pt-0.5",
+              )}
+            >
+              <span className="text-[15px] font-semibold tabular-nums text-saukhya-text md:text-base">
                 {formatPrice(product.finalAmount)}
               </span>
               {onOffer && (
@@ -366,11 +389,11 @@ export function CuratedProductCard({
                 </span>
               )}
             </div>
-            <div className="flex gap-1.5 pt-1">
+            <div className="mt-2.5 flex gap-1.5">
               {["#ec3988", "#c9a96e", "#1f1a1c", "#fff8fb"].map((color) => (
                 <span
                   key={color}
-                  className="h-3.5 w-3.5 rounded-full border border-saukhya-border shadow-sm"
+                  className="h-3.5 w-3.5 rounded-full border border-black/10 shadow-sm"
                   style={{ backgroundColor: color }}
                 />
               ))}

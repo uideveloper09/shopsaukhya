@@ -95,6 +95,7 @@ export function RecentlyViewed({ products = [] }: RecentlyViewedProps) {
                 product={product}
                 priority={index < 2}
                 showMetaBelow
+                equalMetaHeight
               />
             </RevealItem>
           ))}
