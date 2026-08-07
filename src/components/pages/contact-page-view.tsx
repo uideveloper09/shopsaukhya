@@ -86,7 +86,7 @@ export function ContactPageView({
   const [phoneMenuOpen, setPhoneMenuOpen] = useState(false);
   const phoneShellRef = useRef<HTMLDivElement>(null);
   const phoneCountry = getPhoneCountry(phoneCountryIso);
-  const messageMax = 250;
+  const messageMax = 350;
   const phoneFieldActive = focused === "phone" || phoneMenuOpen;
 
   const setPhoneFocused = () => setFocused("phone");
@@ -761,7 +761,7 @@ export function ContactPageView({
                           placeholder="Tell us how we can help"
                           aria-invalid={Boolean(fieldErrors.message)}
                           aria-describedby="message-char-count"
-                          className={`${fieldErrors.message ? fieldErrorClass : fieldClass} min-h-[120px] resize-y`}
+                          className={`${fieldErrors.message ? fieldErrorClass : fieldClass} min-h-[120px] resize-none`}
                           onFocus={() => setFocused("message")}
                           onBlur={() => setFocused(null)}
                           onChange={(e) => {
@@ -789,7 +789,7 @@ export function ContactPageView({
                           ) : messageLength >= messageMax ? (
                             <FieldErrorTooltip
                               key="message-limit"
-                              message="You've reached the 250 character limit."
+                              message="You've reached the 350 character limit."
                             />
                           ) : null}
                         </AnimatePresence>

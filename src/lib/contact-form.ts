@@ -91,8 +91,8 @@ export function validateContactPayload(
   }
   if (payload.message.length < 10) {
     errors.message = "Message must be at least 10 characters.";
-  } else if (payload.message.length > 250) {
-    errors.message = "Message must be 250 characters or less.";
+  } else if (payload.message.length > 350) {
+    errors.message = "Message must be 350 characters or less.";
   }
 
   return errors;
