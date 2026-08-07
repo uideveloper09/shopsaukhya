@@ -2,11 +2,17 @@
 
 import { useEffect } from "react";
 
-const VIEWPORT_CONTENT =
+const LOCKED_VIEWPORT =
   "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
 
+const OPEN_VIEWPORT =
+  "width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover";
+
+const MOBILE_QUERY = "(max-width: 1023px), (hover: none) and (pointer: coarse)";
+
 /**
- * Hard-lock page zoom across the whole site (pinch, ctrl+wheel, keyboard).
+ * Lock pinch/page zoom on mobile only.
+ * Desktop keeps browser zoom in / zoom out (Ctrl/Cmd + wheel, +/-).
  */
 export function MobileViewportLock() {
   useEffect(() => {
@@ -19,94 +25,104 @@ export function MobileViewportLock() {
         return el;
       })();
 
-    const lockViewport = () => {
-      meta.setAttribute("content", VIEWPORT_CONTENT);
-      document.documentElement.setAttribute("data-zoom-locked", "true");
+    const media = window.matchMedia(MOBILE_QUERY);
+    const listeners: Array<() => void> = [];
+
+    const clearListeners = () => {
+      while (listeners.length) listeners.pop()?.();
     };
 
-    lockViewport();
-
-    const prevent = (event: Event) => {
-      event.preventDefault();
-    };
-
-    // iOS Safari gesture zoom
-    document.addEventListener("gesturestart", prevent, { passive: false });
-    document.addEventListener("gesturechange", prevent, { passive: false });
-    document.addEventListener("gestureend", prevent, { passive: false });
-
-    // Multi-touch pinch on any section
-    const onTouchStart = (event: TouchEvent) => {
-      if (event.touches.length > 1) event.preventDefault();
-    };
-    const onTouchMove = (event: TouchEvent) => {
-      if (event.touches.length > 1) event.preventDefault();
-    };
-    document.addEventListener("touchstart", onTouchStart, { passive: false });
-    document.addEventListener("touchmove", onTouchMove, { passive: false });
-
-    // Desktop trackpad / mouse zoom
-    const onWheel = (event: WheelEvent) => {
-      if (event.ctrlKey || event.metaKey) event.preventDefault();
-    };
-    window.addEventListener("wheel", onWheel, { passive: false });
-
-    // Keyboard zoom shortcuts
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (!(event.ctrlKey || event.metaKey)) return;
-      if (
-        event.key === "+" ||
-        event.key === "-" ||
-        event.key === "=" ||
-        event.key === "_" ||
-        event.key === "0" ||
-        event.code === "NumpadAdd" ||
-        event.code === "NumpadSubtract"
-      ) {
-        event.preventDefault();
+    const setViewport = (content: string, locked: boolean) => {
+      meta.setAttribute("content", content);
+      if (locked) {
+        document.documentElement.setAttribute("data-zoom-locked", "true");
+      } else {
+        document.documentElement.removeAttribute("data-zoom-locked");
       }
     };
-    window.addEventListener("keydown", onKeyDown, { passive: false });
 
-    const visualViewport = window.visualViewport;
-    let resetTimer: ReturnType<typeof setTimeout> | undefined;
+    const applyMobileLock = () => {
+      clearListeners();
+      setViewport(LOCKED_VIEWPORT, true);
 
-    const onViewportChange = () => {
-      if (!visualViewport) return;
-      if (Math.abs(visualViewport.scale - 1) <= 0.001) return;
+      const prevent = (event: Event) => {
+        event.preventDefault();
+      };
 
-      lockViewport();
-      // Some browsers need a second meta write to snap scale back
-      clearTimeout(resetTimer);
-      resetTimer = setTimeout(() => {
-        meta.setAttribute(
-          "content",
-          "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0",
-        );
-        requestAnimationFrame(lockViewport);
-        document.documentElement.style.width = "100%";
-        document.body.style.width = "100%";
-      }, 0);
+      document.addEventListener("gesturestart", prevent, { passive: false });
+      document.addEventListener("gesturechange", prevent, { passive: false });
+      document.addEventListener("gestureend", prevent, { passive: false });
+      listeners.push(() => {
+        document.removeEventListener("gesturestart", prevent);
+        document.removeEventListener("gesturechange", prevent);
+        document.removeEventListener("gestureend", prevent);
+      });
+
+      const onTouchStart = (event: TouchEvent) => {
+        if (event.touches.length > 1) event.preventDefault();
+      };
+      const onTouchMove = (event: TouchEvent) => {
+        if (event.touches.length > 1) event.preventDefault();
+      };
+      document.addEventListener("touchstart", onTouchStart, { passive: false });
+      document.addEventListener("touchmove", onTouchMove, { passive: false });
+      listeners.push(() => {
+        document.removeEventListener("touchstart", onTouchStart);
+        document.removeEventListener("touchmove", onTouchMove);
+      });
+
+      const visualViewport = window.visualViewport;
+      let resetTimer: ReturnType<typeof setTimeout> | undefined;
+
+      const onViewportChange = () => {
+        if (!visualViewport) return;
+        if (Math.abs(visualViewport.scale - 1) <= 0.001) return;
+
+        setViewport(LOCKED_VIEWPORT, true);
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          meta.setAttribute(
+            "content",
+            "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0",
+          );
+          requestAnimationFrame(() => setViewport(LOCKED_VIEWPORT, true));
+          document.documentElement.style.width = "100%";
+          document.body.style.width = "100%";
+        }, 0);
+      };
+
+      const onOrientationOrResize = () => setViewport(LOCKED_VIEWPORT, true);
+
+      visualViewport?.addEventListener("resize", onViewportChange);
+      visualViewport?.addEventListener("scroll", onViewportChange);
+      window.addEventListener("orientationchange", onOrientationOrResize);
+      window.addEventListener("resize", onOrientationOrResize);
+      listeners.push(() => {
+        clearTimeout(resetTimer);
+        visualViewport?.removeEventListener("resize", onViewportChange);
+        visualViewport?.removeEventListener("scroll", onViewportChange);
+        window.removeEventListener("orientationchange", onOrientationOrResize);
+        window.removeEventListener("resize", onOrientationOrResize);
+      });
     };
 
-    visualViewport?.addEventListener("resize", onViewportChange);
-    visualViewport?.addEventListener("scroll", onViewportChange);
-    window.addEventListener("orientationchange", lockViewport);
-    window.addEventListener("resize", lockViewport);
+    const applyDesktopOpen = () => {
+      clearListeners();
+      setViewport(OPEN_VIEWPORT, false);
+    };
+
+    const sync = () => {
+      if (media.matches) applyMobileLock();
+      else applyDesktopOpen();
+    };
+
+    sync();
+    media.addEventListener("change", sync);
 
     return () => {
-      clearTimeout(resetTimer);
-      document.removeEventListener("gesturestart", prevent);
-      document.removeEventListener("gesturechange", prevent);
-      document.removeEventListener("gestureend", prevent);
-      document.removeEventListener("touchstart", onTouchStart);
-      document.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("keydown", onKeyDown);
-      visualViewport?.removeEventListener("resize", onViewportChange);
-      visualViewport?.removeEventListener("scroll", onViewportChange);
-      window.removeEventListener("orientationchange", lockViewport);
-      window.removeEventListener("resize", lockViewport);
+      media.removeEventListener("change", sync);
+      clearListeners();
+      document.documentElement.removeAttribute("data-zoom-locked");
     };
   }, []);
 
