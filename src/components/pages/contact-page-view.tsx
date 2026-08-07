@@ -17,7 +17,7 @@ function cdn(path: string) {
 }
 
 const fieldClass =
-  "w-full border-0 border-b border-saukhya-border/80 bg-transparent px-0 py-3 text-sm text-saukhya-text outline-none transition placeholder:text-saukhya-muted/60 focus:border-saukhya-pink";
+  "w-full rounded-none border border-saukhya-maroon/20 bg-[#faf6f4] px-3.5 py-3 text-sm text-saukhya-text outline-none transition placeholder:text-saukhya-muted/80 focus:border-saukhya-pink focus:bg-white focus:ring-1 focus:ring-saukhya-pink/25";
 
 type HeroImage = { src: string; alt: string };
 
@@ -330,13 +330,13 @@ export function ContactPageView({
                     ).map((field) => (
                       <label
                         key={field.name}
-                        className={`relative block ${"full" in field && field.full ? "sm:col-span-2" : ""}`}
+                        className={`block ${"full" in field && field.full ? "sm:col-span-2" : ""}`}
                       >
                         <span
-                          className={`mb-1.5 block text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
+                          className={`mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
                             focused === field.name
                               ? "text-saukhya-pink"
-                              : "text-saukhya-muted"
+                              : "text-saukhya-maroon/70"
                           }`}
                         >
                           {field.label}
@@ -350,24 +350,15 @@ export function ContactPageView({
                           onFocus={() => setFocused(field.name)}
                           onBlur={() => setFocused(null)}
                         />
-                        <motion.span
-                          aria-hidden
-                          className="pointer-events-none absolute bottom-0 left-0 h-px bg-gradient-to-r from-saukhya-pink to-saukhya-gold"
-                          animate={{
-                            scaleX: focused === field.name ? 1 : 0,
-                          }}
-                          style={{ originX: 0, width: "100%" }}
-                          transition={{ duration: 0.35, ease }}
-                        />
                       </label>
                     ))}
 
-                    <label className="relative block sm:col-span-2">
+                    <label className="block sm:col-span-2">
                       <span
-                        className={`mb-1.5 block text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
+                        className={`mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
                           focused === "message"
                             ? "text-saukhya-pink"
-                            : "text-saukhya-muted"
+                            : "text-saukhya-maroon/70"
                         }`}
                       >
                         Message
@@ -377,16 +368,9 @@ export function ContactPageView({
                         required
                         rows={4}
                         placeholder="Tell us how we can help"
-                        className={`${fieldClass} resize-y`}
+                        className={`${fieldClass} min-h-[120px] resize-y`}
                         onFocus={() => setFocused("message")}
                         onBlur={() => setFocused(null)}
-                      />
-                      <motion.span
-                        aria-hidden
-                        className="pointer-events-none absolute bottom-0 left-0 h-px bg-gradient-to-r from-saukhya-pink to-saukhya-gold"
-                        animate={{ scaleX: focused === "message" ? 1 : 0 }}
-                        style={{ originX: 0, width: "100%" }}
-                        transition={{ duration: 0.35, ease }}
                       />
                     </label>
                   </div>
