@@ -71,3 +71,43 @@ export async function storefrontFetchSafe<T>(
     return fallback;
   }
 }
+
+/** Live-style JSON POST helper (`T` in shopsaukhya.com bundle). */
+export async function storefrontPost<T>(
+  path: string,
+  body: unknown,
+  fallback: T,
+): Promise<T> {
+  const url = `${getBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      cache: "no-store",
+    });
+
+    if (res.status === 204) return true as T;
+    if (!res.ok) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn("[storefront POST]", path, res.status);
+      }
+      try {
+        return (await res.json()) as T;
+      } catch {
+        return fallback;
+      }
+    }
+
+    return (await res.json()) as T;
+  } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[storefront POST]", path, error);
+    }
+    return fallback;
+  }
+}

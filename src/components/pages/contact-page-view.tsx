@@ -9,6 +9,12 @@ import { FOOTER_LINKS } from "@/constants/footer";
 import { Button } from "@/components/ui/button";
 import { AppLink } from "@/components/ui/app-link";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
+import {
+  normalizeContactPayload,
+  validateContactPayload,
+  type ContactFormErrors,
+  type ContactSubmitResult,
+} from "@/lib/contact-form";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -18,6 +24,9 @@ function cdn(path: string) {
 
 const fieldClass =
   "w-full rounded-none border border-saukhya-maroon/20 bg-[#faf6f4] px-3.5 py-3 text-sm text-saukhya-text outline-none transition placeholder:text-saukhya-muted/80 focus:border-saukhya-pink focus:bg-white focus:ring-1 focus:ring-saukhya-pink/25";
+
+const fieldErrorClass =
+  "w-full rounded-none border border-red-400/70 bg-[#fff6f6] px-3.5 py-3 text-sm text-saukhya-text outline-none transition placeholder:text-saukhya-muted/80 focus:border-saukhya-pink focus:bg-white focus:ring-1 focus:ring-saukhya-pink/25";
 
 type HeroImage = { src: string; alt: string };
 
@@ -33,6 +42,10 @@ export function ContactPageView({
   const content = CONTACT_PAGE;
   const reduceMotion = useReducedMotion();
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [statusTone, setStatusTone] = useState<"ok" | "error">("ok");
+  const [fieldErrors, setFieldErrors] = useState<ContactFormErrors>({});
   const [focused, setFocused] = useState<string | null>(null);
 
   const banner: HeroImage =
@@ -42,29 +55,73 @@ export function ContactPageView({
     3,
   );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const name = String(form.get("name") ?? "").trim();
-    const email = String(form.get("email") ?? "").trim();
-    const phone = String(form.get("phone") ?? "").trim();
-    const subject = String(form.get("subject") ?? "").trim();
-    const message = String(form.get("message") ?? "").trim();
+    const formEl = event.currentTarget;
+    const form = new FormData(formEl);
+    const payload = normalizeContactPayload({
+      name: String(form.get("name") ?? ""),
+      email: String(form.get("email") ?? ""),
+      phone: String(form.get("phone") ?? ""),
+      subject: String(form.get("subject") ?? ""),
+      message: String(form.get("message") ?? ""),
+    });
 
-    const body = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      `Phone: ${phone}`,
-      "",
-      message,
-    ].join("\n");
+    const localErrors = validateContactPayload(payload);
+    if (Object.keys(localErrors).length) {
+      setFieldErrors(localErrors);
+      setStatusTone("error");
+      setStatusMessage("Please check the highlighted fields.");
+      setSent(false);
+      return;
+    }
 
-    const mailto = `mailto:info@shopsaukhya.com?subject=${encodeURIComponent(
-      subject || "Saukhya enquiry",
-    )}&body=${encodeURIComponent(body)}`;
+    setFieldErrors({});
+    setSubmitting(true);
+    setStatusMessage(null);
+    setSent(false);
 
-    window.location.href = mailto;
-    setSent(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = (await res.json()) as ContactSubmitResult;
+
+      if (!res.ok || !data.success) {
+        setFieldErrors(data.errors ?? {});
+        setStatusTone("error");
+        setStatusMessage(
+          data.message ||
+            "We could not send your message right now. Please try again.",
+        );
+        return;
+      }
+
+      if (data.delivery === "mailto" && data.mailto) {
+        window.location.href = data.mailto;
+      } else {
+        formEl.reset();
+      }
+
+      setStatusTone("ok");
+      setStatusMessage(
+        data.message || "Thank you. Your message has been sent.",
+      );
+      setSent(true);
+    } catch {
+      setStatusTone("error");
+      setStatusMessage(
+        "We could not send your message right now. Please try again in a moment.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -336,7 +393,9 @@ export function ContactPageView({
                           className={`mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
                             focused === field.name
                               ? "text-saukhya-pink"
-                              : "text-saukhya-maroon/70"
+                              : fieldErrors[field.name]
+                                ? "text-red-600"
+                                : "text-saukhya-maroon/70"
                           }`}
                         >
                           {field.label}
@@ -346,10 +405,26 @@ export function ContactPageView({
                           type={"type" in field ? field.type : "text"}
                           required={"required" in field ? field.required : false}
                           placeholder={field.placeholder}
-                          className={fieldClass}
+                          aria-invalid={Boolean(fieldErrors[field.name])}
+                          className={
+                            fieldErrors[field.name] ? fieldErrorClass : fieldClass
+                          }
                           onFocus={() => setFocused(field.name)}
                           onBlur={() => setFocused(null)}
+                          onChange={() => {
+                            if (!fieldErrors[field.name]) return;
+                            setFieldErrors((prev) => {
+                              const next = { ...prev };
+                              delete next[field.name];
+                              return next;
+                            });
+                          }}
                         />
+                        {fieldErrors[field.name] ? (
+                          <p className="mt-1.5 text-xs text-red-600">
+                            {fieldErrors[field.name]}
+                          </p>
+                        ) : null}
                       </label>
                     ))}
 
@@ -358,7 +433,9 @@ export function ContactPageView({
                         className={`mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
                           focused === "message"
                             ? "text-saukhya-pink"
-                            : "text-saukhya-maroon/70"
+                            : fieldErrors.message
+                              ? "text-red-600"
+                              : "text-saukhya-maroon/70"
                         }`}
                       >
                         Message
@@ -368,26 +445,47 @@ export function ContactPageView({
                         required
                         rows={4}
                         placeholder="Tell us how we can help"
-                        className={`${fieldClass} min-h-[120px] resize-y`}
+                        aria-invalid={Boolean(fieldErrors.message)}
+                        className={`${fieldErrors.message ? fieldErrorClass : fieldClass} min-h-[120px] resize-y`}
                         onFocus={() => setFocused("message")}
                         onBlur={() => setFocused(null)}
+                        onChange={() => {
+                          if (!fieldErrors.message) return;
+                          setFieldErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.message;
+                            return next;
+                          });
+                        }}
                       />
+                      {fieldErrors.message ? (
+                        <p className="mt-1.5 text-xs text-red-600">
+                          {fieldErrors.message}
+                        </p>
+                      ) : null}
                     </label>
                   </div>
 
                   <div className="mt-9 flex flex-wrap items-center gap-5 border-t border-saukhya-border/50 pt-8">
-                    <Button type="submit" size="lg">
-                      Send Message
+                    <Button type="submit" size="lg" disabled={submitting}>
+                      {submitting ? "Sending…" : "Send Message"}
                     </Button>
                     <AnimatePresence>
-                      {sent && (
+                      {statusMessage && (
                         <motion.p
+                          key={statusMessage}
                           initial={{ opacity: 0, x: -8 }}
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0 }}
-                          className="text-sm text-saukhya-muted"
+                          className={`text-sm ${
+                            statusTone === "error"
+                              ? "text-red-600"
+                              : sent
+                                ? "text-saukhya-maroon"
+                                : "text-saukhya-muted"
+                          }`}
                         >
-                          Opening your email app…
+                          {statusMessage}
                         </motion.p>
                       )}
                     </AnimatePresence>
