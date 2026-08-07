@@ -347,15 +347,12 @@ export function ShopPageView({
       {/* Catalog */}
       <section className="section-padding floral-decoration">
         <div className="container-saukhya">
-          <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
-            <SectionHeading
-              align="left"
-              title={SHOP_PAGE.catalogTitle}
-              subtitle={`${filtered.length} of ${products.length} styles showing`}
-              className="mb-0"
-            />
+          <SectionHeading
+            title={SHOP_PAGE.catalogTitle}
+            subtitle={`${filtered.length} of ${products.length} styles showing`}
+          />
 
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="mb-8 flex flex-wrap items-center justify-center gap-3 md:justify-end">
               <button
                 type="button"
                 onClick={() => setFiltersOpen((v) => !v)}
@@ -387,7 +384,6 @@ export function ShopPageView({
                   ))}
                 </select>
               </label>
-            </div>
           </div>
 
           <AnimatePresence initial={false}>
