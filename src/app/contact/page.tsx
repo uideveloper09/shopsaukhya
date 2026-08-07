@@ -12,12 +12,25 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const { products } = await getHomepageData();
+  const { products, home } = await getHomepageData();
   const trending = getTrendingProducts(products, 3);
-  const collageImages = trending.map((product) => ({
+  const heroImages = trending.map((product) => ({
     src: getProductCardImage(product),
     alt: product.productName,
   }));
 
-  return <ContactPageView collageImages={collageImages} />;
+  const activeBanner = [...(home.banners ?? [])]
+    .filter((banner) => banner.isActive && banner.desktopImageUrl)
+    .sort((a, b) => a.position - b.position)[0];
+
+  const bannerImage = activeBanner
+    ? {
+        src: activeBanner.desktopImageUrl,
+        alt: activeBanner.altText || activeBanner.title || "Saukhya",
+      }
+    : CONTACT_PAGE.fashionStrip[1];
+
+  return (
+    <ContactPageView bannerImage={bannerImage} heroImages={heroImages} />
+  );
 }
