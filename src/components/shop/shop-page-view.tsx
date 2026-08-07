@@ -202,11 +202,11 @@ export function ShopPageView({
         )}
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-r from-[#1f1a1c]/82 via-[#5c2238]/55 to-[#1f1a1c]/20"
+          className="absolute inset-0 bg-gradient-to-r from-[#1f1a1c]/85 via-[#5c2238]/58 to-[#1f1a1c]/30"
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-saukhya-warm via-transparent to-[#1f1a1c]/25"
+          className="absolute inset-0 bg-gradient-to-t from-[#120e10]/70 via-[#120e10]/15 to-[#1f1a1c]/30"
         />
 
         <div className="container-saukhya relative z-10 flex min-h-[48vh] flex-col justify-end pb-8 pt-20 md:min-h-[52vh] md:pb-10 md:pt-24">
@@ -233,12 +233,12 @@ export function ShopPageView({
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.9, ease, delay: 0.4 }}
               />
-              <p className="mt-5 max-w-xl text-[15px] leading-[1.8] text-white/85 md:text-base">
+              <p className="mt-5 max-w-xl text-[15px] leading-[1.8] text-white/90 md:text-base">
                 {SHOP_PAGE.intro}
               </p>
 
               <div
-                className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-[11px] font-medium uppercase tracking-[0.2em] text-white/75"
+                className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-[11px] font-medium uppercase tracking-[0.2em] text-white/90"
                 aria-label="Shop summary"
               >
                 <span>
