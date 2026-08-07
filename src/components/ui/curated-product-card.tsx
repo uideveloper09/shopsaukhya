@@ -221,7 +221,7 @@ export function CuratedProductCard({
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: "100%", opacity: 0 }}
                 transition={luxurySpring}
-                className="absolute inset-x-0 bottom-0 z-40 overflow-hidden"
+                className="absolute inset-x-0 bottom-0 z-20 overflow-hidden"
               >
                 <motion.div
                   initial={{ scaleX: 0 }}

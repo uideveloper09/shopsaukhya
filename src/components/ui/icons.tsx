@@ -63,6 +63,25 @@ export function IconChevronRight({ className }: IconProps) {
   );
 }
 
+export function IconCheck({ className }: IconProps) {
+  return (
+    <svg
+      className={cn("h-3.5 w-3.5", className)}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      aria-hidden
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m4.5 12.75 6 6 9-13.5"
+      />
+    </svg>
+  );
+}
+
 /** Right-pointing arrow with a slight upward tilt — used on CTA buttons. */
 export function IconArrowTiltRight({ className }: IconProps) {
   return (

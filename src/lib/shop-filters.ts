@@ -64,11 +64,19 @@ export function filterAndSortProducts(
       return false;
     }
 
-    if (
-      filters.subcategoryCode > 0 &&
-      product.subCategoryCode !== filters.subcategoryCode
-    ) {
-      return false;
+    if (filters.subcategoryCode > 0) {
+      const selectedName = products
+        .find((p) => p.subCategoryCode === filters.subcategoryCode)
+        ?.subCategoryName?.trim()
+        .toLowerCase();
+
+      if (selectedName) {
+        if (product.subCategoryName?.trim().toLowerCase() !== selectedName) {
+          return false;
+        }
+      } else if (product.subCategoryCode !== filters.subcategoryCode) {
+        return false;
+      }
     }
 
     if (filters.discountOnly && !(product.discountPercent > 0)) {

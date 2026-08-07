@@ -46,8 +46,6 @@ export const viewport: Viewport = {
   interactiveWidget: "resizes-content",
 };
 
-const bootScript = `(function(){try{if(sessionStorage.getItem("saukhya:booted")==="1"){document.documentElement.dataset.saukhyaBooted="1";}else{document.documentElement.classList.add("saukhya-loading");}}catch(e){document.documentElement.classList.add("saukhya-loading");}})();`;
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -60,10 +58,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
-      </head>
-      <body className={`${outfit.variable} ${cormorant.variable} min-h-screen w-full overflow-x-hidden`}>
+      <body
+        className={`${outfit.variable} ${cormorant.variable} min-h-screen w-full overflow-x-clip`}
+      >
         <Providers>
           <SoftNavigation />
           <MobileViewportLock />

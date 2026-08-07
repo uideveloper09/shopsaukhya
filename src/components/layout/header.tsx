@@ -10,6 +10,7 @@ import { AppLink } from "@/components/ui/app-link";
 import {
   cn,
   getMenuHref,
+  getMenuItemHref,
   getProductCardImage,
   getProductHref,
 } from "@/lib/utils";
@@ -90,7 +91,11 @@ export function Header({ navigation, products = [] }: HeaderProps) {
     setMegaOpen(false);
   };
 
-  const shopMenu = navigation.headerMenus.find((m) => m.menuName === "Shop");
+  const shopMenu = navigation.headerMenus.find(
+    (m) => m.menuName.trim().toLowerCase() === "shop",
+  );
+  const isShopMenu = (name: string) =>
+    name.trim().toLowerCase() === "shop";
   const megaItems = useMemo(() => {
     const items = shopMenu
       ? navigation.megaMenus.filter((m) => m.parentMenuCode === shopMenu.menuCode)
@@ -132,7 +137,7 @@ export function Header({ navigation, products = [] }: HeaderProps) {
               aria-label="Main"
             >
               {navigation.headerMenus.map((item) =>
-                item.menuName === "Shop" ? (
+                isShopMenu(item.menuName) ? (
                   <AppLink
                     key={item.menuCode}
                     href="/shop"
@@ -142,22 +147,21 @@ export function Header({ navigation, products = [] }: HeaderProps) {
                     onMouseLeave={closeMega}
                     onFocus={openMega}
                     onBlur={closeMega}
+                    onClick={closeMegaNow}
                     className={cn(
-                      "relative inline-flex h-9 items-center border-0 bg-transparent p-0 text-sm font-medium leading-none transition-colors",
+                      "inline-flex h-9 items-center gap-1 border-0 bg-transparent p-0 text-sm font-medium leading-none transition-colors",
                       megaOpen
                         ? "text-saukhya-pink"
                         : "text-saukhya-text hover:text-saukhya-pink",
                     )}
                   >
                     {item.menuName}
-                    <span
-                      aria-hidden
+                    <IconChevronRight
                       className={cn(
-                        "pointer-events-none absolute left-1/2 top-[calc(100%+2px)] -translate-x-1/2 border-x-[5px] border-t-[6px] border-x-transparent transition-opacity",
-                        megaOpen
-                          ? "border-t-saukhya-pink opacity-100"
-                          : "border-t-transparent opacity-0",
+                        "h-3.5 w-3.5 shrink-0 transition-transform duration-300",
+                        megaOpen ? "-rotate-90" : "rotate-90",
                       )}
+                      aria-hidden
                     />
                   </AppLink>
                 ) : (
@@ -321,7 +325,7 @@ function MobileMenu({
     >
       <div className="max-h-[min(70vh,calc(100dvh-5.5rem))] overflow-y-auto overscroll-contain scroll-smooth [-webkit-overflow-scrolling:touch]">
         {navigation.headerMenus.map((item) => {
-          if (item.menuName === "Shop") {
+          if (item.menuName.trim().toLowerCase() === "shop") {
             return (
               <div
                 key={item.menuCode}
@@ -376,7 +380,7 @@ function MobileMenu({
                           ({ category, products: columnProducts }) => (
                             <div key={category.menuCode}>
                               <AppLink
-                                href={getMenuHref(category.menuUrl)}
+                                href={getMenuItemHref(category)}
                                 onClick={onClose}
                                 className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.16em] text-saukhya-pink"
                               >
@@ -398,7 +402,7 @@ function MobileMenu({
                                 ) : (
                                   <li>
                                     <AppLink
-                                      href={getMenuHref(category.menuUrl)}
+                                      href={getMenuItemHref(category)}
                                       onClick={onClose}
                                       className="block text-sm text-saukhya-muted"
                                     >
@@ -476,7 +480,7 @@ function MegaMenu({
               )}
             >
               <AppLink
-                href={getMenuHref(category.menuUrl)}
+                href={getMenuItemHref(category)}
                 onClick={onClose}
                 className="group mb-4 inline-flex flex-col"
               >
@@ -513,7 +517,7 @@ function MegaMenu({
                 ) : (
                   <li>
                     <AppLink
-                      href={getMenuHref(category.menuUrl)}
+                      href={getMenuItemHref(category)}
                       onClick={onClose}
                       className="text-[13px] font-medium text-saukhya-muted transition-colors hover:text-saukhya-pink"
                     >
@@ -524,7 +528,7 @@ function MegaMenu({
               </ul>
 
               <AppLink
-                href={getMenuHref(category.menuUrl)}
+                href={getMenuItemHref(category)}
                 onClick={onClose}
                 className="mt-auto inline-flex items-center gap-1 pt-4 text-[10px] font-medium uppercase tracking-[0.18em] text-saukhya-maroon/70 transition-colors hover:text-saukhya-pink"
               >

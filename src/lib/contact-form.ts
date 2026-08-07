@@ -1,7 +1,16 @@
+import {
+  DEFAULT_PHONE_COUNTRY,
+  formatInternationalPhone,
+  getPhoneCountry,
+  normalizeNationalNumber,
+  validateNationalPhone,
+} from "@/lib/phone-countries";
+
 export type ContactFormPayload = {
   name: string;
   email: string;
   phone?: string;
+  phoneCountry?: string;
   subject: string;
   message: string;
 };
@@ -19,15 +28,33 @@ export type ContactSubmitResult = {
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_RE = /^[6-9]\d{9}$/;
 
 export function normalizeContactPayload(
-  input: Partial<ContactFormPayload>,
+  input: Partial<ContactFormPayload> & { phoneNational?: string },
 ): ContactFormPayload {
+  const phoneCountry =
+    String(input.phoneCountry ?? DEFAULT_PHONE_COUNTRY.iso).trim() ||
+    DEFAULT_PHONE_COUNTRY.iso;
+  const country = getPhoneCountry(phoneCountry);
+
+  const nationalRaw = String(input.phoneNational ?? "").trim();
+  const fallbackPhone = String(input.phone ?? "").trim();
+
+  let national = "";
+  if (nationalRaw) {
+    national = normalizeNationalNumber(nationalRaw, country);
+  } else if (fallbackPhone) {
+    const digits = fallbackPhone.replace(/\D/g, "");
+    national = digits.startsWith(country.dial)
+      ? digits.slice(country.dial.length)
+      : normalizeNationalNumber(fallbackPhone, country);
+  }
+
   return {
     name: String(input.name ?? "").trim(),
     email: String(input.email ?? "").trim(),
-    phone: String(input.phone ?? "").trim(),
+    phone: national ? formatInternationalPhone(national, country) : "",
+    phoneCountry: country.iso,
     subject: String(input.subject ?? "").trim(),
     message: String(input.message ?? "").trim(),
   };
@@ -38,29 +65,34 @@ export function validateContactPayload(
 ): ContactFormErrors {
   const errors: ContactFormErrors = {};
 
-  if (payload.name.length < 2) {
-    errors.name = "Please enter your full name.";
+  if (payload.name.length < 4) {
+    errors.name = "Name must be at least 4 characters.";
+  } else if (payload.name.length > 55) {
+    errors.name = "Name must be 55 characters or less.";
   }
   if (!EMAIL_RE.test(payload.email)) {
     errors.email = "Enter a valid email.";
   }
+
   if (payload.phone) {
+    const country = getPhoneCountry(
+      payload.phoneCountry || DEFAULT_PHONE_COUNTRY.iso,
+    );
     const digits = payload.phone.replace(/\D/g, "");
-    const mobile =
-      digits.length === 12 && digits.startsWith("91")
-        ? digits.slice(2)
-        : digits.length === 11 && digits.startsWith("0")
-          ? digits.slice(1)
-          : digits;
-    if (!PHONE_RE.test(mobile)) {
-      errors.phone = "Enter a valid 10 digit mobile number.";
-    }
+    const national = digits.startsWith(country.dial)
+      ? digits.slice(country.dial.length)
+      : digits;
+    const phoneError = validateNationalPhone(national, country.iso);
+    if (phoneError) errors.phone = phoneError;
   }
+
   if (payload.subject.length < 3) {
     errors.subject = "Please add a short subject.";
   }
   if (payload.message.length < 10) {
     errors.message = "Message must be at least 10 characters.";
+  } else if (payload.message.length > 250) {
+    errors.message = "Message must be 250 characters or less.";
   }
 
   return errors;

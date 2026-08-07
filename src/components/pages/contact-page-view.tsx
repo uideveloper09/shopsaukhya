@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CDN_BASE } from "@/constants/brand";
@@ -17,6 +17,14 @@ import {
   type ContactFormErrors,
   type ContactSubmitResult,
 } from "@/lib/contact-form";
+import {
+  DEFAULT_PHONE_COUNTRY,
+  getPhoneCountry,
+  normalizeNationalNumber,
+  validateNationalPhone,
+} from "@/lib/phone-countries";
+import { cn } from "@/lib/utils";
+import { PhoneCountrySelect } from "@/components/ui/phone-country-select";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -70,6 +78,26 @@ export function ContactPageView({
   const [statusTone, setStatusTone] = useState<"ok" | "error">("ok");
   const [fieldErrors, setFieldErrors] = useState<ContactFormErrors>({});
   const [focused, setFocused] = useState<string | null>(null);
+  const [phoneCountryIso, setPhoneCountryIso] = useState(
+    DEFAULT_PHONE_COUNTRY.iso,
+  );
+  const [phoneNational, setPhoneNational] = useState("");
+  const [messageLength, setMessageLength] = useState(0);
+  const [phoneMenuOpen, setPhoneMenuOpen] = useState(false);
+  const phoneShellRef = useRef<HTMLDivElement>(null);
+  const phoneCountry = getPhoneCountry(phoneCountryIso);
+  const messageMax = 250;
+  const phoneFieldActive = focused === "phone" || phoneMenuOpen;
+
+  const setPhoneFocused = () => setFocused("phone");
+
+  const clearPhoneFocusedIfLeaving = (
+    relatedTarget: EventTarget | null,
+  ) => {
+    const next = relatedTarget as Node | null;
+    if (phoneShellRef.current?.contains(next)) return;
+    setFocused(null);
+  };
 
   const banner: HeroImage =
     bannerImage ?? heroImages[0] ?? content.fashionStrip[1];
@@ -85,7 +113,8 @@ export function ContactPageView({
     const payload = normalizeContactPayload({
       name: String(form.get("name") ?? ""),
       email: String(form.get("email") ?? ""),
-      phone: String(form.get("phone") ?? ""),
+      phoneCountry: phoneCountryIso,
+      phoneNational,
       subject: String(form.get("subject") ?? ""),
       message: String(form.get("message") ?? ""),
     });
@@ -130,6 +159,9 @@ export function ContactPageView({
         window.location.href = data.mailto;
       } else {
         formEl.reset();
+        setPhoneCountryIso(DEFAULT_PHONE_COUNTRY.iso);
+        setPhoneNational("");
+        setMessageLength(0);
       }
 
       setStatusTone("ok");
@@ -148,9 +180,9 @@ export function ContactPageView({
   };
 
   return (
-    <main className="w-full overflow-x-hidden bg-saukhya-warm">
+    <main className="w-full overflow-x-clip bg-saukhya-warm">
       {/* Full-bleed image banner with overlay design */}
-      <section className="relative min-h-[48vh] w-full overflow-hidden md:min-h-[52vh]">
+      <section className="relative min-h-[42vh] w-full overflow-hidden md:min-h-[52vh]">
         <motion.div
           className="absolute inset-0"
           initial={reduceMotion ? false : { scale: 1.1 }}
@@ -181,11 +213,11 @@ export function ContactPageView({
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-8 bottom-8 top-8 border border-white/10 md:inset-x-12 md:bottom-10 md:top-10"
+          className="pointer-events-none absolute inset-x-4 bottom-4 top-4 border border-white/10 sm:inset-x-8 sm:bottom-8 sm:top-8 md:inset-x-12 md:bottom-10 md:top-10"
         />
 
-        <div className="container-saukhya relative z-10 flex min-h-[48vh] flex-col justify-end pb-8 pt-20 md:min-h-[52vh] md:pb-10 md:pt-24">
-          <div className="grid items-end gap-10 lg:grid-cols-12 lg:gap-12">
+        <div className="container-saukhya relative z-10 flex min-h-[42vh] flex-col justify-end pb-7 pt-20 md:min-h-[52vh] md:pb-10 md:pt-24">
+          <div className="grid items-end gap-8 lg:grid-cols-12 lg:gap-12">
             <motion.div
               initial={reduceMotion ? false : { opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
@@ -194,12 +226,12 @@ export function ContactPageView({
             >
               <div className="flex items-center gap-3">
                 <span className="h-px w-8 bg-saukhya-gold" />
-                <p className="text-[11px] font-medium uppercase tracking-[0.38em] text-saukhya-gold">
+                <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-saukhya-gold md:text-[11px] md:tracking-[0.38em]">
                   Saukhya · {content.kicker}
                 </p>
               </div>
               <h1
-                className="mt-5 text-[2.2rem] font-medium leading-[1.12] tracking-tight text-white md:text-[3rem] lg:text-[3.35rem]"
+                className="mt-4 text-[1.85rem] font-medium leading-[1.15] tracking-tight text-white sm:text-[2.15rem] md:mt-5 md:text-[3rem] lg:text-[3.35rem] lg:leading-[1.12]"
                 style={{ fontFamily: "var(--font-serif)" }}
               >
                 {content.title}
@@ -223,7 +255,7 @@ export function ContactPageView({
               initial={reduceMotion ? false : { opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease, delay: 0.35 }}
-              className="lg:col-span-5 lg:justify-self-end"
+              className="hidden md:block lg:col-span-5 lg:justify-self-end"
             >
               <div className="border border-white/15 bg-white/[0.08] p-4 backdrop-blur-[6px] md:p-5">
                 <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-saukhya-gold">
@@ -310,7 +342,7 @@ export function ContactPageView({
       </section>
 
       {/* Form + help — premium editorial correspondence */}
-      <section className="relative overflow-hidden border-t border-saukhya-border/30 py-14 md:py-20">
+      <section className="relative overflow-x-clip border-t border-saukhya-border/30 py-10 md:py-20">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,#faf4f1_0%,#f6ebe7_48%,#f3e4df_100%)]"
@@ -330,10 +362,10 @@ export function ContactPageView({
             subtitle={content.form.copy}
           />
 
-          <div className="relative overflow-hidden border border-saukhya-border/50 bg-white/70 shadow-[0_24px_60px_rgba(92,34,56,0.06)] backdrop-blur-[2px]">
+          <div className="relative overflow-visible border border-saukhya-border/50 bg-white/70 shadow-[0_24px_60px_rgba(92,34,56,0.06)] backdrop-blur-[2px]">
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-3 border border-saukhya-gold/15 md:inset-4"
+              className="pointer-events-none absolute inset-2 border border-saukhya-gold/15 sm:inset-3 md:inset-4"
             />
 
             <div className="relative grid lg:grid-cols-12">
@@ -341,7 +373,7 @@ export function ContactPageView({
                 <form
                   onSubmit={handleSubmit}
                   noValidate
-                  className="relative px-6 py-8 md:px-10 md:py-11 lg:px-12 lg:py-12"
+                  className="relative overflow-visible px-4 py-7 sm:px-6 sm:py-8 md:px-10 md:py-11 lg:px-12 lg:py-12"
                 >
                   <div className="flex items-end justify-between gap-4">
                     <SectionHeading
@@ -356,7 +388,7 @@ export function ContactPageView({
                     </p>
                   </div>
 
-                  <div className="relative z-0 mt-9 grid gap-8 sm:grid-cols-2">
+                  <div className="relative z-0 mt-8 grid gap-7 md:mt-9 md:grid-cols-2 md:gap-8">
                     {(
                       [
                         {
@@ -373,20 +405,6 @@ export function ContactPageView({
                           type: "email",
                           required: true,
                         },
-                        {
-                          name: "phone",
-                          label: "Phone number",
-                          placeholder: "10 digit mobile number",
-                          type: "tel",
-                        },
-                        {
-                          name: "subject",
-                          label: "Subject",
-                          placeholder:
-                            "Order help, product question, collaboration...",
-                          full: true,
-                          required: true,
-                        },
                       ] as const
                     ).map((field) => {
                       const required =
@@ -396,7 +414,7 @@ export function ContactPageView({
                       return (
                         <div
                           key={field.name}
-                          className={`relative ${"full" in field && field.full ? "sm:col-span-2" : ""}`}
+                          className={`relative ${"full" in field && field.full ? "md:col-span-2" : ""}`}
                         >
                           <label className="mb-2 inline-flex items-start gap-1">
                             <span
@@ -428,6 +446,14 @@ export function ContactPageView({
                               type={"type" in field ? field.type : "text"}
                               required={required}
                               aria-required={required}
+                              minLength={
+                                field.name === "name"
+                                  ? 4
+                                  : undefined
+                              }
+                              maxLength={
+                                field.name === "name" ? 55 : undefined
+                              }
                               placeholder={field.placeholder}
                               aria-invalid={Boolean(error)}
                               className={error ? fieldErrorClass : fieldClass}
@@ -455,18 +481,179 @@ export function ContactPageView({
                       );
                     })}
 
-                    <div className="relative sm:col-span-2">
+                    <div className="relative">
+                      <label className="mb-2 inline-flex items-start gap-1">
+                        <span
+                          className={cn(
+                            "text-[10px] font-medium uppercase tracking-[0.2em] transition-colors",
+                            phoneFieldActive
+                              ? "text-saukhya-pink"
+                              : fieldErrors.phone
+                                ? "text-red-600"
+                                : "text-saukhya-maroon/70",
+                          )}
+                        >
+                          Phone number
+                        </span>
+                        <span className="sr-only">optional</span>
+                      </label>
+                      <div
+                        ref={phoneShellRef}
+                        className={cn(
+                          "relative flex min-w-0 items-stretch border bg-[#faf6f4] transition-[border-color,box-shadow] duration-200",
+                          fieldErrors.phone
+                            ? "border-red-400/70 bg-[#fff6f6] ring-1 ring-red-400/20"
+                            : phoneFieldActive
+                              ? "border-saukhya-pink ring-1 ring-saukhya-pink/25"
+                              : "border-saukhya-maroon/20",
+                        )}
+                        onFocusCapture={setPhoneFocused}
+                        onBlurCapture={(e) => {
+                          if (phoneMenuOpen) return;
+                          clearPhoneFocusedIfLeaving(e.relatedTarget);
+                        }}
+                      >
+                        <PhoneCountrySelect
+                          embedded
+                          value={phoneCountryIso}
+                          hasError={Boolean(fieldErrors.phone)}
+                          onFocus={setPhoneFocused}
+                          onOpenChange={(open) => {
+                            setPhoneMenuOpen(open);
+                            if (open) setPhoneFocused();
+                          }}
+                          onChange={(nextIso, nextCountry) => {
+                            setPhoneFocused();
+                            setPhoneCountryIso(nextIso);
+                            const nextNational = normalizeNationalNumber(
+                              phoneNational,
+                              nextCountry,
+                            );
+                            setPhoneNational(nextNational);
+
+                            // Re-validate against the selected country id
+                            if (!nextNational) {
+                              setFieldErrors((prev) => {
+                                if (!prev.phone) return prev;
+                                const next = { ...prev };
+                                delete next.phone;
+                                return next;
+                              });
+                              return;
+                            }
+
+                            const phoneError = validateNationalPhone(
+                              nextNational,
+                              nextIso,
+                            );
+                            setFieldErrors((prev) => {
+                              const next = { ...prev };
+                              if (phoneError) next.phone = phoneError;
+                              else delete next.phone;
+                              return next;
+                            });
+                          }}
+                        />
+                        <span
+                          aria-hidden
+                          className={cn(
+                            "my-2.5 w-px shrink-0 transition-colors duration-200",
+                            fieldErrors.phone
+                              ? "bg-red-300/70"
+                              : phoneFieldActive
+                                ? "bg-saukhya-pink/35"
+                                : "bg-saukhya-maroon/15",
+                          )}
+                        />
+                        <input
+                          name="phoneNational"
+                          type="tel"
+                          inputMode="numeric"
+                          autoComplete="tel-national"
+                          value={phoneNational}
+                          maxLength={phoneCountry.maxLength}
+                          placeholder={phoneCountry.placeholder}
+                          aria-invalid={Boolean(fieldErrors.phone)}
+                          className="min-w-0 flex-1 border-0 bg-transparent px-3.5 py-3 text-sm text-saukhya-text outline-none placeholder:text-saukhya-muted/80 focus:ring-0"
+                          onBlur={() => {
+                            if (!phoneNational) {
+                              setFieldErrors((prev) => {
+                                if (!prev.phone) return prev;
+                                const next = { ...prev };
+                                delete next.phone;
+                                return next;
+                              });
+                              return;
+                            }
+                            const phoneError = validateNationalPhone(
+                              phoneNational,
+                              phoneCountryIso,
+                            );
+                            setFieldErrors((prev) => {
+                              const next = { ...prev };
+                              if (phoneError) next.phone = phoneError;
+                              else delete next.phone;
+                              return next;
+                            });
+                          }}
+                          onChange={(e) => {
+                            const nextNational = normalizeNationalNumber(
+                              e.target.value,
+                              phoneCountry,
+                            );
+                            setPhoneNational(nextNational);
+
+                            if (!nextNational) {
+                              if (fieldErrors.phone) {
+                                setFieldErrors((prev) => {
+                                  const next = { ...prev };
+                                  delete next.phone;
+                                  return next;
+                                });
+                              }
+                              return;
+                            }
+
+                            const phoneError = validateNationalPhone(
+                              nextNational,
+                              phoneCountryIso,
+                            );
+                            if (
+                              nextNational.length >= phoneCountry.minLength ||
+                              fieldErrors.phone
+                            ) {
+                              setFieldErrors((prev) => {
+                                const next = { ...prev };
+                                if (phoneError) next.phone = phoneError;
+                                else delete next.phone;
+                                return next;
+                              });
+                            }
+                          }}
+                        />
+                        <AnimatePresence>
+                          {fieldErrors.phone ? (
+                            <FieldErrorTooltip
+                              key="phone-error"
+                              message={fieldErrors.phone}
+                            />
+                          ) : null}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+
+                    <div className="relative md:col-span-2">
                       <label className="mb-2 inline-flex items-start gap-1">
                         <span
                           className={`text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
-                            focused === "message"
+                            focused === "subject"
                               ? "text-saukhya-pink"
-                              : fieldErrors.message
+                              : fieldErrors.subject
                                 ? "text-red-600"
                                 : "text-saukhya-maroon/70"
                           }`}
                         >
-                          Message
+                          Subject
                         </span>
                         <span
                           aria-hidden
@@ -477,17 +664,108 @@ export function ContactPageView({
                         <span className="sr-only">required</span>
                       </label>
                       <div className="relative">
+                        <input
+                          name="subject"
+                          type="text"
+                          required
+                          aria-required
+                          minLength={3}
+                          placeholder="Order help, product question, collaboration..."
+                          aria-invalid={Boolean(fieldErrors.subject)}
+                          className={
+                            fieldErrors.subject ? fieldErrorClass : fieldClass
+                          }
+                          onFocus={() => setFocused("subject")}
+                          onBlur={() => setFocused(null)}
+                          onChange={() => {
+                            if (!fieldErrors.subject) return;
+                            setFieldErrors((prev) => {
+                              const next = { ...prev };
+                              delete next.subject;
+                              return next;
+                            });
+                          }}
+                        />
+                        <AnimatePresence>
+                          {fieldErrors.subject ? (
+                            <FieldErrorTooltip
+                              key="subject-error"
+                              message={fieldErrors.subject}
+                            />
+                          ) : null}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+
+                    <div className="relative md:col-span-2">
+                      <div className="mb-2 flex items-end justify-between gap-3">
+                        <label className="inline-flex items-start gap-1">
+                          <span
+                            className={`text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
+                              focused === "message"
+                                ? "text-saukhya-pink"
+                                : fieldErrors.message
+                                  ? "text-red-600"
+                                  : "text-saukhya-maroon/70"
+                            }`}
+                          >
+                            Message
+                          </span>
+                          <span
+                            aria-hidden
+                            className="-mt-0.5 text-[12px] font-semibold leading-none text-saukhya-pink"
+                          >
+                            *
+                          </span>
+                          <span className="sr-only">required</span>
+                        </label>
+                        <p
+                          className={cn(
+                            "shrink-0 text-[10px] font-medium uppercase tracking-[0.22em] tabular-nums transition-colors",
+                            fieldErrors.message
+                              ? "text-red-500"
+                              : messageLength >= messageMax
+                                ? "text-saukhya-pink"
+                                : focused === "message"
+                                  ? "text-saukhya-maroon/70"
+                                  : "text-saukhya-muted/65",
+                          )}
+                          aria-live="polite"
+                        >
+                          <span
+                            className={cn(
+                              messageLength > 0
+                                ? "text-saukhya-maroon"
+                                : "text-saukhya-muted/55",
+                            )}
+                            style={
+                              messageLength > 0
+                                ? { fontFamily: "var(--font-serif)" }
+                                : undefined
+                            }
+                          >
+                            {messageLength}
+                          </span>
+                          <span className="mx-1 text-saukhya-gold/70">/</span>
+                          <span>{messageMax}</span>
+                        </p>
+                      </div>
+                      <div className="relative">
                         <textarea
                           name="message"
                           required
                           aria-required
                           rows={4}
+                          minLength={10}
+                          maxLength={messageMax}
                           placeholder="Tell us how we can help"
                           aria-invalid={Boolean(fieldErrors.message)}
+                          aria-describedby="message-char-count"
                           className={`${fieldErrors.message ? fieldErrorClass : fieldClass} min-h-[120px] resize-y`}
                           onFocus={() => setFocused("message")}
                           onBlur={() => setFocused(null)}
-                          onChange={() => {
+                          onChange={(e) => {
+                            setMessageLength(e.target.value.length);
                             if (!fieldErrors.message) return;
                             setFieldErrors((prev) => {
                               const next = { ...prev };
@@ -496,11 +774,22 @@ export function ContactPageView({
                             });
                           }}
                         />
+                        <span id="message-char-count" className="sr-only">
+                          {messageLength} of {messageMax} characters
+                          {messageLength >= messageMax
+                            ? ". Maximum length reached."
+                            : ""}
+                        </span>
                         <AnimatePresence>
                           {fieldErrors.message ? (
                             <FieldErrorTooltip
                               key="message-error"
                               message={fieldErrors.message}
+                            />
+                          ) : messageLength >= messageMax ? (
+                            <FieldErrorTooltip
+                              key="message-limit"
+                              message="You've reached the 250 character limit."
                             />
                           ) : null}
                         </AnimatePresence>
@@ -508,8 +797,13 @@ export function ContactPageView({
                     </div>
                   </div>
 
-                  <div className="mt-9 flex flex-wrap items-center gap-5 border-t border-saukhya-border/50 pt-8">
-                    <Button type="submit" size="lg" disabled={submitting}>
+                  <div className="mt-8 flex flex-col gap-4 border-t border-saukhya-border/50 pt-7 sm:mt-9 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5 sm:pt-8">
+                    <Button
+                      type="submit"
+                      size="lg"
+                      disabled={submitting}
+                      className="w-full sm:w-auto"
+                    >
                       {submitting ? "Sending…" : "Send Message"}
                     </Button>
                     <AnimatePresence>
@@ -537,7 +831,7 @@ export function ContactPageView({
 
               <Reveal from="right" delay={0.1} className="lg:col-span-5">
                 <aside
-                  className="relative h-full overflow-hidden bg-[#5c2238] px-6 py-8 text-white md:px-9 md:py-11 lg:px-10 lg:py-12"
+                  className="relative h-full overflow-hidden bg-[#5c2238] px-4 py-7 text-white sm:px-6 sm:py-8 md:px-9 md:py-11 lg:px-10 lg:py-12"
                   aria-label="How Saukhya can help"
                 >
                   <div

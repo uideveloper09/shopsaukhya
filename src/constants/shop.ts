@@ -8,6 +8,7 @@ export const SHOP_PAGE = {
     "Curated fabrics, fresh textures, and relaxed occasion-ready sets from the current Saukhya edits.",
   catalogKicker: "Saukhya Catalog",
   catalogTitle: "Shop Saukhya styles",
+  pageSize: 6,
 } as const;
 
 export const SHOP_PRICE_RANGES = [

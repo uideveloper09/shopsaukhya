@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
@@ -8,7 +8,6 @@ import type { Category, Product, SubCategory } from "@/types/storefront";
 import {
   SHOP_PAGE,
   SHOP_PRICE_RANGES,
-  SHOP_SORT_OPTIONS,
   type ShopSortMode,
 } from "@/constants/shop";
 import {
@@ -23,6 +22,9 @@ import { cn, getProductCardImage } from "@/lib/utils";
 import { CuratedProductCard } from "@/components/ui/curated-product-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
+import { IconCheck, IconChevronLeft, IconChevronRight } from "@/components/ui/icons";
+import { ShopSortDropdown } from "@/components/shop/shop-sort-dropdown";
+import { ShopFilterSelect } from "@/components/shop/shop-filter-select";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -34,18 +36,19 @@ type ShopPageViewProps = {
 
 function FilterLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="mb-3 block text-[10px] font-medium uppercase tracking-[0.24em] text-saukhya-gold">
+    <span className="mb-2.5 block text-[10px] font-medium uppercase tracking-[0.24em] text-saukhya-gold">
       {children}
     </span>
   );
 }
 
-function underlineSelect(active?: boolean) {
+function filterField(active?: boolean) {
   return cn(
-    "w-full appearance-none bg-transparent py-2.5 pr-7 text-sm outline-none transition border-b",
+    "w-full appearance-none border bg-[#faf6f4] px-3.5 py-2.5 text-sm text-saukhya-text outline-none transition",
+    "focus:border-saukhya-pink focus:bg-white focus:ring-1 focus:ring-saukhya-pink/25",
     active
-      ? "border-saukhya-pink text-saukhya-maroon"
-      : "border-saukhya-border/70 text-saukhya-text focus:border-saukhya-pink/60",
+      ? "border-saukhya-pink/50 text-saukhya-maroon"
+      : "border-saukhya-maroon/20",
   );
 }
 
@@ -59,6 +62,7 @@ export function ShopPageView({
   const reduceMotion = useReducedMotion();
   const [, startTransition] = useTransition();
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [page, setPage] = useState(1);
 
   const initial: ShopFiltersState = {
     ...DEFAULT_SHOP_FILTERS,
@@ -69,6 +73,17 @@ export function ShopPageView({
   };
 
   const [filters, setFilters] = useState<ShopFiltersState>(initial);
+
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      categoryCode: Number(searchParams.get("category") || 0) || 0,
+      subcategoryCode: Number(searchParams.get("subcategory") || 0) || 0,
+      query: searchParams.get("q") || "",
+      sortMode: (searchParams.get("sort") as ShopSortMode) || "featured",
+    }));
+    setPage(1);
+  }, [searchParams]);
 
   const materials = useMemo(() => getProductMaterials(products), [products]);
   const sizes = useMemo(() => getProductSizes(products), [products]);
@@ -87,6 +102,47 @@ export function ShopPageView({
     () => filterAndSortProducts(products, filters),
     [products, filters],
   );
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / SHOP_PAGE.pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const pageStart = (currentPage - 1) * SHOP_PAGE.pageSize;
+  const pageEnd = Math.min(pageStart + SHOP_PAGE.pageSize, filtered.length);
+  const paged = useMemo(
+    () => filtered.slice(pageStart, pageEnd),
+    [filtered, pageStart, pageEnd],
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [filters]);
+
+  const goToPage = (next: number) => {
+    const clamped = Math.min(Math.max(1, next), totalPages);
+    setPage(clamped);
+    const catalog = document.getElementById("shop-catalog-grid");
+    if (catalog) {
+      const top =
+        catalog.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({
+        top,
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
+    }
+  };
+
+  const pageNumbers = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    const pages: (number | "…")[] = [1];
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+    if (start > 2) pages.push("…");
+    for (let i = start; i <= end; i += 1) pages.push(i);
+    if (end < totalPages - 1) pages.push("…");
+    pages.push(totalPages);
+    return pages;
+  }, [currentPage, totalPages]);
 
   const heroImage = useMemo(() => {
     const preferred =
@@ -108,13 +164,19 @@ export function ShopPageView({
         map.set(sub.subCategoryCode, sub.subCategoryName);
       }
     }
-    // Prefer names from products if sub list incomplete
     for (const product of products) {
       if (product.subCategoryCode && product.subCategoryName) {
         map.set(product.subCategoryCode, product.subCategoryName);
       }
     }
-    return Array.from(map.entries()).map(([code, name]) => ({ code, name }));
+    // Dedupe by name — API can return same style under multiple codes
+    const byName = new Map<string, { code: number; name: string }>();
+    for (const [code, name] of map.entries()) {
+      const key = name.trim().toLowerCase();
+      if (!key || byName.has(key)) continue;
+      byName.set(key, { code, name: name.trim() });
+    }
+    return Array.from(byName.values());
   }, [subcategories, products]);
 
   const activeFilters = useMemo(() => {
@@ -180,9 +242,9 @@ export function ShopPageView({
   }, [subcategories, filters.categoryCode]);
 
   return (
-    <main className="w-full overflow-x-hidden bg-saukhya-warm">
+    <main className="w-full overflow-x-clip bg-saukhya-warm">
       {/* Cinematic hero */}
-      <section className="relative min-h-[48vh] overflow-hidden md:min-h-[52vh]">
+      <section className="relative min-h-[42vh] overflow-hidden md:min-h-[52vh]">
         {heroImage && (
           <motion.div
             className="absolute inset-0"
@@ -209,7 +271,7 @@ export function ShopPageView({
           className="absolute inset-0 bg-gradient-to-t from-[#120e10]/70 via-[#120e10]/15 to-[#1f1a1c]/30"
         />
 
-        <div className="container-saukhya relative z-10 flex min-h-[48vh] flex-col justify-end pb-8 pt-20 md:min-h-[52vh] md:pb-10 md:pt-24">
+        <div className="container-saukhya relative z-10 flex min-h-[42vh] flex-col justify-end pb-7 pt-16 md:min-h-[52vh] md:pb-10 md:pt-24">
           <div className="grid items-end gap-8 lg:grid-cols-12 lg:gap-10">
             <motion.div
               className="lg:col-span-7"
@@ -217,11 +279,11 @@ export function ShopPageView({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease, delay: 0.1 }}
             >
-              <p className="text-[11px] font-medium uppercase tracking-[0.36em] text-saukhya-gold">
+              <p className="text-[10px] font-medium uppercase tracking-[0.32em] text-saukhya-gold md:text-[11px] md:tracking-[0.36em]">
                 {SHOP_PAGE.kicker}
               </p>
               <h1
-                className="mt-3 max-w-2xl text-[2rem] font-medium leading-[1.12] tracking-tight text-white md:text-[2.65rem] lg:text-[3rem]"
+                className="mt-3 max-w-2xl text-[1.75rem] font-medium leading-[1.15] tracking-tight text-white sm:text-[2rem] md:text-[2.65rem] lg:text-[3rem]"
                 style={{ fontFamily: "var(--font-serif)" }}
               >
                 {SHOP_PAGE.title}
@@ -293,97 +355,84 @@ export function ShopPageView({
         </div>
       </section>
 
-      {/* Style rail */}
-      <section className="border-b border-saukhya-border/60 bg-white/70">
-        <div className="container-saukhya py-5 md:py-6">
-          <LayoutGroup>
-            <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none md:flex-wrap md:justify-center md:gap-x-8 md:overflow-visible">
-              <button
-                type="button"
-                onClick={() => updateFilters({ subcategoryCode: 0 })}
-                className="relative shrink-0 px-3 py-2 text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-muted transition-colors hover:text-saukhya-maroon"
-              >
-                All styles
-                {!filters.subcategoryCode && (
-                  <motion.span
-                    layoutId="shop-style-underline"
-                    className="absolute inset-x-3 -bottom-0.5 h-px bg-saukhya-pink"
-                  />
-                )}
-              </button>
-              {uniqueStyles.map((style) => {
-                const active = filters.subcategoryCode === style.code;
-                return (
-                  <button
-                    key={style.code}
-                    type="button"
-                    onClick={() =>
-                      updateFilters({
-                        subcategoryCode: active ? 0 : style.code,
-                      })
-                    }
-                    className={cn(
-                      "relative shrink-0 px-3 py-2 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors",
-                      active
-                        ? "text-saukhya-maroon"
-                        : "text-saukhya-muted hover:text-saukhya-maroon",
-                    )}
-                  >
-                    {style.name}
-                    {active && (
-                      <motion.span
-                        layoutId="shop-style-underline"
-                        className="absolute inset-x-3 -bottom-0.5 h-px bg-saukhya-pink"
-                      />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </LayoutGroup>
-        </div>
-      </section>
-
       {/* Catalog */}
       <section className="section-padding floral-decoration">
         <div className="container-saukhya">
           <SectionHeading
             title={SHOP_PAGE.catalogTitle}
-            subtitle={`${filtered.length} of ${products.length} styles showing`}
+            subtitle="Soft fabrics and occasion-ready sets from the current edits."
           />
 
-          <div className="mb-8 flex flex-wrap items-center justify-center gap-3 md:justify-end">
-              <button
-                type="button"
-                onClick={() => setFiltersOpen((v) => !v)}
-                className="inline-flex items-center gap-2 border border-saukhya-maroon/20 bg-white/80 px-4 py-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-saukhya-maroon transition-colors hover:border-saukhya-pink/40 hover:text-saukhya-pink lg:hidden"
-                aria-expanded={filtersOpen}
-                aria-controls="shop-filter-panel"
-              >
-                {filtersOpen ? "Close filters" : "Refine"}
-              </button>
-
-              <label className="flex items-center gap-3 border border-saukhya-border/70 bg-white/80 px-4 py-2">
-                <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-saukhya-muted">
-                  Sort
-                </span>
-                <select
-                  id="shop-sort"
-                  value={filters.sortMode}
-                  onChange={(e) =>
-                    updateFilters({
-                      sortMode: e.target.value as ShopSortMode,
-                    })
-                  }
-                  className="bg-transparent text-sm text-saukhya-text outline-none"
+          <div className="mb-5 border-b border-saukhya-border/50 md:sticky md:top-[72px] md:z-40 md:-mx-6 md:mb-10 md:bg-saukhya-warm/95 md:px-6 md:backdrop-blur-md md:supports-[backdrop-filter]:bg-saukhya-warm/90 lg:-mx-8 lg:px-8">
+            <LayoutGroup>
+              <div className="flex gap-1 overflow-x-auto py-2.5 scrollbar-none md:flex-wrap md:justify-center md:gap-x-8 md:overflow-visible md:py-3.5">
+                <button
+                  type="button"
+                  onClick={() => updateFilters({ subcategoryCode: 0 })}
+                  className="relative min-h-10 shrink-0 px-3 py-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-saukhya-muted transition-colors hover:text-saukhya-maroon md:tracking-[0.2em]"
                 >
-                  {SHOP_SORT_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  All styles
+                  {!filters.subcategoryCode && (
+                    <motion.span
+                      layoutId="shop-style-underline"
+                      className="absolute inset-x-3 -bottom-0.5 h-px bg-saukhya-pink"
+                    />
+                  )}
+                </button>
+                {uniqueStyles.map((style) => {
+                  const selectedName = products
+                    .find((p) => p.subCategoryCode === filters.subcategoryCode)
+                    ?.subCategoryName?.trim()
+                    .toLowerCase();
+                  const active =
+                    filters.subcategoryCode === style.code ||
+                    (!!selectedName &&
+                      selectedName === style.name.trim().toLowerCase());
+                  return (
+                    <button
+                      key={style.name}
+                      type="button"
+                      onClick={() =>
+                        updateFilters({
+                          subcategoryCode: active ? 0 : style.code,
+                        })
+                      }
+                      className={cn(
+                        "relative min-h-10 shrink-0 px-3 py-2.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors md:tracking-[0.2em]",
+                        active
+                          ? "text-saukhya-maroon"
+                          : "text-saukhya-muted hover:text-saukhya-maroon",
+                      )}
+                    >
+                      {style.name}
+                      {active && (
+                        <motion.span
+                          layoutId="shop-style-underline"
+                          className="absolute inset-x-3 -bottom-0.5 h-px bg-saukhya-pink"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </LayoutGroup>
+          </div>
+
+          <div className="mb-5 flex justify-end lg:hidden">
+            <button
+              type="button"
+              onClick={() => setFiltersOpen((v) => !v)}
+              className="inline-flex min-h-11 items-center gap-2 border border-saukhya-maroon/20 bg-white px-4 py-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-saukhya-maroon transition-colors hover:border-saukhya-pink/40 hover:text-saukhya-pink"
+              aria-expanded={filtersOpen}
+              aria-controls="shop-filter-panel"
+            >
+              {filtersOpen ? "Hide filters" : "Filters"}
+              {activeFilters.length > 0 ? (
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-saukhya-pink px-1.5 text-[10px] text-white">
+                  {activeFilters.length}
+                </span>
+              ) : null}
+            </button>
           </div>
 
           <AnimatePresence initial={false}>
@@ -392,7 +441,7 @@ export function ShopPageView({
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-8 overflow-hidden"
+                className="mb-6 overflow-hidden"
               >
                 <div
                   className="flex flex-wrap items-center gap-2"
@@ -403,7 +452,7 @@ export function ShopPageView({
                       key={`${chip.key}-${chip.label}`}
                       type="button"
                       onClick={() => clearChip(chip.key)}
-                      className="inline-flex items-center gap-2 border border-saukhya-border/80 bg-white px-3 py-1.5 text-xs tracking-wide text-saukhya-text transition-colors hover:border-saukhya-pink/40 hover:text-saukhya-pink"
+                      className="inline-flex min-h-9 items-center gap-2 border border-saukhya-border/80 bg-white px-3 py-2 text-xs tracking-wide text-saukhya-text transition-colors hover:border-saukhya-pink/40 hover:text-saukhya-pink"
                     >
                       {chip.label}
                       <span aria-hidden className="text-saukhya-muted">
@@ -423,30 +472,47 @@ export function ShopPageView({
             )}
           </AnimatePresence>
 
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[300px_minmax(0,1fr)]">
             <aside
               id="shop-filter-panel"
-              className={cn(
-                "lg:col-span-3",
-                filtersOpen ? "block" : "hidden lg:block",
-              )}
+              className="relative z-0 w-full isolate lg:sticky lg:top-[8.5rem] lg:self-start"
             >
-              <Reveal
-                from="left"
-                className="space-y-8 border border-saukhya-border/60 bg-white/85 p-5 shadow-saukhya-soft md:p-6 lg:sticky lg:top-28"
-              >
-                <div>
-                  <p
-                    className="text-lg font-medium text-saukhya-maroon"
-                    style={{ fontFamily: "var(--font-serif)" }}
-                  >
-                    Refine
-                  </p>
-                  <p className="mt-1 text-xs text-saukhya-muted">
-                    Soft filters for a calmer find
-                  </p>
-                </div>
+              <div className="relative flex flex-col border border-saukhya-border/60 bg-white shadow-saukhya-soft">
+                <ShopSortDropdown
+                  value={filters.sortMode}
+                  onChange={(sortMode) => updateFilters({ sortMode })}
+                />
 
+                <div
+                  className={cn(
+                    "flex min-h-0 flex-col overflow-hidden lg:max-h-[calc(100vh-10.5rem)]",
+                    filtersOpen ? "flex" : "hidden lg:flex",
+                  )}
+                >
+                  <div className="flex shrink-0 items-start justify-between gap-3 border-b border-saukhya-border/50 bg-white px-5 py-4 md:px-6">
+                    <div>
+                      <p
+                        className="text-lg font-medium text-saukhya-maroon"
+                        style={{ fontFamily: "var(--font-serif)" }}
+                      >
+                        Filters
+                      </p>
+                      <p className="mt-0.5 text-xs text-saukhya-muted">
+                        Refine while you browse
+                      </p>
+                    </div>
+                    {activeFilters.length > 0 ? (
+                      <button
+                        type="button"
+                        onClick={clearFilters}
+                        className="pt-1 text-[10px] font-medium uppercase tracking-[0.16em] text-saukhya-pink transition-colors hover:text-saukhya-maroon"
+                      >
+                        Clear
+                      </button>
+                    ) : null}
+                  </div>
+
+                  <div className="space-y-5 overflow-y-auto overscroll-contain bg-[#fffdfc] px-5 py-5 scrollbar-none md:px-6 md:py-6">
                 <label className="block">
                   <FilterLabel>Search</FilterLabel>
                   <input
@@ -455,53 +521,53 @@ export function ShopPageView({
                     onChange={(e) => updateFilters({ query: e.target.value })}
                     placeholder="Style, fabric, code"
                     aria-label="Search styles"
-                    className="w-full border-b border-saukhya-border/70 bg-transparent py-2.5 text-sm outline-none transition placeholder:text-saukhya-muted/55 focus:border-saukhya-pink"
+                    className={cn(
+                      filterField(!!filters.query.trim()),
+                      "placeholder:text-saukhya-muted/70",
+                    )}
                   />
                 </label>
 
-                <label className="block">
-                  <FilterLabel>Collection</FilterLabel>
-                  <select
-                    value={filters.categoryCode || ""}
-                    onChange={(e) =>
-                      updateFilters({
-                        categoryCode: Number(e.target.value) || 0,
-                        subcategoryCode: 0,
-                      })
-                    }
-                    className={underlineSelect(!!filters.categoryCode)}
-                  >
-                    <option value="">All collections</option>
-                    {categories.map((cat) => (
-                      <option key={cat.categoryCode} value={cat.categoryCode}>
-                        {cat.categoryName}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <ShopFilterSelect
+                  label="Collection"
+                  value={filters.categoryCode ? String(filters.categoryCode) : ""}
+                  placeholder="All collections"
+                  options={[
+                    { value: "", label: "All collections" },
+                    ...categories.map((cat) => ({
+                      value: String(cat.categoryCode),
+                      label: cat.categoryName,
+                    })),
+                  ]}
+                  onChange={(next) =>
+                    updateFilters({
+                      categoryCode: Number(next) || 0,
+                      subcategoryCode: 0,
+                    })
+                  }
+                />
 
-                <label className="block">
-                  <FilterLabel>Style</FilterLabel>
-                  <select
-                    value={filters.subcategoryCode || ""}
-                    onChange={(e) =>
-                      updateFilters({
-                        subcategoryCode: Number(e.target.value) || 0,
-                      })
-                    }
-                    className={underlineSelect(!!filters.subcategoryCode)}
-                  >
-                    <option value="">All styles</option>
-                    {activeSubs.map((sub) => (
-                      <option
-                        key={sub.subCategoryCode}
-                        value={sub.subCategoryCode}
-                      >
-                        {sub.subCategoryName}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <ShopFilterSelect
+                  label="Style"
+                  value={
+                    filters.subcategoryCode
+                      ? String(filters.subcategoryCode)
+                      : ""
+                  }
+                  placeholder="All styles"
+                  options={[
+                    { value: "", label: "All styles" },
+                    ...activeSubs.map((sub) => ({
+                      value: String(sub.subCategoryCode),
+                      label: sub.subCategoryName,
+                    })),
+                  ]}
+                  onChange={(next) =>
+                    updateFilters({
+                      subcategoryCode: Number(next) || 0,
+                    })
+                  }
+                />
 
                 {sizes.length > 0 && (
                   <div>
@@ -520,7 +586,7 @@ export function ShopPageView({
                               "min-w-10 border px-3 py-2 text-xs tracking-wide transition-colors",
                               active
                                 ? "border-saukhya-maroon bg-saukhya-maroon text-white"
-                                : "border-saukhya-border/80 text-saukhya-text hover:border-saukhya-pink/40",
+                                : "border-saukhya-maroon/20 bg-[#faf6f4] text-saukhya-text hover:border-saukhya-pink/40 hover:bg-white",
                             )}
                           >
                             {size}
@@ -532,29 +598,25 @@ export function ShopPageView({
                 )}
 
                 {materials.length > 0 && (
-                  <label className="block">
-                    <FilterLabel>Material</FilterLabel>
-                    <select
-                      value={filters.material}
-                      onChange={(e) =>
-                        updateFilters({ material: e.target.value })
-                      }
-                      className={underlineSelect(!!filters.material)}
-                    >
-                      <option value="">All materials</option>
-                      {materials.map((material) => (
-                        <option key={material} value={material}>
-                          {material}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <ShopFilterSelect
+                    label="Material"
+                    value={filters.material}
+                    placeholder="All materials"
+                    options={[
+                      { value: "", label: "All materials" },
+                      ...materials.map((material) => ({
+                        value: material,
+                        label: material,
+                      })),
+                    ]}
+                    onChange={(next) => updateFilters({ material: next })}
+                  />
                 )}
 
                 <div>
                   <FilterLabel>Price</FilterLabel>
-                  <div className="space-y-2">
-                    {SHOP_PRICE_RANGES.map((range) => {
+                  <div className="overflow-hidden border border-saukhya-maroon/20 bg-[#faf6f4]">
+                    {SHOP_PRICE_RANGES.map((range, index) => {
                       const active = filters.price === range.key;
                       return (
                         <button
@@ -562,15 +624,16 @@ export function ShopPageView({
                           type="button"
                           onClick={() => updateFilters({ price: range.key })}
                           className={cn(
-                            "flex w-full items-center justify-between border-b py-2.5 text-left text-sm transition-colors",
+                            "flex w-full items-center justify-between px-3.5 py-2.5 text-left text-sm transition-colors",
+                            index > 0 && "border-t border-saukhya-maroon/10",
                             active
-                              ? "border-saukhya-pink text-saukhya-maroon"
-                              : "border-saukhya-border/50 text-saukhya-muted hover:text-saukhya-text",
+                              ? "bg-white text-saukhya-maroon"
+                              : "text-saukhya-muted hover:bg-white/70 hover:text-saukhya-text",
                           )}
                         >
                           <span>{range.label}</span>
                           {active && (
-                            <span className="h-1.5 w-1.5 rotate-45 bg-saukhya-pink" />
+                            <span className="h-1.5 w-1.5 rotate-45 bg-saukhya-gold" />
                           )}
                         </button>
                       );
@@ -580,49 +643,147 @@ export function ShopPageView({
 
                 <button
                   type="button"
+                  role="checkbox"
+                  aria-checked={filters.discountOnly}
                   onClick={() =>
                     updateFilters({ discountOnly: !filters.discountOnly })
                   }
                   className={cn(
-                    "flex w-full items-center justify-between border px-4 py-3 text-left transition-colors",
+                    "flex w-full items-center justify-between border px-3.5 py-3 text-left transition-colors",
                     filters.discountOnly
-                      ? "border-saukhya-pink/40 bg-saukhya-pink/[0.04] text-saukhya-maroon"
-                      : "border-saukhya-border/70 text-saukhya-text hover:border-saukhya-pink/30",
+                      ? "border-saukhya-pink/50 bg-saukhya-pink/[0.06] text-saukhya-maroon"
+                      : "border-saukhya-maroon/20 bg-[#faf6f4] text-saukhya-text hover:border-saukhya-pink/40 hover:bg-white",
                   )}
                 >
                   <span className="text-sm">Early Bird Savings</span>
                   <span
                     className={cn(
-                      "h-4 w-4 border transition-colors",
+                      "flex h-[18px] w-[18px] shrink-0 items-center justify-center border transition-colors",
                       filters.discountOnly
-                        ? "border-saukhya-pink bg-saukhya-pink"
-                        : "border-saukhya-border",
+                        ? "border-saukhya-maroon bg-saukhya-maroon text-white"
+                        : "border-saukhya-maroon/35 bg-white text-transparent",
                     )}
-                  />
+                  >
+                    <IconCheck
+                      className={cn(
+                        "h-3 w-3 transition-opacity",
+                        filters.discountOnly ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                  </span>
                 </button>
-              </Reveal>
+                  </div>
+                </div>
+              </div>
             </aside>
 
-            <div className="lg:col-span-9">
+            <div className="relative z-0 min-w-0 isolate">
               {filtered.length > 0 ? (
-                <RevealStagger
-                  className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-5"
-                  stagger={0.05}
-                >
-                  {filtered.map((product, index) => (
-                    <RevealItem
-                      key={product.productCode}
-                      index={index}
-                      className="h-full"
+                <>
+                  <div id="shop-catalog-grid">
+                    <RevealStagger
+                      className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 md:gap-5"
+                      stagger={0.05}
+                      key={currentPage}
                     >
-                      <CuratedProductCard
-                        product={product}
-                        priority={index < 6}
-                        showMetaBelow
-                      />
-                    </RevealItem>
-                  ))}
-                </RevealStagger>
+                      {paged.map((product, index) => (
+                        <RevealItem
+                          key={product.productCode}
+                          index={index}
+                          className="h-full"
+                        >
+                          <CuratedProductCard
+                            product={product}
+                            priority={index < 6}
+                            showMetaBelow
+                          />
+                        </RevealItem>
+                      ))}
+                    </RevealStagger>
+                  </div>
+
+                  {totalPages > 1 ? (
+                    <nav
+                      className="mt-6 flex items-center justify-between gap-2 border-t border-saukhya-border/40 pt-5 sm:gap-4 md:mt-8 md:pt-6"
+                      aria-label="Catalog pages"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => goToPage(currentPage - 1)}
+                        disabled={currentPage <= 1}
+                        className="group inline-flex min-h-10 items-center gap-2 px-1 text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-muted transition-colors hover:text-saukhya-maroon disabled:pointer-events-none disabled:opacity-25"
+                        aria-label="Previous page"
+                      >
+                        <IconChevronLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5" />
+                        <span className="hidden sm:inline">Previous</span>
+                      </button>
+
+                      <div className="flex flex-col items-center gap-2 sm:gap-3">
+                        <div className="flex items-center gap-0.5">
+                          {pageNumbers.map((item, index) =>
+                            item === "…" ? (
+                              <span
+                                key={`ellipsis-${index}`}
+                                className="w-7 text-center text-[11px] text-saukhya-gold/60"
+                                aria-hidden
+                              >
+                                ···
+                              </span>
+                            ) : (
+                              <button
+                                key={item}
+                                type="button"
+                                onClick={() => goToPage(item)}
+                                aria-current={
+                                  item === currentPage ? "page" : undefined
+                                }
+                                aria-label={`Page ${item}`}
+                                className={cn(
+                                  "relative flex h-10 w-10 items-center justify-center text-[12px] transition-all duration-300",
+                                  item === currentPage
+                                    ? "text-saukhya-maroon"
+                                    : "text-saukhya-muted/80 hover:text-saukhya-pink",
+                                )}
+                                style={
+                                  item === currentPage
+                                    ? { fontFamily: "var(--font-serif)" }
+                                    : undefined
+                                }
+                              >
+                                {item}
+                                {item === currentPage ? (
+                                  <motion.span
+                                    layoutId="shop-page-indicator"
+                                    className="absolute inset-x-1.5 -bottom-px h-px bg-saukhya-gold"
+                                    transition={{
+                                      type: "spring",
+                                      stiffness: 380,
+                                      damping: 32,
+                                    }}
+                                  />
+                                ) : null}
+                              </button>
+                            ),
+                          )}
+                        </div>
+                        <p className="text-[10px] tracking-[0.18em] text-saukhya-muted/70">
+                          {pageStart + 1}–{pageEnd} / {filtered.length}
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => goToPage(currentPage + 1)}
+                        disabled={currentPage >= totalPages}
+                        className="group inline-flex min-h-10 items-center gap-2 px-1 text-[10px] font-medium uppercase tracking-[0.22em] text-saukhya-muted transition-colors hover:text-saukhya-maroon disabled:pointer-events-none disabled:opacity-25"
+                        aria-label="Next page"
+                      >
+                        <span className="hidden sm:inline">Next</span>
+                        <IconChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                      </button>
+                    </nav>
+                  ) : null}
+                </>
               ) : (
                 <Reveal
                   from="bottom"

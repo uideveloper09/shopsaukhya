@@ -23,9 +23,9 @@ export function AboutPageView() {
   const secondaryImage = content.signature.images[1];
 
   return (
-    <main className="w-full overflow-x-hidden bg-saukhya-warm">
+    <main className="w-full overflow-x-clip bg-saukhya-warm">
       {/* Hero — one composition, brand-forward */}
-      <section className="relative min-h-[88vh] w-full overflow-hidden md:min-h-[92vh]">
+      <section className="relative min-h-[70vh] w-full overflow-hidden md:min-h-[88vh] lg:min-h-[92vh]">
         <motion.div
           className="absolute inset-0"
           initial={reduceMotion ? false : { scale: 1.08 }}
@@ -51,18 +51,18 @@ export function AboutPageView() {
           className="absolute inset-0 bg-gradient-to-t from-[#1f1a1c]/70 via-transparent to-[#1f1a1c]/20"
         />
 
-        <div className="container-saukhya relative z-10 flex min-h-[88vh] flex-col justify-end pb-14 pt-28 md:min-h-[92vh] md:pb-20 md:pt-32">
+        <div className="container-saukhya relative z-10 flex min-h-[70vh] flex-col justify-end pb-10 pt-24 md:min-h-[88vh] md:pb-20 md:pt-32 lg:min-h-[92vh]">
           <motion.div
             initial={reduceMotion ? false : { opacity: 0, y: 36 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease, delay: 0.15 }}
             className="max-w-2xl"
           >
-            <p className="text-[11px] font-medium uppercase tracking-[0.36em] text-saukhya-gold">
+            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-saukhya-gold md:text-[11px] md:tracking-[0.36em]">
               {content.kicker}
             </p>
             <h1
-              className="mt-5 text-[2.35rem] font-medium leading-[1.12] tracking-tight text-white md:text-5xl lg:text-[3.4rem]"
+              className="mt-4 text-[1.85rem] font-medium leading-[1.15] tracking-tight text-white sm:text-[2.15rem] md:mt-5 md:text-5xl lg:text-[3.4rem] lg:leading-[1.12]"
               style={{ fontFamily: "var(--font-serif)" }}
             >
               {content.title}
@@ -77,13 +77,13 @@ export function AboutPageView() {
             <p className="mt-6 max-w-xl text-base leading-[1.85] text-white/85 md:text-[17px]">
               {content.intro}
             </p>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <ButtonLink href="/shop" size="lg">
+            <div className="mt-8 flex w-full flex-col gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+              <ButtonLink href="/shop" size="lg" className="w-full sm:w-auto">
                 Shop The Collection
               </ButtonLink>
               <AppLink
                 href="/contact"
-                className="group inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-white/90 transition-colors hover:text-saukhya-gold"
+                className="group inline-flex min-h-11 items-center justify-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-white/90 transition-colors hover:text-saukhya-gold sm:justify-start"
               >
                 Talk to us
                 <IconArrowTiltRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-px" />
@@ -95,7 +95,7 @@ export function AboutPageView() {
             initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9, duration: 0.8 }}
-            className="mt-12 text-[10px] uppercase tracking-[0.32em] text-white/55 md:mt-16"
+            className="mt-8 text-[10px] uppercase tracking-[0.32em] text-white/55 md:mt-16"
           >
             Embrace Tranquility
           </motion.p>
@@ -103,7 +103,7 @@ export function AboutPageView() {
       </section>
 
       {/* Values — editorial strip, not card grid */}
-      <section className="relative overflow-hidden bg-white py-16 md:py-24">
+      <section className="relative overflow-hidden bg-white section-padding">
         <div
           aria-hidden
           className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-saukhya-pink/[0.04] blur-3xl"
@@ -150,77 +150,123 @@ export function AboutPageView() {
         </div>
       </section>
 
-      {/* Point of view + imagery */}
-      <section className="relative overflow-hidden section-padding floral-decoration">
+      {/* Point of view — same composition as home About */}
+      <section
+        className="section-padding overflow-hidden bg-saukhya-warm-alt"
+        aria-labelledby="point-of-view-heading"
+      >
         <div className="container-saukhya">
-          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
-            <Reveal from="left" className="relative lg:col-span-5">
-              <div className="relative mx-auto max-w-md lg:max-w-none">
-                <motion.div
+          <SectionHeading
+            id="point-of-view-heading"
+            title={content.pointOfView.kicker}
+            subtitle="Luxury Indian fashion rooted in tranquility, craftsmanship, and ease"
+          />
+
+          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-16 xl:gap-20">
+            <Reveal from="left" distance={44} className="relative lg:col-span-5">
+              <div className="relative mx-auto max-w-md px-1 lg:max-w-none lg:px-0">
+                <div
                   aria-hidden
-                  className="absolute -bottom-6 -left-6 h-full w-full border border-saukhya-gold/40"
-                  initial={reduceMotion ? false : { opacity: 0, x: -12, y: 12 }}
-                  whileInView={{ opacity: 1, x: 0, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, ease, delay: 0.2 }}
+                  className="absolute -bottom-3 -left-3 h-full w-full rounded-tl-[2rem] rounded-br-[2rem] border border-saukhya-gold/35 bg-saukhya-gold/5 sm:-bottom-5 sm:-left-5"
                 />
-                <div className="relative aspect-[4/5] overflow-hidden">
-                  <motion.div
-                    className="absolute inset-0"
-                    whileHover={
-                      reduceMotion ? undefined : { scale: 1.04 }
-                    }
-                    transition={{ duration: 0.8, ease }}
-                  >
-                    <Image
-                      src={cdn(secondaryImage.src)}
-                      alt={secondaryImage.alt}
-                      fill
-                      sizes="(max-width: 1024px) 90vw, 40vw"
-                      className="object-cover"
-                    />
-                  </motion.div>
+                <div className="relative aspect-[4/5] overflow-hidden rounded-tl-[2rem] rounded-br-[2rem] rounded-tr-md rounded-bl-md shadow-[0_24px_64px_rgba(92,34,56,0.12)]">
+                  <Image
+                    src={cdn(secondaryImage.src)}
+                    alt={secondaryImage.alt}
+                    fill
+                    sizes="(max-width: 1024px) 90vw, 40vw"
+                    className="object-cover transition-transform duration-700 hover:scale-[1.03]"
+                  />
                 </div>
-                <motion.div
-                  className="absolute -bottom-5 right-4 bg-white px-5 py-4 shadow-saukhya-soft md:right-6"
-                  initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, ease, delay: 0.35 }}
+
+                <Reveal
+                  from="bottom"
+                  distance={20}
+                  delay={0.2}
+                  className="absolute -bottom-3 right-3 z-10 bg-white/95 px-3 py-2.5 shadow-[0_8px_32px_rgba(31,26,28,0.08)] backdrop-blur-sm sm:-bottom-4 sm:right-4 sm:px-4 sm:py-3 md:right-6 md:px-5"
                 >
                   <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-saukhya-gold">
-                    Brand promise
+                    Our Philosophy
                   </p>
                   <p
-                    className="mt-1 text-base font-medium text-saukhya-maroon"
+                    className="mt-1 text-sm font-medium text-saukhya-maroon md:text-base"
                     style={{ fontFamily: "var(--font-serif)" }}
                   >
-                    {content.signature.title}
+                    Embrace Tranquility
                   </p>
-                </motion.div>
+                </Reveal>
               </div>
             </Reveal>
 
-            <Reveal from="right" delay={0.1} className="lg:col-span-7">
-              <SectionHeading
-                align="left"
-                title={content.pointOfView.kicker}
-                subtitle={content.pointOfView.title}
-                className="mb-6 md:mb-7"
-              />
-              <p className="max-w-xl text-base leading-[1.85] text-saukhya-muted md:text-[17px]">
+            <Reveal
+              from="right"
+              distance={44}
+              delay={0.08}
+              className="lg:col-span-7"
+            >
+              <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-saukhya-pink">
+                Our Story
+              </p>
+
+              <h3
+                className="mt-4 text-[1.4rem] font-medium leading-[1.35] tracking-tight text-saukhya-text sm:text-[1.65rem] md:text-3xl lg:text-[2rem] lg:leading-[1.3]"
+                style={{ fontFamily: "var(--font-serif)" }}
+              >
+                {content.pointOfView.title}
+              </h3>
+
+              <div className="mt-6 h-px w-14 bg-gradient-to-r from-saukhya-gold via-saukhya-pink/60 to-transparent" />
+
+              <p className="mt-6 max-w-xl text-[15px] leading-[1.8] text-saukhya-muted md:text-[17px]">
                 {content.pointOfView.copy}
               </p>
-              <p className="mt-5 max-w-xl text-sm leading-relaxed text-saukhya-muted md:text-base">
+              <p className="mt-4 max-w-xl text-[15px] leading-[1.8] text-saukhya-muted md:text-base">
                 {content.signature.copy}
               </p>
+
+              <RevealStagger
+                className="mt-8 grid gap-6 border-y border-saukhya-border/80 py-7 md:mt-10 md:grid-cols-3 md:py-8"
+                delay={0.1}
+                stagger={0.08}
+              >
+                {content.values.map((value, index) => (
+                  <RevealItem key={value.title} index={index} distance={24}>
+                    <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-gold">
+                      0{index + 1}
+                    </p>
+                    <h4 className="mt-2 text-sm font-medium text-saukhya-text md:text-[15px]">
+                      {value.title}
+                    </h4>
+                    <p className="mt-1 text-xs leading-relaxed text-saukhya-muted md:text-sm">
+                      {value.copy}
+                    </p>
+                  </RevealItem>
+                ))}
+              </RevealStagger>
+
+              <div className="mt-8 flex w-full flex-col gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+                <ButtonLink
+                  href="/shop"
+                  size="lg"
+                  className="w-full rounded-sm bg-saukhya-maroon shadow-[0_8px_24px_rgba(92,34,56,0.22)] hover:bg-saukhya-maroon/90 hover:shadow-[0_12px_32px_rgba(92,34,56,0.28)] sm:w-auto"
+                >
+                  Shop The Collection
+                </ButtonLink>
+                <AppLink
+                  href="/contact"
+                  className="group inline-flex min-h-11 items-center justify-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon transition-colors hover:text-saukhya-pink sm:justify-start"
+                >
+                  Talk to us
+                  <IconArrowTiltRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-px" />
+                </AppLink>
+              </div>
             </Reveal>
           </div>
         </div>
       </section>
 
       {/* Craft journey */}
-      <section className="border-t border-saukhya-border/60 bg-[#fff9fb] py-16 md:py-24">
+      <section className="border-t border-saukhya-border/60 bg-[#fff9fb] section-padding">
         <div className="container-saukhya">
           <SectionHeading
             title="From cloth to closet"
@@ -230,7 +276,7 @@ export function AboutPageView() {
           <div className="relative mx-auto mt-4 max-w-4xl md:mt-6">
             <div
               aria-hidden
-              className="absolute left-[15px] top-2 bottom-2 w-px bg-gradient-to-b from-saukhya-gold via-saukhya-pink/40 to-transparent md:left-1/2 md:-translate-x-px"
+              className="absolute left-4 top-2 bottom-2 w-px bg-gradient-to-b from-saukhya-gold via-saukhya-pink/40 to-transparent md:left-1/2 md:-translate-x-px"
             />
             <ul className="space-y-10 md:space-y-14">
               {content.craftSteps.map((step, index) => {
@@ -242,26 +288,30 @@ export function AboutPageView() {
                     delay={index * 0.06}
                   >
                     <li
-                      className={`relative flex items-start gap-5 md:items-center md:gap-0 ${
+                      className={`relative flex items-start gap-4 md:items-center md:gap-0 ${
                         fromRight ? "md:flex-row-reverse" : ""
                       }`}
                     >
+                      <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-saukhya-maroon text-xs font-medium text-white shadow-[0_8px_24px_rgba(92,34,56,0.28)] md:absolute md:left-1/2 md:-translate-x-1/2">
+                        {index + 1}
+                      </span>
                       <div
-                        className={`flex-1 ${fromRight ? "md:pl-12 md:text-left" : "md:pr-12 md:text-right"}`}
+                        className={`min-w-0 flex-1 pt-0.5 ${
+                          fromRight
+                            ? "md:pl-12 md:pt-0 md:text-left"
+                            : "md:pr-12 md:pt-0 md:text-right"
+                        }`}
                       >
                         <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-saukhya-pink">
                           Step {index + 1}
                         </p>
                         <p
-                          className="mt-2 text-lg font-medium text-saukhya-text md:text-xl"
+                          className="mt-2 text-lg font-medium leading-snug text-saukhya-text md:text-xl"
                           style={{ fontFamily: "var(--font-serif)" }}
                         >
                           {step}
                         </p>
                       </div>
-                      <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-saukhya-maroon text-xs font-medium text-white shadow-[0_8px_24px_rgba(92,34,56,0.28)] md:absolute md:left-1/2 md:-translate-x-1/2">
-                        {index + 1}
-                      </span>
                       <div className="hidden flex-1 md:block" />
                     </li>
                   </Reveal>
