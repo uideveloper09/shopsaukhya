@@ -8,6 +8,7 @@ import { CONTACT_PAGE } from "@/constants/content-pages";
 import { FOOTER_LINKS } from "@/constants/footer";
 import { Button } from "@/components/ui/button";
 import { AppLink } from "@/components/ui/app-link";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
 import {
   normalizeContactPayload,
@@ -302,26 +303,12 @@ export function ContactPageView({
         />
 
         <div className="container-saukhya relative">
-          <Reveal from="top" className="mx-auto max-w-2xl text-center">
-            <div className="flex items-center justify-center gap-3">
-              <span className="h-px w-8 bg-saukhya-gold/60" />
-              <p className="text-[11px] font-medium uppercase tracking-[0.36em] text-saukhya-gold">
-                {content.form.kicker}
-              </p>
-              <span className="h-px w-8 bg-saukhya-gold/60" />
-            </div>
-            <h2
-              className="mt-4 text-3xl font-medium text-saukhya-maroon md:text-[2.65rem]"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              A quieter way to reach us
-            </h2>
-            <p className="mx-auto mt-4 max-w-lg text-sm leading-[1.85] text-saukhya-muted md:text-[15px]">
-              {content.form.copy}
-            </p>
-          </Reveal>
+          <SectionHeading
+            title={content.form.kicker}
+            subtitle={content.form.copy}
+          />
 
-          <div className="relative mt-10 overflow-hidden border border-saukhya-border/50 bg-white/70 shadow-[0_24px_60px_rgba(92,34,56,0.06)] backdrop-blur-[2px] md:mt-14">
+          <div className="relative overflow-hidden border border-saukhya-border/50 bg-white/70 shadow-[0_24px_60px_rgba(92,34,56,0.06)] backdrop-blur-[2px]">
             <div
               aria-hidden
               className="pointer-events-none absolute inset-3 border border-saukhya-gold/15 md:inset-4"
@@ -334,18 +321,12 @@ export function ContactPageView({
                   className="relative px-6 py-8 md:px-10 md:py-11 lg:px-12 lg:py-12"
                 >
                   <div className="flex items-end justify-between gap-4">
-                    <div>
-                      <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-saukhya-pink">
-                        Enquiry
-                      </p>
-                      <h3
-                        className="mt-2 text-2xl font-medium text-saukhya-maroon md:text-[1.85rem]"
-                        style={{ fontFamily: "var(--font-serif)" }}
-                      >
-                        {content.form.title}
-                      </h3>
-                    </div>
-                    <p className="hidden text-right text-[10px] uppercase tracking-[0.22em] text-saukhya-muted/70 sm:block">
+                    <SectionHeading
+                      align="left"
+                      title={content.form.title}
+                      className="mb-0"
+                    />
+                    <p className="hidden shrink-0 pb-1 text-right text-[10px] uppercase tracking-[0.22em] text-saukhya-muted/70 sm:block">
                       Reply in
                       <br />
                       business hours

@@ -21,6 +21,7 @@ import {
 } from "@/lib/shop-filters";
 import { cn, getProductCardImage } from "@/lib/utils";
 import { CuratedProductCard } from "@/components/ui/curated-product-card";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -347,23 +348,12 @@ export function ShopPageView({
       <section className="section-padding floral-decoration">
         <div className="container-saukhya">
           <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
-            <Reveal from="left">
-              <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-saukhya-gold">
-                {SHOP_PAGE.catalogKicker}
-              </p>
-              <h2
-                className="mt-3 text-3xl font-medium text-saukhya-maroon md:text-4xl"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
-                {SHOP_PAGE.catalogTitle}
-              </h2>
-              <p className="mt-3 text-sm text-saukhya-muted md:text-base">
-                <span className="font-medium text-saukhya-maroon">
-                  {filtered.length}
-                </span>{" "}
-                of {products.length} styles showing
-              </p>
-            </Reveal>
+            <SectionHeading
+              align="left"
+              title={SHOP_PAGE.catalogTitle}
+              subtitle={`${filtered.length} of ${products.length} styles showing`}
+              className="mb-0"
+            />
 
             <div className="flex flex-wrap items-center gap-3">
               <button
@@ -640,25 +630,17 @@ export function ShopPageView({
               ) : (
                 <Reveal
                   from="bottom"
-                  className="border border-dashed border-saukhya-border/80 bg-white/60 px-6 py-20 text-center"
+                  className="border border-dashed border-saukhya-border/80 bg-white/60 px-6 py-16 text-center md:py-20"
                 >
-                  <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-saukhya-gold">
-                    Nothing here yet
-                  </p>
-                  <h3
-                    className="mt-4 text-3xl font-medium text-saukhya-maroon"
-                    style={{ fontFamily: "var(--font-serif)" }}
-                  >
-                    No styles found
-                  </h3>
-                  <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-saukhya-muted">
-                    Try clearing filters or searching with a different fabric,
-                    style, or price range.
-                  </p>
+                  <SectionHeading
+                    title="No styles found"
+                    subtitle="Try clearing filters or searching with a different fabric, style, or price range."
+                    className="mb-6 md:mb-8"
+                  />
                   <button
                     type="button"
                     onClick={clearFilters}
-                    className="mt-8 text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-pink"
+                    className="text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-pink"
                   >
                     Clear all filters
                   </button>

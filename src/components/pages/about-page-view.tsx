@@ -6,6 +6,7 @@ import { CDN_BASE } from "@/constants/brand";
 import { ABOUT_PAGE } from "@/constants/content-pages";
 import { ButtonLink } from "@/components/ui/button";
 import { AppLink } from "@/components/ui/app-link";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -106,20 +107,13 @@ export function AboutPageView() {
           className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-saukhya-pink/[0.04] blur-3xl"
         />
         <div className="container-saukhya">
-          <Reveal from="top" className="mx-auto max-w-2xl text-center">
-            <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-saukhya-gold">
-              How we design
-            </p>
-            <h2
-              className="mt-4 text-3xl font-medium text-saukhya-maroon md:text-4xl"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              Quiet luxury, made wearable
-            </h2>
-          </Reveal>
+          <SectionHeading
+            title="How we design"
+            subtitle="Quiet luxury, made wearable"
+          />
 
           <RevealStagger
-            className="mt-14 grid gap-0 md:grid-cols-3"
+            className="grid gap-0 md:grid-cols-3"
             stagger={0.12}
             delay={0.08}
           >
@@ -206,17 +200,13 @@ export function AboutPageView() {
             </Reveal>
 
             <Reveal from="right" delay={0.1} className="lg:col-span-7">
-              <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-saukhya-pink">
-                {content.pointOfView.kicker}
-              </p>
-              <h2
-                className="mt-4 max-w-xl text-[1.85rem] font-medium leading-[1.25] text-saukhya-maroon md:text-4xl"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
-                {content.pointOfView.title}
-              </h2>
-              <div className="mt-5 h-px w-14 bg-gradient-to-r from-saukhya-gold to-transparent" />
-              <p className="mt-6 max-w-xl text-base leading-[1.85] text-saukhya-muted md:text-[17px]">
+              <SectionHeading
+                align="left"
+                title={content.pointOfView.kicker}
+                subtitle={content.pointOfView.title}
+                className="mb-6 md:mb-7"
+              />
+              <p className="max-w-xl text-base leading-[1.85] text-saukhya-muted md:text-[17px]">
                 {content.pointOfView.copy}
               </p>
               <p className="mt-5 max-w-xl text-sm leading-relaxed text-saukhya-muted md:text-base">
@@ -230,19 +220,12 @@ export function AboutPageView() {
       {/* Craft journey */}
       <section className="border-t border-saukhya-border/60 bg-[#fff9fb] py-16 md:py-24">
         <div className="container-saukhya">
-          <Reveal from="bottom" className="text-center">
-            <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-saukhya-gold">
-              From cloth to closet
-            </p>
-            <h2
-              className="mt-4 text-3xl font-medium text-saukhya-maroon md:text-4xl"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              A slower way to make clothes
-            </h2>
-          </Reveal>
+          <SectionHeading
+            title="From cloth to closet"
+            subtitle="A slower way to make clothes"
+          />
 
-          <div className="relative mx-auto mt-14 max-w-4xl">
+          <div className="relative mx-auto mt-4 max-w-4xl md:mt-6">
             <div
               aria-hidden
               className="absolute left-[15px] top-2 bottom-2 w-px bg-gradient-to-b from-saukhya-gold via-saukhya-pink/40 to-transparent md:left-1/2 md:-translate-x-px"
