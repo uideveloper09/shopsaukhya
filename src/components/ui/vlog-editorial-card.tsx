@@ -5,8 +5,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import type { VlogCard } from "@/types/storefront";
 import { FashionPatternTexture } from "@/components/ui/fashion-pattern-texture";
+import { IconArrowTiltRight, IconPlay } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
-import { IconPlay } from "@/components/ui/icons";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -43,9 +43,7 @@ function ReadLink({ className }: { className?: string }) {
       )}
     >
       Read story
-      <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
-        →
-      </span>
+      <IconArrowTiltRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-px" />
     </span>
   );
 }

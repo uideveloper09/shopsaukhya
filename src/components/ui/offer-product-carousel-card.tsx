@@ -16,6 +16,7 @@ import {
   getProductHref,
 } from "@/lib/utils";
 import { trackRecentlyViewed } from "@/lib/recently-viewed";
+import { IconArrowTiltRight } from "@/components/ui/icons";
 
 const luxurySpring = {
   type: "spring" as const,
@@ -273,7 +274,7 @@ export function OfferProductCarouselCard({
                           delay: 0.6,
                         }}
                       >
-                        →
+                        <IconArrowTiltRight className="h-3.5 w-3.5" />
                       </motion.span>
                     </span>
                   </motion.div>

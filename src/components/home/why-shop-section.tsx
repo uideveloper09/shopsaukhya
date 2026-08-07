@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { CDN_BASE } from "@/constants/brand";
 import { HOME_FAQ_ITEMS } from "@/constants/faq";
-import { IconHeart } from "@/components/ui/icons";
+import { IconArrowTiltRight, IconHeart } from "@/components/ui/icons";
 import { FashionPatternTexture } from "@/components/ui/fashion-pattern-texture";
 import { Reveal } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
+import { Button, ButtonLink } from "@/components/ui/button";
 
 const WHY_SHOP_IMAGE = `${CDN_BASE}/ProductImg/16/optimized/8df4f032-471c-476d-842b-98a70ada71cf_2-detail.jpg`;
 
@@ -120,31 +120,29 @@ function NewsletterPanel() {
             />
             <button
               type="submit"
-              className="flex w-12 shrink-0 items-center justify-center bg-saukhya-pink text-lg text-white transition-colors hover:bg-saukhya-pink-hover"
+              className="flex w-12 shrink-0 items-center justify-center bg-saukhya-pink text-white transition-colors hover:bg-saukhya-pink-hover"
               aria-label="Subscribe"
             >
-              →
+              <IconArrowTiltRight className="h-4 w-4" />
             </button>
           </div>
 
-          <button
-            type="submit"
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-saukhya-pink px-6 py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:bg-saukhya-pink-hover"
-          >
+          <Button type="submit" size="lg" className="mt-4 w-full rounded-lg">
             Join Saukhya
-            <span aria-hidden className="text-sm">
-              →
-            </span>
-          </button>
+          </Button>
         </form>
 
-        <Link
+        <ButtonLink
           href="/wishlist"
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-saukhya-pink bg-white px-6 py-3.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-saukhya-pink transition-colors hover:bg-saukhya-pink/[0.04]"
+          variant="outline"
+          size="lg"
+          className="mt-3 w-full rounded-lg"
         >
-          <IconHeart className="h-4 w-4" />
-          View Wishlist
-        </Link>
+          <span className="inline-flex items-center gap-2">
+            <IconHeart className="h-4 w-4" />
+            View Wishlist
+          </span>
+        </ButtonLink>
       </div>
     </Reveal>
   );

@@ -3,7 +3,9 @@
 import Image from "next/image";
 import { CDN_BASE } from "@/constants/brand";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { ButtonLink } from "@/components/ui/button";
 import { AppLink } from "@/components/ui/app-link";
+import { IconArrowTiltRight } from "@/components/ui/icons";
 import { Reveal, RevealStagger, RevealItem } from "@/components/motion/reveal";
 
 const PILLARS = [
@@ -118,23 +120,19 @@ export function AboutSection() {
             </RevealStagger>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <AppLink
+              <ButtonLink
                 href="/about"
-                className="inline-flex items-center justify-center rounded-sm bg-saukhya-maroon px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.22em] text-white shadow-[0_8px_24px_rgba(92,34,56,0.22)] transition-all duration-300 hover:bg-saukhya-maroon/90 hover:shadow-[0_12px_32px_rgba(92,34,56,0.28)]"
+                size="lg"
+                className="rounded-sm bg-saukhya-maroon shadow-[0_8px_24px_rgba(92,34,56,0.22)] hover:bg-saukhya-maroon/90 hover:shadow-[0_12px_32px_rgba(92,34,56,0.28)]"
               >
                 Discover Our Story
-              </AppLink>
+              </ButtonLink>
               <AppLink
                 href="/shop"
-                className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
+                className="group inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
               >
                 Shop The Collection
-                <span
-                  aria-hidden
-                  className="transition-transform duration-300 hover:translate-x-0.5"
-                >
-                  →
-                </span>
+                <IconArrowTiltRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-px" />
               </AppLink>
             </div>
           </Reveal>

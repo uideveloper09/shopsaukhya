@@ -17,7 +17,7 @@ import {
 } from "@/lib/utils";
 import { trackRecentlyViewed } from "@/lib/recently-viewed";
 import { IconHeart, IconStar } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { useWishlistStore } from "@/stores/wishlist-store";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -324,13 +324,15 @@ export function CuratedProductCard({
                       >
                         Add To Bag
                       </Button>
-                      <Link
+                      <ButtonLink
                         href={href}
+                        variant="outline"
+                        size="sm"
+                        className="h-9 px-2 text-[10px] tracking-[0.14em]"
                         onClick={handleProductView}
-                        className="flex h-9 items-center justify-center rounded-saukhya-md border border-saukhya-border bg-white/70 px-2 text-[10px] font-medium uppercase tracking-[0.14em] text-saukhya-text backdrop-blur-[2px] transition-colors hover:border-saukhya-pink/40 hover:text-saukhya-pink"
                       >
                         View
-                      </Link>
+                      </ButtonLink>
                     </motion.div>
                   </div>
                 </div>

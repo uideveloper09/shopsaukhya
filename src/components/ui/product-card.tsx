@@ -15,7 +15,7 @@ import {
 } from "@/lib/utils";
 import { trackRecentlyViewed } from "@/lib/recently-viewed";
 import { IconHeart, IconStar } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { useWishlistStore } from "@/stores/wishlist-store";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -138,13 +138,15 @@ export function ProductCard({
                   <Button size="sm" className="flex-1" onClick={handleAddToBag}>
                     Add To Bag
                   </Button>
-                  <Link
+                  <ButtonLink
                     href={href}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 border-saukhya-border"
                     onClick={handleProductView}
-                    className="flex flex-1 items-center justify-center rounded-saukhya-md border border-saukhya-border px-3 py-2 text-xs uppercase tracking-wide transition-colors hover:border-saukhya-pink/40"
                   >
                     View Details
-                  </Link>
+                  </ButtonLink>
                 </div>
               </motion.div>
             )}

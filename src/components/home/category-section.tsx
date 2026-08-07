@@ -9,7 +9,7 @@ import type { Product, SectionFilter } from "@/types/storefront";
 import { getCategoryMaxOfferPercent } from "@/lib/category-offers";
 import { CategoryCarouselCard } from "@/components/ui/category-carousel-card";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { IconChevronLeft, IconChevronRight } from "@/components/ui/icons";
+import { IconArrowTiltRight, IconChevronLeft, IconChevronRight } from "@/components/ui/icons";
 import { Reveal } from "@/components/motion/reveal";
 import "swiper/css";
 
@@ -35,12 +35,12 @@ export function CategorySection({ filters, products = [] }: CategorySectionProps
       <div className="container-saukhya relative">
         <Link
           href="/shop/all-styles"
-          className="absolute right-0 top-1 z-10 inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
+          className="group absolute right-0 top-1 z-10 inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
         >
           <span className="hidden h-px w-6 bg-saukhya-gold/60 sm:block" />
           <span className="hidden sm:inline">View All Collections</span>
           <span className="sm:hidden">View All</span>
-          <span aria-hidden>→</span>
+          <IconArrowTiltRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-px" />
         </Link>
 
         <SectionHeading

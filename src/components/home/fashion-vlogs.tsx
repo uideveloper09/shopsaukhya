@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { VLOG_CARDS } from "@/constants/editorial";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { ButtonLink } from "@/components/ui/button";
 import { VlogEditorialCard } from "@/components/ui/vlog-editorial-card";
 import { Reveal, RevealStagger, RevealItem } from "@/components/motion/reveal";
 
@@ -72,18 +72,13 @@ export function FashionVlogs() {
         )}
 
         <Reveal from="bottom" distance={24} delay={0.1} className="mt-8 flex justify-center md:mt-10">
-          <Link
+          <ButtonLink
             href="/blog"
-            className="group inline-flex items-center gap-2 border border-saukhya-maroon/20 bg-white px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-saukhya-maroon shadow-saukhya-soft transition-all hover:border-saukhya-pink/30 hover:text-saukhya-pink"
+            variant="outline"
+            className="border-saukhya-maroon/20 bg-white text-saukhya-maroon shadow-saukhya-soft hover:border-saukhya-pink/30 hover:text-saukhya-pink"
           >
             Explore all stories
-            <span
-              aria-hidden
-              className="transition-transform group-hover:translate-x-1"
-            >
-              →
-            </span>
-          </Link>
+          </ButtonLink>
         </Reveal>
       </div>
     </section>

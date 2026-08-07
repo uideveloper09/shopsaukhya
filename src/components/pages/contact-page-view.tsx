@@ -9,6 +9,7 @@ import { FOOTER_LINKS } from "@/constants/footer";
 import { Button } from "@/components/ui/button";
 import { AppLink } from "@/components/ui/app-link";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { IconArrowTiltRight } from "@/components/ui/icons";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
 import {
   normalizeContactPayload,
@@ -268,7 +269,7 @@ export function ContactPageView({
                       aria-hidden
                       className="text-saukhya-pink/70 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-saukhya-pink"
                     >
-                      →
+                      <IconArrowTiltRight className="h-3.5 w-3.5" />
                     </span>
                   </div>
                   <p
@@ -577,9 +578,10 @@ export function ContactPageView({
                   href={FOOTER_LINKS.contact.directionsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
+                  className="group inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-saukhya-maroon transition-colors hover:text-saukhya-pink"
                 >
-                  Open in Maps →
+                  Open in Maps
+                  <IconArrowTiltRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-px" />
                 </a>
               </div>
               <div className="relative h-64 md:h-[22rem]">

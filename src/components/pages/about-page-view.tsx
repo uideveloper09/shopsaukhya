@@ -7,6 +7,7 @@ import { ABOUT_PAGE } from "@/constants/content-pages";
 import { ButtonLink } from "@/components/ui/button";
 import { AppLink } from "@/components/ui/app-link";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { IconArrowTiltRight } from "@/components/ui/icons";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/reveal";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -82,9 +83,10 @@ export function AboutPageView() {
               </ButtonLink>
               <AppLink
                 href="/contact"
-                className="text-[11px] font-medium uppercase tracking-[0.22em] text-white/90 transition-colors hover:text-saukhya-gold"
+                className="group inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-white/90 transition-colors hover:text-saukhya-gold"
               >
-                Talk to us →
+                Talk to us
+                <IconArrowTiltRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-px" />
               </AppLink>
             </div>
           </motion.div>

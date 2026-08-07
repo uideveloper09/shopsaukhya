@@ -5,7 +5,7 @@ import Image from "next/image";
 import type { Product } from "@/types/storefront";
 import { CDN_BASE } from "@/constants/brand";
 import { formatPrice, getProductCardImage, getProductHref } from "@/lib/utils";
-import { ButtonLink } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { FashionPatternTexture } from "@/components/ui/fashion-pattern-texture";
 import { IconPlay } from "@/components/ui/icons";
 import { Reveal } from "@/components/motion/reveal";
@@ -95,15 +95,11 @@ export function WatchAndBuy({ featuredProduct }: WatchAndBuyProps) {
             )}
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => setPlaying(true)}
-                className="inline-flex items-center justify-center rounded-saukhya-md bg-saukhya-pink px-8 py-3.5 text-sm font-medium uppercase tracking-widest text-white shadow-saukhya-soft transition-all hover:bg-saukhya-pink-hover"
-              >
+              <Button type="button" size="lg" onClick={() => setPlaying(true)}>
                 Watch Now
-              </button>
+              </Button>
               {product && (
-                <ButtonLink href={getProductHref(product)} variant="outline">
+                <ButtonLink href={getProductHref(product)} variant="outline" size="lg">
                   Buy Now
                 </ButtonLink>
               )}

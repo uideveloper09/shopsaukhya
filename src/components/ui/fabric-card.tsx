@@ -222,12 +222,14 @@ export function FabricCard({ fabric, variant = "default", className }: FabricCar
                     >
                       Explore
                     </ButtonLink>
-                    <Link
+                    <ButtonLink
                       href={href}
-                      className="flex h-9 items-center justify-center rounded-saukhya-md border border-saukhya-border bg-white/70 px-2 text-[10px] font-medium uppercase tracking-[0.14em] text-saukhya-text backdrop-blur-[2px] transition-colors hover:border-saukhya-pink/40 hover:text-saukhya-pink"
+                      variant="outline"
+                      size="sm"
+                      className="h-9 px-2 text-[10px] tracking-[0.14em] border-saukhya-border bg-white/70 text-saukhya-text hover:border-saukhya-pink/40 hover:text-saukhya-pink"
                     >
                       View
-                    </Link>
+                    </ButtonLink>
                   </motion.div>
                 </div>
               </div>

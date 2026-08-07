@@ -9,7 +9,7 @@ import { AppLink } from "@/components/ui/app-link";
 import { FashionPatternTexture } from "@/components/ui/fashion-pattern-texture";
 import { FOOTER_LINKS } from "@/constants/footer";
 import { cn, getMenuHref } from "@/lib/utils";
-import { TrustIcon, IconInstagram, IconFacebook } from "@/components/ui/icons";
+import { TrustIcon, IconInstagram, IconFacebook, IconArrowTiltRight } from "@/components/ui/icons";
 import { RevealStagger, RevealItem } from "@/components/motion/reveal";
 
 interface FooterProps {
@@ -311,10 +311,10 @@ function FooterContactSection({
             href={contact.directionsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-saukhya-pink transition-colors hover:text-saukhya-maroon"
+            className="group mt-3 inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-saukhya-pink transition-colors hover:text-saukhya-maroon"
           >
             Get directions
-            <span aria-hidden>→</span>
+            <IconArrowTiltRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-px" />
           </a>
         </div>
 

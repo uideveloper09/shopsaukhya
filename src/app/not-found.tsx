@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { BRAND } from "@/constants/brand";
 import { ButtonLink } from "@/components/ui/button";
-import { AppLink } from "@/components/ui/app-link";
 
 export const metadata: Metadata = {
   title: "Page Not Found",
@@ -59,12 +58,14 @@ export default function NotFound() {
             <ButtonLink href="/" size="lg" className="w-full sm:w-auto">
               Back to Home
             </ButtonLink>
-            <AppLink
+            <ButtonLink
               href="/#bestsellers-heading"
-              className="inline-flex items-center justify-center rounded-saukhya-md border border-saukhya-maroon/20 px-8 py-3.5 text-sm font-medium tracking-widest text-saukhya-maroon uppercase transition-colors duration-250 hover:border-saukhya-pink/40 hover:text-saukhya-pink"
+              variant="outline"
+              size="lg"
+              className="w-full border-saukhya-maroon/20 text-saukhya-maroon hover:border-saukhya-pink/40 hover:text-saukhya-pink sm:w-auto"
             >
               Browse Styles
-            </AppLink>
+            </ButtonLink>
           </div>
 
           <p className="mt-12 text-[11px] uppercase tracking-[0.28em] text-saukhya-muted/80">
