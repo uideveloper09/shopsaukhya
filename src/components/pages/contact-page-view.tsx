@@ -70,7 +70,7 @@ export function ContactPageView({
   return (
     <main className="w-full overflow-x-hidden bg-saukhya-warm">
       {/* Full-bleed image banner with overlay design */}
-      <section className="relative min-h-[72vh] w-full overflow-hidden md:min-h-[78vh]">
+      <section className="relative min-h-[48vh] w-full overflow-hidden md:min-h-[52vh]">
         <motion.div
           className="absolute inset-0"
           initial={reduceMotion ? false : { scale: 1.1 }}
@@ -104,7 +104,7 @@ export function ContactPageView({
           className="pointer-events-none absolute inset-x-8 bottom-8 top-8 border border-white/10 md:inset-x-12 md:bottom-10 md:top-10"
         />
 
-        <div className="container-saukhya relative z-10 flex min-h-[72vh] flex-col justify-end pb-12 pt-28 md:min-h-[78vh] md:pb-16 md:pt-32">
+        <div className="container-saukhya relative z-10 flex min-h-[48vh] flex-col justify-end pb-8 pt-20 md:min-h-[52vh] md:pb-10 md:pt-24">
           <div className="grid items-end gap-10 lg:grid-cols-12 lg:gap-12">
             <motion.div
               initial={reduceMotion ? false : { opacity: 0, y: 32 }}
