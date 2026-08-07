@@ -182,7 +182,7 @@ export function ShopPageView({
   return (
     <main className="w-full overflow-x-hidden bg-saukhya-warm">
       {/* Cinematic hero */}
-      <section className="relative min-h-[72vh] overflow-hidden md:min-h-[82vh]">
+      <section className="relative min-h-[48vh] overflow-hidden md:min-h-[52vh]">
         {heroImage && (
           <motion.div
             className="absolute inset-0"
@@ -209,8 +209,8 @@ export function ShopPageView({
           className="absolute inset-0 bg-gradient-to-t from-saukhya-warm via-transparent to-[#1f1a1c]/25"
         />
 
-        <div className="container-saukhya relative z-10 flex min-h-[72vh] flex-col justify-end pb-10 pt-28 md:min-h-[82vh] md:pb-14 md:pt-32">
-          <div className="grid items-end gap-10 lg:grid-cols-12">
+        <div className="container-saukhya relative z-10 flex min-h-[48vh] flex-col justify-end pb-8 pt-20 md:min-h-[52vh] md:pb-10 md:pt-24">
+          <div className="grid items-end gap-8 lg:grid-cols-12 lg:gap-10">
             <motion.div
               className="lg:col-span-7"
               initial={reduceMotion ? false : { opacity: 0, y: 32 }}
@@ -221,24 +221,24 @@ export function ShopPageView({
                 {SHOP_PAGE.kicker}
               </p>
               <h1
-                className="mt-4 max-w-2xl text-[2.35rem] font-medium leading-[1.12] tracking-tight text-white md:text-5xl lg:text-[3.25rem]"
+                className="mt-3 max-w-2xl text-[2rem] font-medium leading-[1.12] tracking-tight text-white md:text-[2.65rem] lg:text-[3rem]"
                 style={{ fontFamily: "var(--font-serif)" }}
               >
                 {SHOP_PAGE.title}
               </h1>
               <motion.div
                 aria-hidden
-                className="mt-6 h-px origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/70 to-transparent"
+                className="mt-5 h-px origin-left bg-gradient-to-r from-saukhya-gold via-saukhya-pink/70 to-transparent"
                 initial={reduceMotion ? false : { scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.9, ease, delay: 0.4 }}
               />
-              <p className="mt-6 max-w-xl text-base leading-[1.85] text-white/85 md:text-[17px]">
+              <p className="mt-5 max-w-xl text-[15px] leading-[1.8] text-white/85 md:text-base">
                 {SHOP_PAGE.intro}
               </p>
 
               <div
-                className="mt-9 flex flex-wrap gap-x-8 gap-y-3 text-[11px] font-medium uppercase tracking-[0.2em] text-white/75"
+                className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-[11px] font-medium uppercase tracking-[0.2em] text-white/75"
                 aria-label="Shop summary"
               >
                 <span>
@@ -263,18 +263,18 @@ export function ShopPageView({
               transition={{ duration: 0.95, ease, delay: 0.2 }}
               aria-hidden
             >
-              <div className="grid grid-cols-2 gap-3">
-                {sideImages.slice(0, 4).map((src, index) => (
+              <div className="ml-auto grid max-w-sm grid-cols-3 gap-2.5">
+                {sideImages.slice(0, 3).map((src, index) => (
                   <motion.div
                     key={src}
                     className={cn(
-                      "relative overflow-hidden",
-                      index % 2 === 0 ? "aspect-[3/4]" : "aspect-[3/4] mt-8",
+                      "relative aspect-[3/4] overflow-hidden",
+                      index === 1 && "mt-5",
                     )}
                     whileHover={
                       reduceMotion
                         ? undefined
-                        : { y: -6, transition: { duration: 0.4, ease } }
+                        : { y: -4, transition: { duration: 0.4, ease } }
                     }
                   >
                     <Image
