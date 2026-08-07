@@ -133,9 +133,9 @@ export function Header({ navigation, products = [] }: HeaderProps) {
             >
               {navigation.headerMenus.map((item) =>
                 item.menuName === "Shop" ? (
-                  <button
+                  <AppLink
                     key={item.menuCode}
-                    type="button"
+                    href="/shop"
                     aria-expanded={megaOpen}
                     aria-haspopup="true"
                     onMouseEnter={openMega}
@@ -159,7 +159,7 @@ export function Header({ navigation, products = [] }: HeaderProps) {
                           : "border-t-transparent opacity-0",
                       )}
                     />
-                  </button>
+                  </AppLink>
                 ) : (
                   <AppLink
                     key={item.menuCode}
@@ -327,23 +327,33 @@ function MobileMenu({
                 key={item.menuCode}
                 className="border-b border-saukhya-border"
               >
-                <button
-                  type="button"
-                  onClick={onToggleShop}
-                  aria-expanded={mobileShopOpen}
-                  className="flex w-full items-center justify-between px-4 py-3.5 text-left text-[15px] font-medium text-saukhya-text sm:px-5"
-                >
-                  <span className={cn(mobileShopOpen && "text-saukhya-pink")}>
-                    {item.menuName}
-                  </span>
-                  <motion.span
-                    animate={{ rotate: mobileShopOpen ? 90 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-saukhya-pink"
+                <div className="flex items-center justify-between gap-2 px-4 py-3.5 sm:px-5">
+                  <AppLink
+                    href="/shop"
+                    onClick={onClose}
+                    className="text-[15px] font-medium text-saukhya-text transition-colors hover:text-saukhya-pink"
                   >
-                    <IconChevronRight className="h-4 w-4" />
-                  </motion.span>
-                </button>
+                    {item.menuName}
+                  </AppLink>
+                  <button
+                    type="button"
+                    onClick={onToggleShop}
+                    aria-expanded={mobileShopOpen}
+                    aria-label={
+                      mobileShopOpen
+                        ? "Hide shop categories"
+                        : "Show shop categories"
+                    }
+                    className="flex h-8 w-8 items-center justify-center text-saukhya-pink"
+                  >
+                    <motion.span
+                      animate={{ rotate: mobileShopOpen ? 90 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <IconChevronRight className="h-4 w-4" />
+                    </motion.span>
+                  </button>
+                </div>
 
                 <AnimatePresence initial={false}>
                   {mobileShopOpen && (
@@ -355,6 +365,13 @@ function MobileMenu({
                       className="overflow-hidden"
                     >
                       <div className="space-y-4 px-4 pb-4 sm:px-5">
+                        <AppLink
+                          href="/shop"
+                          onClick={onClose}
+                          className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-saukhya-pink"
+                        >
+                          All styles
+                        </AppLink>
                         {megaColumns.map(
                           ({ category, products: columnProducts }) => (
                             <div key={category.menuCode}>
