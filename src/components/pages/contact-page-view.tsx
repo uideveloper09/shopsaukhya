@@ -30,6 +30,27 @@ const fieldClass =
 const fieldErrorClass =
   "w-full rounded-none border border-red-400/70 bg-[#fff6f6] px-3.5 py-3 text-sm text-saukhya-text outline-none transition placeholder:text-saukhya-muted/80 focus:border-saukhya-pink focus:bg-white focus:ring-1 focus:ring-saukhya-pink/25";
 
+function FieldErrorTooltip({ message }: { message: string }) {
+  return (
+    <motion.div
+      role="alert"
+      initial={{ opacity: 0, y: 4, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 2, scale: 0.98 }}
+      transition={{ duration: 0.2, ease }}
+      className="pointer-events-none absolute left-0 top-[calc(100%+8px)] z-20 max-w-[min(100%,18rem)]"
+    >
+      <span
+        aria-hidden
+        className="absolute -top-1.5 left-4 h-3 w-3 rotate-45 bg-[#5c2238]"
+      />
+      <p className="relative rounded-sm bg-[#5c2238] px-3 py-2 text-[11px] leading-snug text-white shadow-[0_10px_24px_rgba(92,34,56,0.28)]">
+        {message}
+      </p>
+    </motion.div>
+  );
+}
+
 type HeroImage = { src: string; alt: string };
 
 interface ContactPageViewProps {
@@ -319,6 +340,7 @@ export function ContactPageView({
               <Reveal from="left" className="lg:col-span-7">
                 <form
                   onSubmit={handleSubmit}
+                  noValidate
                   className="relative px-6 py-8 md:px-10 md:py-11 lg:px-12 lg:py-12"
                 >
                   <div className="flex items-end justify-between gap-4">
@@ -334,7 +356,7 @@ export function ContactPageView({
                     </p>
                   </div>
 
-                  <div className="relative mt-9 grid gap-7 sm:grid-cols-2">
+                  <div className="relative z-0 mt-9 grid gap-8 sm:grid-cols-2">
                     {(
                       [
                         {
@@ -366,86 +388,124 @@ export function ContactPageView({
                           required: true,
                         },
                       ] as const
-                    ).map((field) => (
-                      <label
-                        key={field.name}
-                        className={`block ${"full" in field && field.full ? "sm:col-span-2" : ""}`}
-                      >
+                    ).map((field) => {
+                      const required =
+                        "required" in field ? Boolean(field.required) : false;
+                      const error = fieldErrors[field.name];
+
+                      return (
+                        <div
+                          key={field.name}
+                          className={`relative ${"full" in field && field.full ? "sm:col-span-2" : ""}`}
+                        >
+                          <label className="mb-2 inline-flex items-start gap-1">
+                            <span
+                              className={`text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
+                                focused === field.name
+                                  ? "text-saukhya-pink"
+                                  : error
+                                    ? "text-red-600"
+                                    : "text-saukhya-maroon/70"
+                              }`}
+                            >
+                              {field.label}
+                            </span>
+                            {required ? (
+                              <span
+                                aria-hidden
+                                className="-mt-0.5 text-[12px] font-semibold leading-none text-saukhya-pink"
+                              >
+                                *
+                              </span>
+                            ) : null}
+                            <span className="sr-only">
+                              {required ? "required" : "optional"}
+                            </span>
+                          </label>
+                          <div className="relative">
+                            <input
+                              name={field.name}
+                              type={"type" in field ? field.type : "text"}
+                              required={required}
+                              aria-required={required}
+                              placeholder={field.placeholder}
+                              aria-invalid={Boolean(error)}
+                              className={error ? fieldErrorClass : fieldClass}
+                              onFocus={() => setFocused(field.name)}
+                              onBlur={() => setFocused(null)}
+                              onChange={() => {
+                                if (!error) return;
+                                setFieldErrors((prev) => {
+                                  const next = { ...prev };
+                                  delete next[field.name];
+                                  return next;
+                                });
+                              }}
+                            />
+                            <AnimatePresence>
+                              {error ? (
+                                <FieldErrorTooltip
+                                  key={`${field.name}-error`}
+                                  message={error}
+                                />
+                              ) : null}
+                            </AnimatePresence>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    <div className="relative sm:col-span-2">
+                      <label className="mb-2 inline-flex items-start gap-1">
                         <span
-                          className={`mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
-                            focused === field.name
+                          className={`text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
+                            focused === "message"
                               ? "text-saukhya-pink"
-                              : fieldErrors[field.name]
+                              : fieldErrors.message
                                 ? "text-red-600"
                                 : "text-saukhya-maroon/70"
                           }`}
                         >
-                          {field.label}
+                          Message
                         </span>
-                        <input
-                          name={field.name}
-                          type={"type" in field ? field.type : "text"}
-                          required={"required" in field ? field.required : false}
-                          placeholder={field.placeholder}
-                          aria-invalid={Boolean(fieldErrors[field.name])}
-                          className={
-                            fieldErrors[field.name] ? fieldErrorClass : fieldClass
-                          }
-                          onFocus={() => setFocused(field.name)}
+                        <span
+                          aria-hidden
+                          className="-mt-0.5 text-[12px] font-semibold leading-none text-saukhya-pink"
+                        >
+                          *
+                        </span>
+                        <span className="sr-only">required</span>
+                      </label>
+                      <div className="relative">
+                        <textarea
+                          name="message"
+                          required
+                          aria-required
+                          rows={4}
+                          placeholder="Tell us how we can help"
+                          aria-invalid={Boolean(fieldErrors.message)}
+                          className={`${fieldErrors.message ? fieldErrorClass : fieldClass} min-h-[120px] resize-y`}
+                          onFocus={() => setFocused("message")}
                           onBlur={() => setFocused(null)}
                           onChange={() => {
-                            if (!fieldErrors[field.name]) return;
+                            if (!fieldErrors.message) return;
                             setFieldErrors((prev) => {
                               const next = { ...prev };
-                              delete next[field.name];
+                              delete next.message;
                               return next;
                             });
                           }}
                         />
-                        {fieldErrors[field.name] ? (
-                          <p className="mt-1.5 text-xs text-red-600">
-                            {fieldErrors[field.name]}
-                          </p>
-                        ) : null}
-                      </label>
-                    ))}
-
-                    <label className="block sm:col-span-2">
-                      <span
-                        className={`mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
-                          focused === "message"
-                            ? "text-saukhya-pink"
-                            : fieldErrors.message
-                              ? "text-red-600"
-                              : "text-saukhya-maroon/70"
-                        }`}
-                      >
-                        Message
-                      </span>
-                      <textarea
-                        name="message"
-                        required
-                        rows={4}
-                        placeholder="Tell us how we can help"
-                        aria-invalid={Boolean(fieldErrors.message)}
-                        className={`${fieldErrors.message ? fieldErrorClass : fieldClass} min-h-[120px] resize-y`}
-                        onFocus={() => setFocused("message")}
-                        onBlur={() => setFocused(null)}
-                        onChange={() => {
-                          if (!fieldErrors.message) return;
-                          setFieldErrors((prev) => {
-                            const next = { ...prev };
-                            delete next.message;
-                            return next;
-                          });
-                        }}
-                      />
-                      {fieldErrors.message ? (
-                        <p className="mt-1.5 text-xs text-red-600">
-                          {fieldErrors.message}
-                        </p>
-                      ) : null}
-                    </label>
+                        <AnimatePresence>
+                          {fieldErrors.message ? (
+                            <FieldErrorTooltip
+                              key="message-error"
+                              message={fieldErrors.message}
+                            />
+                          ) : null}
+                        </AnimatePresence>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="mt-9 flex flex-wrap items-center gap-5 border-t border-saukhya-border/50 pt-8">
