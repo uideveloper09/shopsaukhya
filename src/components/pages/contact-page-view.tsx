@@ -229,216 +229,266 @@ export function ContactPageView({
         </div>
       </section>
 
-      {/* Form + help */}
-      <section className="section-padding floral-decoration">
-        <div className="container-saukhya">
-          <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
-            <Reveal from="left" className="lg:col-span-7">
-              <form
-                onSubmit={handleSubmit}
-                className="relative overflow-hidden bg-white px-5 py-8 shadow-saukhya-soft ring-1 ring-black/[0.03] md:px-10 md:py-12"
-              >
-                <motion.div
-                  aria-hidden
-                  className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-saukhya-pink/[0.06]"
-                  animate={
-                    reduceMotion
-                      ? undefined
-                      : { scale: [1, 1.15, 1], opacity: [0.5, 0.85, 0.5] }
-                  }
-                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                />
+      {/* Form + help — premium editorial correspondence */}
+      <section className="relative overflow-hidden border-t border-saukhya-border/30 py-14 md:py-20">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,#faf4f1_0%,#f6ebe7_48%,#f3e4df_100%)]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-20 top-10 h-72 w-72 bg-[radial-gradient(circle,rgba(201,169,110,0.14),transparent_70%)]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 bottom-0 h-80 w-80 bg-[radial-gradient(circle,rgba(92,34,56,0.07),transparent_70%)]"
+        />
 
-                <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-saukhya-pink">
-                  {content.form.kicker}
-                </p>
-                <h2
-                  className="mt-3 text-3xl font-medium text-saukhya-maroon md:text-4xl"
-                  style={{ fontFamily: "var(--font-serif)" }}
+        <div className="container-saukhya relative">
+          <Reveal from="top" className="mx-auto max-w-2xl text-center">
+            <div className="flex items-center justify-center gap-3">
+              <span className="h-px w-8 bg-saukhya-gold/60" />
+              <p className="text-[11px] font-medium uppercase tracking-[0.36em] text-saukhya-gold">
+                {content.form.kicker}
+              </p>
+              <span className="h-px w-8 bg-saukhya-gold/60" />
+            </div>
+            <h2
+              className="mt-4 text-3xl font-medium text-saukhya-maroon md:text-[2.65rem]"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              A quieter way to reach us
+            </h2>
+            <p className="mx-auto mt-4 max-w-lg text-sm leading-[1.85] text-saukhya-muted md:text-[15px]">
+              {content.form.copy}
+            </p>
+          </Reveal>
+
+          <div className="relative mt-10 overflow-hidden border border-saukhya-border/50 bg-white/70 shadow-[0_24px_60px_rgba(92,34,56,0.06)] backdrop-blur-[2px] md:mt-14">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-3 border border-saukhya-gold/15 md:inset-4"
+            />
+
+            <div className="relative grid lg:grid-cols-12">
+              <Reveal from="left" className="lg:col-span-7">
+                <form
+                  onSubmit={handleSubmit}
+                  className="relative px-6 py-8 md:px-10 md:py-11 lg:px-12 lg:py-12"
                 >
-                  {content.form.title}
-                </h2>
-                <p className="mt-3 max-w-md text-sm leading-relaxed text-saukhya-muted md:text-base">
-                  {content.form.copy}
-                </p>
+                  <div className="flex items-end justify-between gap-4">
+                    <div>
+                      <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-saukhya-pink">
+                        Enquiry
+                      </p>
+                      <h3
+                        className="mt-2 text-2xl font-medium text-saukhya-maroon md:text-[1.85rem]"
+                        style={{ fontFamily: "var(--font-serif)" }}
+                      >
+                        {content.form.title}
+                      </h3>
+                    </div>
+                    <p className="hidden text-right text-[10px] uppercase tracking-[0.22em] text-saukhya-muted/70 sm:block">
+                      Reply in
+                      <br />
+                      business hours
+                    </p>
+                  </div>
 
-                <div className="relative mt-10 grid gap-7 sm:grid-cols-2">
-                  {(
-                    [
-                      {
-                        name: "name",
-                        label: "Full name",
-                        placeholder: "Your name",
-                        full: true,
-                        required: true,
-                      },
-                      {
-                        name: "email",
-                        label: "Email address",
-                        placeholder: "you@example.com",
-                        type: "email",
-                        required: true,
-                      },
-                      {
-                        name: "phone",
-                        label: "Phone number",
-                        placeholder: "10 digit mobile number",
-                        type: "tel",
-                      },
-                      {
-                        name: "subject",
-                        label: "Subject",
-                        placeholder:
-                          "Order help, product question, collaboration...",
-                        full: true,
-                        required: true,
-                      },
-                    ] as const
-                  ).map((field) => (
-                    <label
-                      key={field.name}
-                      className={`relative block ${"full" in field && field.full ? "sm:col-span-2" : ""}`}
-                    >
+                  <div className="relative mt-9 grid gap-7 sm:grid-cols-2">
+                    {(
+                      [
+                        {
+                          name: "name",
+                          label: "Full name",
+                          placeholder: "Your name",
+                          full: true,
+                          required: true,
+                        },
+                        {
+                          name: "email",
+                          label: "Email address",
+                          placeholder: "you@example.com",
+                          type: "email",
+                          required: true,
+                        },
+                        {
+                          name: "phone",
+                          label: "Phone number",
+                          placeholder: "10 digit mobile number",
+                          type: "tel",
+                        },
+                        {
+                          name: "subject",
+                          label: "Subject",
+                          placeholder:
+                            "Order help, product question, collaboration...",
+                          full: true,
+                          required: true,
+                        },
+                      ] as const
+                    ).map((field) => (
+                      <label
+                        key={field.name}
+                        className={`relative block ${"full" in field && field.full ? "sm:col-span-2" : ""}`}
+                      >
+                        <span
+                          className={`mb-1.5 block text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
+                            focused === field.name
+                              ? "text-saukhya-pink"
+                              : "text-saukhya-muted"
+                          }`}
+                        >
+                          {field.label}
+                        </span>
+                        <input
+                          name={field.name}
+                          type={"type" in field ? field.type : "text"}
+                          required={"required" in field ? field.required : false}
+                          placeholder={field.placeholder}
+                          className={fieldClass}
+                          onFocus={() => setFocused(field.name)}
+                          onBlur={() => setFocused(null)}
+                        />
+                        <motion.span
+                          aria-hidden
+                          className="pointer-events-none absolute bottom-0 left-0 h-px bg-gradient-to-r from-saukhya-pink to-saukhya-gold"
+                          animate={{
+                            scaleX: focused === field.name ? 1 : 0,
+                          }}
+                          style={{ originX: 0, width: "100%" }}
+                          transition={{ duration: 0.35, ease }}
+                        />
+                      </label>
+                    ))}
+
+                    <label className="relative block sm:col-span-2">
                       <span
-                        className={`mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${
-                          focused === field.name
+                        className={`mb-1.5 block text-[10px] font-medium uppercase tracking-[0.2em] transition-colors ${
+                          focused === "message"
                             ? "text-saukhya-pink"
                             : "text-saukhya-muted"
                         }`}
                       >
-                        {field.label}
+                        Message
                       </span>
-                      <input
-                        name={field.name}
-                        type={"type" in field ? field.type : "text"}
-                        required={"required" in field ? field.required : false}
-                        placeholder={field.placeholder}
-                        className={fieldClass}
-                        onFocus={() => setFocused(field.name)}
+                      <textarea
+                        name="message"
+                        required
+                        rows={4}
+                        placeholder="Tell us how we can help"
+                        className={`${fieldClass} resize-y`}
+                        onFocus={() => setFocused("message")}
                         onBlur={() => setFocused(null)}
                       />
                       <motion.span
                         aria-hidden
-                        className="pointer-events-none absolute bottom-0 left-0 h-px bg-saukhya-pink"
-                        animate={{
-                          scaleX: focused === field.name ? 1 : 0,
-                        }}
+                        className="pointer-events-none absolute bottom-0 left-0 h-px bg-gradient-to-r from-saukhya-pink to-saukhya-gold"
+                        animate={{ scaleX: focused === "message" ? 1 : 0 }}
                         style={{ originX: 0, width: "100%" }}
                         transition={{ duration: 0.35, ease }}
                       />
                     </label>
-                  ))}
+                  </div>
 
-                  <label className="relative block sm:col-span-2">
-                    <span
-                      className={`mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${
-                        focused === "message"
-                          ? "text-saukhya-pink"
-                          : "text-saukhya-muted"
-                      }`}
-                    >
-                      Message
-                    </span>
-                    <textarea
-                      name="message"
-                      required
-                      rows={5}
-                      placeholder="Tell us how we can help"
-                      className={`${fieldClass} resize-y`}
-                      onFocus={() => setFocused("message")}
-                      onBlur={() => setFocused(null)}
-                    />
-                    <motion.span
-                      aria-hidden
-                      className="pointer-events-none absolute bottom-0 left-0 h-px bg-saukhya-pink"
-                      animate={{ scaleX: focused === "message" ? 1 : 0 }}
-                      style={{ originX: 0, width: "100%" }}
-                      transition={{ duration: 0.35, ease }}
-                    />
-                  </label>
-                </div>
+                  <div className="mt-9 flex flex-wrap items-center gap-5 border-t border-saukhya-border/50 pt-8">
+                    <Button type="submit" size="lg">
+                      Send Message
+                    </Button>
+                    <AnimatePresence>
+                      {sent && (
+                        <motion.p
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0 }}
+                          className="text-sm text-saukhya-muted"
+                        >
+                          Opening your email app…
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </form>
+              </Reveal>
 
-                <div className="mt-10 flex flex-wrap items-center gap-5">
-                  <Button type="submit" size="lg">
-                    Send Message
-                  </Button>
-                  <AnimatePresence>
-                    {sent && (
-                      <motion.p
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="text-sm text-saukhya-muted"
-                      >
-                        Opening your email app…
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </form>
-            </Reveal>
-
-            <Reveal from="right" delay={0.1} className="lg:col-span-5">
-              <aside className="lg:sticky lg:top-28" aria-label="How Saukhya can help">
-                <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-saukhya-gold">
-                  How we help
-                </p>
-                <h2
-                  className="mt-4 text-2xl font-medium text-saukhya-maroon md:text-3xl"
-                  style={{ fontFamily: "var(--font-serif)" }}
+              <Reveal from="right" delay={0.1} className="lg:col-span-5">
+                <aside
+                  className="relative h-full overflow-hidden bg-[#5c2238] px-6 py-8 text-white md:px-9 md:py-11 lg:px-10 lg:py-12"
+                  aria-label="How Saukhya can help"
                 >
-                  Support that stays calm and clear
-                </h2>
-                <p className="mt-4 text-sm leading-relaxed text-saukhya-muted">
-                  {content.supportCard.copy}
-                </p>
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-saukhya-gold/15 blur-2xl"
+                  />
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-saukhya-gold/50 to-transparent"
+                  />
 
-                <ul className="mt-10 space-y-0">
-                  {content.help.map((item, index) => (
-                    <motion.li
-                      key={item.title}
-                      initial={reduceMotion ? false : { opacity: 0, x: 20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, margin: "-40px" }}
-                      transition={{
-                        duration: 0.55,
-                        ease,
-                        delay: 0.08 * index,
-                      }}
-                      className="border-t border-saukhya-border/70 py-5"
-                    >
-                      <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-saukhya-pink">
-                        0{index + 1}
-                      </p>
-                      <p
-                        className="mt-2 text-lg font-medium text-saukhya-text"
-                        style={{ fontFamily: "var(--font-serif)" }}
+                  <p className="text-[10px] font-medium uppercase tracking-[0.32em] text-saukhya-gold">
+                    How we help
+                  </p>
+                  <h3
+                    className="mt-3 max-w-xs text-2xl font-medium leading-snug text-white md:text-[1.85rem]"
+                    style={{ fontFamily: "var(--font-serif)" }}
+                  >
+                    Support that stays calm and clear
+                  </h3>
+                  <p className="mt-4 text-sm leading-[1.8] text-white/70">
+                    {content.supportCard.copy}
+                  </p>
+
+                  <ul className="mt-9 space-y-0">
+                    {content.help.map((item, index) => (
+                      <motion.li
+                        key={item.title}
+                        initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-40px" }}
+                        transition={{
+                          duration: 0.55,
+                          ease,
+                          delay: 0.08 * index,
+                        }}
+                        className="border-t border-white/15 py-5"
                       >
-                        {item.title}
-                      </p>
-                      <p className="mt-2 text-sm leading-relaxed text-saukhya-muted">
-                        {item.copy}
-                      </p>
-                    </motion.li>
-                  ))}
-                </ul>
+                        <div className="flex gap-4">
+                          <span
+                            className="shrink-0 text-2xl font-medium text-saukhya-gold/80"
+                            style={{ fontFamily: "var(--font-serif)" }}
+                          >
+                            0{index + 1}
+                          </span>
+                          <div>
+                            <p className="text-[15px] font-medium tracking-wide text-white">
+                              {item.title}
+                            </p>
+                            <p className="mt-1.5 text-sm leading-relaxed text-white/65">
+                              {item.copy}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.li>
+                    ))}
+                  </ul>
 
-                <div className="mt-8 space-y-3 border-t border-saukhya-border/70 pt-8">
-                  <AppLink
-                    href={`tel:${FOOTER_LINKS.contact.phone.replace(/\s/g, "")}`}
-                    className="block text-sm font-medium tracking-wide text-saukhya-maroon transition-colors hover:text-saukhya-pink"
-                  >
-                    Call {FOOTER_LINKS.contact.phone}
-                  </AppLink>
-                  <AppLink
-                    href={`mailto:${FOOTER_LINKS.contact.email}`}
-                    className="block text-sm font-medium tracking-wide text-saukhya-maroon transition-colors hover:text-saukhya-pink"
-                  >
-                    {FOOTER_LINKS.contact.email}
-                  </AppLink>
-                </div>
-              </aside>
-            </Reveal>
+                  <div className="mt-6 space-y-3 border-t border-white/15 pt-7">
+                    <AppLink
+                      href={`tel:${FOOTER_LINKS.contact.phone.replace(/\s/g, "")}`}
+                      className="block text-sm font-medium tracking-wide text-white/90 transition-colors hover:text-saukhya-gold"
+                    >
+                      Call {FOOTER_LINKS.contact.phone}
+                    </AppLink>
+                    <AppLink
+                      href={`mailto:${FOOTER_LINKS.contact.email}`}
+                      className="block text-sm font-medium tracking-wide text-white/90 transition-colors hover:text-saukhya-gold"
+                    >
+                      {FOOTER_LINKS.contact.email}
+                    </AppLink>
+                  </div>
+                </aside>
+              </Reveal>
+            </div>
           </div>
         </div>
       </section>
